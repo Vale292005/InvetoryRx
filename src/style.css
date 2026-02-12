@@ -1,79 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* --- PALETA DE COLORES (BRAND) --- */
+  --color-brand-30: #355364; /* Oscuro */
+  --color-brand: #517F99;    /* Base */
+  --color-brand-40: #476F85;
+  --color-brand-80: #BCD0DC; /* Claro/Pastel */
+  --color-brand-50: #588AA7; /* Intermedio */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* --- CONFIGURACIÓN POR DEFECTO --- */
+  --font-main: 'Arimo', sans-serif;
 }
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+html,body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
 }
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+h3{
+  font-family: var(--font-main)!important;
+  font-size: 28px;
+  font-weight: 600; /* Bold */
+  line-height: 1.2;
+  display: block;
+  margin: 0;
 }
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+h4 {
+  font-family: var(--font-main);
+  font-size: 22px;
+  font-weight: 400; /* Regular */
+  margin: 0;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
-}
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.button-text {
+  font-size: 16px;
+  font-weight: 400; /* Regular */
   text-align: center;
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+.bg-brand { background-color: var(--color-brand); }
+.text-brand { color: var(--color-brand); }
