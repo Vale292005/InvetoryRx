@@ -17,13 +17,19 @@ defineEmits(['update:modelValue'])
       {{ label }}
     </label>
 
-    <input
-        :type="type"
-        :value="modelValue"
-        @input="$emit('update:modelValue',$event.target.value)"
-        :placeholder="placeholder"
-        :class="['custom-input','h4',{'input-error':hasError}]"
-    />
+    <div class="input-wrapper">
+      <input
+          :type="type"
+          :value="modelValue"
+          @input="$emit('update:modelValue',$event.target.value)"
+          :placeholder="placeholder"
+          :class="['custom-input','h4',{'input-error':hasError}]"
+      />
+
+      <div v-if="$slots.icon" class="input-icon">
+        <slot name="icon"></slot>
+      </div>
+    </div>
 
     <div
         v-if="hasMsg || $slots.msg"
@@ -122,6 +128,28 @@ defineEmits(['update:modelValue'])
 .message-error {
   color: #a87a7a;
   font-weight: 500;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+.custom-input {
+  padding: 4px 40px 4px 14px;
+}
+
+.custom-input[type="password"] {
+  letter-spacing: 0.1em;
 }
 
 </style>

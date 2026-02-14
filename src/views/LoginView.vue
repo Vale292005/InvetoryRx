@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, ref, watch} from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
 import { useRouter } from 'vue-router'
 import CustomInput from "@/components/CustomInput.vue";
@@ -12,7 +12,14 @@ const form = ref({
   username: '',
   password: ''
 })
+
+const showPassword=ref(false)
 const attemptedLogin=ref(false)
+const serverErrorMessage=ref('')
+
+watch(() => [form.value.username, form.value.password], () => {
+  serverErrorMessage.value = ''
+})
 
 const userError = computed(() => {
   if (!attemptedLogin.value)return ''
@@ -26,6 +33,10 @@ const passwordError=computed(()=>{
   return ''
 })
 
+const globalErrorMessage=computed(()=>{
+  return serverErrorMessage.value||''
+})
+
 const buttonStatus=computed(()=>{
   if(!form.value.username || !form.value.password){
     return 'disable'
@@ -34,6 +45,7 @@ const buttonStatus=computed(()=>{
 })
 const handleLogin = async () => {
   attemptedLogin.value=true
+  serverErrorMessage.value=''
 
   if(!form.value.username||!form.value.password)return
 
@@ -42,6 +54,7 @@ const handleLogin = async () => {
     router.push('/inventory')
   } catch (err) {
     console.error("Fallo el login en el componente")
+    serverErrorMessage.value='Usuario o contraseña incorrectos'
   }
 }
 </script>
@@ -53,20 +66,34 @@ const handleLogin = async () => {
   </div>
 
   <div class="conteiner-form">
+    <p v-if="serverErrorMessage" class="server-error">
+      {{ serverErrorMessage }}
+    </p>
     <custom-input
-        label="Usuario"
+        label="Usuario 👤"
         v-model="form.username"
         placeholder="Ingrese su usuario"
-        :hasError="!!userError"
+        :hasError="!!userError||!!serverErrorMessage"
         :hasMsg="userError"
     />
     <custom-input
-        label="Contraseña"
+        label="Contraseña 🔒"
         v-model="form.password"
+        :type="showPassword?'text':'password'"
         placeholder="Ingrese su contraseña"
-        :hasError="!!passwordError"
+        :hasError="!!passwordError||!!serverErrorMessage"
         :hasMsg="passwordError"
     >
+      <template #icon>
+        <button
+            type="button"
+            @click="showPassword = !showPassword"
+            style="background:none; border:none; cursor:pointer; padding:0;"
+        >
+          <span style="font-size: 20px;">{{ showPassword ? '👁️' : '🙈' }}</span>
+        </button>
+      </template>
+
       <template #msg>
         <a
             href="https://i.pinimg.com/236x/1e/a4/2f/1ea42fd2256e7d5a8e2bb165bcd52a92.jpg"
@@ -114,13 +141,40 @@ const handleLogin = async () => {
   width: 100%;
   height: 100vh;
 }
+@media (max-width: 768px) {
+  .container-branch{
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    gap: 20px;
+  }
+}
 .container-logo{
+  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0;
   height: 100%;
   width: 100%;
+  min-width: 0;
+}
+.container-logo img{
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  object-fit: contain;
+}
+@media (max-width: 768px) {
+  .container-logo img{
+    max-width: 251px;
+  }
 }
 .conteiner-form{
   display: flex;
@@ -134,5 +188,21 @@ const handleLogin = async () => {
   max-width: 376px;
   border-radius:20px 0 0 20px;
   background-color: #ffffff;
+}
+@media (max-width: 780px) {
+  .conteiner-form{
+    border-radius: 20px 20px 0 0;
+  }
+}
+.server-error {
+  color: #ff4d4f;
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: -20px; /* Ajusta según tu gap */
 }
 </style>
