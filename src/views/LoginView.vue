@@ -9,14 +9,14 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const form = ref({
-  user: '',
+  username: '',
   password: ''
 })
 const attemptedLogin=ref(false)
 
 const userError = computed(() => {
   if (!attemptedLogin.value)return ''
-  if (!form.value.user)return 'El usuario es obligatorio'
+  if (!form.value.username)return 'El usuario es obligatorio'
   return ''
 })
 
@@ -27,7 +27,7 @@ const passwordError=computed(()=>{
 })
 
 const buttonStatus=computed(()=>{
-  if(!form.value.user || !form.value.password){
+  if(!form.value.username || !form.value.password){
     return 'disable'
   }
   return 'default'
@@ -35,7 +35,7 @@ const buttonStatus=computed(()=>{
 const handleLogin = async () => {
   attemptedLogin.value=true
 
-  if(!form.value.user||!form.value.password)return
+  if(!form.value.username||!form.value.password)return
 
   try {
     await authStore.login(form.value)
@@ -55,7 +55,7 @@ const handleLogin = async () => {
   <div class="conteiner-form">
     <custom-input
         label="Usuario"
-        v-model="form.user"
+        v-model="form.username"
         placeholder="Ingrese su usuario"
         :hasError="!!userError"
         :hasMsg="userError"

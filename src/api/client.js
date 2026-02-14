@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const client=axios.create({
-    basaeURL:import.meta.env.VITE_API_URL||'http://localhost:3000/api',
+    baseURL:import.meta.env.VITE_API_URL||'http://localhost:8080/api',
     timeout:10000,
     headers:{
         'Content-Type':'application/json',
@@ -10,7 +10,7 @@ const client=axios.create({
 })
 client.interceptors.request.use(
     (config)=>{
-        const toker=localStorage.getItem('auth_token');
+        const token=localStorage.getItem('auth_token');
         if(token){
             config.headers.Authoriation=`Bearer ${token}`;
         }
