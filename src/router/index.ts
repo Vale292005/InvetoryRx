@@ -7,7 +7,7 @@ import LoginView from "../views/LoginView.vue";
 export const router=createRouter({
     history:createWebHistory(),
     routes:[
-        {path:'/',redirect:'/Home'},
+        {path:'/',component:HomeView},
         {path:'/Home',component:HomeView},
         {
             path:'/login',

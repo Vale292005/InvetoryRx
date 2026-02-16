@@ -3,13 +3,15 @@
 import CustomButton from "@/components/CustomButton.vue";
 import CustomCard from "@/components/CustomCard.vue";
 import {onMounted, onUnmounted, ref} from "vue";
-import router from "@/router/index.js";
+import {useRouter} from "vue-router";
+
+const router=useRouter();
 
 const goToLogin=()=>{
   router.push('/login');
 }
 
-const index=ref('');
+const index=ref(0);
 let interval=null;
 
 function moveCarousel(){
@@ -46,7 +48,7 @@ onUnmounted(()=>{
   <div class="carousel-container">
     <div
         class="carousel-track"
-        :style="{transform: `translateX(-${index*100}%`}"
+        :style="{transform: `translateX(-${index*100}%)`}"
     >
       <img src="../assets/simi1.png">
       <img src="../assets/simi2.png">
