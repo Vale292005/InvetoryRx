@@ -17,11 +17,13 @@ defineProps({
 
 <style scoped>
 .custom-button{
-  width: 252px;
-  height: 50px;
-  border-radius: 10px;
+  width: auto!important;
+  height: auto!important;
 
-  display: flex;
+  padding: 10px 60px;
+
+  border-radius: 10px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -36,7 +38,13 @@ defineProps({
   transition: all 0.2s ease;
 
   box-shadow: 4px 4px 0px #000,0 6px 8px rgba(0,0,0,0.15);
-  padding: 0;
+}
+@media (max-width: 768px){
+  .custom-button{
+    font-size: 20px;
+    padding: 8px 20px;
+    box-shadow: 3px 3px 0px #000;
+  }
 }
 .custom-button:hover{
   background-color: #BCD0DC;

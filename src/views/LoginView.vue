@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import { useRouter } from 'vue-router'
 import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
+import CustomCard from "@/components/CustomCard.vue";
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -130,6 +131,7 @@ const handleLogin = async () => {
 
   </div>
 </div>
+  <Custom-card></Custom-card>
 </template>
 
 <style scoped>

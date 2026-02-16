@@ -1,13 +1,19 @@
 import {createRouter,createWebHistory} from "vue-router";
-import LoginView from "../views/LoginView.vue";
 import InventoryView from "../views/InventoryView.vue";
+import HomeView from "../views/HomeView.vue";
+import LoginView from "../views/LoginView.vue";
 
 
 export const router=createRouter({
     history:createWebHistory(),
     routes:[
-        {path:'/',redirect:'/login'},
-        {path:'/login',component:LoginView},
+        {path:'/',redirect:'/Home'},
+        {path:'/Home',component:HomeView},
+        {
+            path:'/login',
+            component:LoginView,
+            meta:{requiresAuth:false}
+        },
         {
             path:'/inventory',
             component:InventoryView,
