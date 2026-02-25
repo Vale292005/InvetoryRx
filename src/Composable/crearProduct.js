@@ -1,7 +1,9 @@
 import { ref, reactive } from 'vue';
 
 export function crearProduct() {
-    // Definimos una función que devuelva un objeto nuevo cada vez
+    // 1. URL dinámica para detectar si estamos en Render o en Localhost
+    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
     const getInitialState = () => ({
         nombre: '',
         descripcion: '',
@@ -11,42 +13,52 @@ export function crearProduct() {
         categoria: ''
     });
 
-    // Inicializamos con una copia limpia
     const form = reactive(getInitialState());
     const loading = ref(false);
     const error = ref(null);
 
-    // Función para resetear el formulario correctamente
     const resetForm = () => {
         Object.assign(form, getInitialState());
     };
 
-    // Función para enviar al Backend (@PostMapping)
     const saveProduct = async () => {
+        // Validación básica antes de enviar
+        if (!form.nombre || !form.precio) {
+            const msg = "El nombre y el precio son obligatorios";
+            error.value = msg;
+            throw new Error(msg);
+        }
+
         loading.value = true;
         error.value = null;
 
         try {
-            const response = await fetch('http://localhost:8080/api/products', {
+            // 2. Usamos la BASE_URL configurada
+            const response = await fetch(`${BASE_URL}/api/products`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                    // Si el backend pide token, descomenta la siguiente línea:
+                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 body: JSON.stringify(form)
             });
 
-            // Manejo de errores basado en la respuesta del servidor
             if (!response.ok) {
-                // Intentamos parsear el error del back, si no, lanzamos genérico
+                // Manejo de error 401 si no hay permisos
+                if (response.status === 401) throw new Error("No tienes permiso para crear productos.");
+
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.message || 'Error al guardar el producto');
             }
 
             const data = await response.json();
-            resetForm(); // Limpiar tras éxito
+            resetForm();
             return data;
 
         } catch (err) {
             error.value = err.message;
-            throw err; // Re-lanzamos para que el componente pueda reaccionar
+            throw err;
         } finally {
             loading.value = false;
         }

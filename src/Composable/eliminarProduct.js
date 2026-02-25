@@ -3,6 +3,9 @@ import { ref, reactive } from 'vue';
 export function useEliminarProducto() {
     const idProducto = ref(null);
 
+    // 1. URL dinámica para Render o Localhost
+    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
     const form = reactive({
         nombre: '',
         descripcion: '',
@@ -20,24 +23,35 @@ export function useEliminarProducto() {
     };
 
     const deleteProduct = async () => {
+        // 2. Lanzamos error si no hay ID para detener el alert del componente
         if (!idProducto.value) {
-            error.value = "Seleccione un producto para eliminar";
-            return;
+            const msg = "Seleccione un producto para eliminar";
+            error.value = msg;
+            throw new Error(msg);
         }
 
         loading.value = true;
         error.value = null;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${idProducto.value}`, {
-                method: 'DELETE'
+            // 3. Uso de la variable BASE_URL
+            const response = await fetch(`${BASE_URL}/api/products/${idProducto.value}`, {
+                method: 'DELETE',
+                headers: {
+                    // Si implementas seguridad, añade el token aquí:
+                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
             });
 
             if (!response.ok) {
-                throw new Error('No se pudo eliminar el producto');
+                // Manejo del 401 Unauthorized
+                if (response.status === 401) throw new Error("No tienes permiso para eliminar este producto.");
+
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'No se pudo eliminar el producto');
             }
 
-            // Limpiamos el formulario tras eliminar
+            // Limpiamos el formulario tras eliminar con éxito
             idProducto.value = null;
             form.nombre = '';
             form.descripcion = '';
@@ -46,7 +60,7 @@ export function useEliminarProducto() {
             return true;
         } catch (err) {
             error.value = err.message;
-            throw err;
+            throw err; // Crucial para el try/catch del componente Vue
         } finally {
             loading.value = false;
         }

@@ -7,6 +7,9 @@ export function searchProductos() {
     const searchQuery = ref('');
     const productos = ref([]);
 
+    // 1. URL dinámica para Render o Localhost
+    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
     const obtenerProductos = async (termino = '') => {
         try {
             const token = authStore.token;
@@ -16,24 +19,24 @@ export function searchProductos() {
                 headers: { 'Authorization': `Bearer ${token}` }
             };
 
-            const baseUrl = 'http://localhost:8080/api/products';
+            // Usamos la variable BASE_URL
+            const baseUrl = `${BASE_URL}/api/products`;
             const query = termino.trim();
 
-            // 1. Si el buscador está vacío, traemos todos (usando el search con nombre vacío)
+            // 1. Si el buscador está vacío
             if (query === '') {
                 const response = await axios.get(`${baseUrl}/search`, { ...config, params: { name: '' } });
                 productos.value = response.data;
                 return;
             }
 
-            // 2. ¿Es un ID? (Solo números y longitud corta, ej: menos de 6 dígitos)
+            // 2. ¿Es un ID?
             if (/^\d+$/.test(query) && query.length < 6) {
                 const response = await axios.get(`${baseUrl}/${query}`, config);
-                // Convertimos el objeto único en un array [producto] para no romper el v-for
                 productos.value = response.data ? [response.data] : [];
             }
 
-            // 3. ¿Es un Código? (Empieza con 'm' o longitud considerable)
+            // 3. ¿Es un Código?
             else if (query.toLowerCase().startsWith('m') || query.length >= 8) {
                 const response = await axios.get(`${baseUrl}/code/${query}`, config);
                 productos.value = response.data ? [response.data] : [];
@@ -49,7 +52,9 @@ export function searchProductos() {
             }
 
         } catch (error) {
+            // Manejo automático del 401 (Unauthorized)
             if (error.response && error.response.status === 401) {
+                console.error("Sesión expirada o token inválido");
                 authStore.logout();
             }
             productos.value = [];
@@ -60,6 +65,7 @@ export function searchProductos() {
 
     watch(searchQuery, (nuevoValor) => {
         const val = nuevoValor.trim();
+        // Disparamos búsqueda si hay 3 letras o si es un número (ID)
         if (val.length >= 3 || /^\d+$/.test(val)) {
             obtenerProductos(val);
         } else if (val.length === 0) {
