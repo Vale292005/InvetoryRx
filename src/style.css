@@ -2,11 +2,21 @@
 
 :root {
   /* --- PALETA DE COLORES (BRAND) --- */
-  --color-brand-30: #355364; /* Oscuro */
-  --color-brand: #517F99;    /* Base */
+  --color-brand-30: #355364;
+  --color-brand: #517F99;
   --color-brand-40: #476F85;
-  --color-brand-80: #BCD0DC; /* Claro/Pastel */
-  --color-brand-50: #588AA7; /* Intermedio */
+  --color-brand-80: #BCD0DC;
+  --color-brand-50: #588AA7;
+  --color-brand-90: #DEE8ED;
+  --color-brand-20: #233743;
+  --color-brand-10: #121C21;
+  --color-brand-60: #7AA2B8;
+  --color-brand-70: #9BB9CA;
+
+  /* --- PALETA DE COLORES (ERROR) --- */
+  --color-error-30: #643535;
+  --color-error-40: #854747;
+  --color-error-80: #DCBCBC;
 
   /* --- CONFIGURACIÓN POR DEFECTO --- */
   --font-main: 'Arimo', sans-serif;
@@ -32,10 +42,46 @@ h4 {
   font-weight: 400; /* Regular */
   margin: 0;
 }
-.button-text {
-  font-size: 16px;
-  font-weight: 400; /* Regular */
-  text-align: center;
+text-button {
+  font-size: 22px;
+  font-weight: 400;
+  text-align: left;
+}
+.text-label{
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+}
+.text-body{
+  font-size: 20px;
+}
+overline{
+  font-size: 14px;
+  font-weight: 400;
 }
 .bg-brand { background-color: var(--color-brand); }
 .text-brand { color: var(--color-brand); }
+
+/* 1. Definir el ancho de la barra */
+::-webkit-scrollbar {
+  width: 8px;              /* Ancho del scroll vertical */
+  height: 8px;             /* Alto del scroll horizontal */
+}
+
+/* 2. El fondo de la barra (el carril) */
+::-webkit-scrollbar-track {
+  background: transparent;  /* Lo hacemos transparente para que parezca que flota */
+}
+
+/* 3. La parte que se mueve (el indicador) */
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.4); /* Color gris suave con transparencia */
+  border-radius: 10px;                  /* Bordes redondeados */
+  border: 2px solid transparent;        /* Espacio para que parezca más fina */
+  background-clip: content-box;         /* Truco para que el borde transparente funcione */
+}
+
+/* 4. Efecto al pasar el mouse */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.8); /* Se oscurece un poco al tocarla */
+}

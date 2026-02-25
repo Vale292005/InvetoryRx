@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import { useRouter } from 'vue-router'
 import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
-import CustomCard from "@/components/CustomCard.vue";
+import CustomBack from "@/components/CustomBack.vue";
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -52,7 +52,7 @@ const handleLogin = async () => {
 
   try {
     await authStore.login(form.value)
-    router.push('/inventory')
+    router.push('/dashboard-producto')
   } catch (err) {
     console.error("Fallo el login en el componente")
     serverErrorMessage.value='Usuario o contraseña incorrectos'
@@ -67,6 +67,7 @@ const handleLogin = async () => {
   </div>
 
   <div class="conteiner-form">
+    <CustomBack/>
     <p v-if="serverErrorMessage" class="server-error">
       {{ serverErrorMessage }}
     </p>
@@ -131,7 +132,6 @@ const handleLogin = async () => {
 
   </div>
 </div>
-  <Custom-card></Custom-card>
 </template>
 
 <style scoped>

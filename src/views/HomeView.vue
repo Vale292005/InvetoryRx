@@ -4,6 +4,7 @@ import CustomButton from "@/components/CustomButton.vue";
 import CustomCard from "@/components/CustomCard.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import {useRouter} from "vue-router";
+import FormCrearProducto from "@/components/FormCrearProducto.vue";
 
 const router=useRouter();
 

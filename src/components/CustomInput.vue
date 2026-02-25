@@ -13,9 +13,9 @@ defineEmits(['update:modelValue'])
 
 <template>
   <div class="input-container">
-    <label :class="['custom-label','h3',{'label-error':hasError}]">
+    <text-button :class="['text-button',{'label-error':hasError}]">
       {{ label }}
-    </label>
+    </text-button>
 
     <div class="input-wrapper">
       <input
@@ -23,7 +23,7 @@ defineEmits(['update:modelValue'])
           :value="modelValue"
           @input="$emit('update:modelValue',$event.target.value)"
           :placeholder="placeholder"
-          :class="['custom-input','h4',{'input-error':hasError}]"
+          :class="['custom-input',{'input-error':hasError}]"
       />
 
       <div v-if="$slots.icon" class="input-icon">
@@ -67,25 +67,26 @@ defineEmits(['update:modelValue'])
   color: #5e3333;
 }
 
-/* INPUT */
 .custom-input {
   width: 100%;
   max-width: 336px;
-  height: 50px;
+  height: auto;
   border-radius: 6px;
   border: 2px solid var(--color-brand-40);
   background-color: #c2d1d9;
-  padding: 4px 14px;
   font-size: 1rem;
   color: #334e5e;
   outline: none;
   transition: all 0.2s ease;
+  padding: 8px 10px;
   box-sizing: border-box;
 }
 
 .custom-input::placeholder {
   color: var(--color-brand-30);
-  font-size: 22px;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
 }
 
 .input-error {
@@ -112,13 +113,14 @@ defineEmits(['update:modelValue'])
 .input-footer :deep(a:hover) {
   text-decoration: underline;
 }
-
+.text-button{
+  color: var(--color-brand-30);
+}
 .input-footer :deep(svg) {
   width: 14px;
   height: 14px;
   stroke: currentColor;
 }
-
 
 .message-text {
   font-size: 14px;
@@ -143,9 +145,6 @@ defineEmits(['update:modelValue'])
   display: flex;
   align-items: center;
   z-index: 2;
-}
-.custom-input {
-  padding: 4px 40px 4px 14px;
 }
 
 .custom-input[type="password"] {

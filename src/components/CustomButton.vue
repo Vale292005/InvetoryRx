@@ -20,7 +20,7 @@ defineProps({
   width: auto!important;
   height: auto!important;
 
-  padding: 10px 60px;
+  padding: 6px 20px;
 
   border-radius: 10px;
   display: inline-flex;
@@ -38,6 +38,9 @@ defineProps({
   transition: all 0.2s ease;
 
   box-shadow: 4px 4px 0px #000,0 6px 8px rgba(0,0,0,0.15);
+
+  font-family: Arimo;
+  font-size: 22px;
 }
 @media (max-width: 768px){
   .custom-button{
@@ -57,7 +60,7 @@ defineProps({
   box-shadow: 0 1px 0px #2c414d;
 }
 
-.button-text {
+.text-button {
   /* Asegura que el texto no se desplace */
   line-height: 1;
 }

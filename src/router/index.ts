@@ -2,7 +2,10 @@ import {createRouter,createWebHistory} from "vue-router";
 import InventoryView from "../views/InventoryView.vue";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
-
+import PerdidaContrasenha from "../views/PerdidaContrasenha.vue";
+import confirmContrasenha from "../views/confirmContrasenha.vue";
+import pruebas from "../views/pruebas.vue";
+import DashboardProducto from "../views/DashboardProducto.vue";
 
 export const router=createRouter({
     history:createWebHistory(),
@@ -18,6 +21,21 @@ export const router=createRouter({
             path:'/inventory',
             component:InventoryView,
             meta:{requiresAuth:true}
+        },
+        {
+            path:'/dashboard-producto',
+            component:DashboardProducto,
+            meta:{requiresAuth:true}
+        },
+        {
+            path:'/contrasenhaOlvidada',
+            component:PerdidaContrasenha,
+            meta:{requiresAuth:false}
+        },
+        {
+            path:'/confirmCode',
+            component:confirmContrasenha,
+            meta:{requiresAuth:false}
         }
     ]
 })
