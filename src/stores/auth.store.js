@@ -36,6 +36,19 @@ export const useAuthStore = defineStore('auth', {
                 this.loading = false;
             }
         },
+        async register(userData){
+            this.loading=true;
+            this.error=null;
+            try{
+                const data=await authApi.register(userData);
+                return data;
+            }catch(e){
+                this.error=e;
+                throw e;
+            }finally {
+                this.loading=false;
+            }
+        },
         logout() {
             this.user = null;
             this.token = null;

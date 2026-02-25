@@ -6,6 +6,7 @@ import PerdidaContrasenha from "../views/PerdidaContrasenha.vue";
 import confirmContrasenha from "../views/confirmContrasenha.vue";
 import pruebas from "../views/pruebas.vue";
 import DashboardProducto from "../views/DashboardProducto.vue";
+import Register from "../views/Register.vue";
 
 export const router=createRouter({
     history:createWebHistory(),
@@ -35,6 +36,11 @@ export const router=createRouter({
         {
             path:'/confirmCode',
             component:confirmContrasenha,
+            meta:{requiresAuth:false}
+        },
+        {
+            path:'/registro',
+            component:Register,
             meta:{requiresAuth:false}
         }
     ]

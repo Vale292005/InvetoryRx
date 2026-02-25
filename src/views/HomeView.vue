@@ -8,6 +8,9 @@ import FormCrearProducto from "@/components/FormCrearProducto.vue";
 
 const router=useRouter();
 
+const goToRegister=()=>{
+  router.push('/registro');
+}
 const goToLogin=()=>{
   router.push('/login');
 }
@@ -37,6 +40,7 @@ onUnmounted(()=>{
 
     <div class="container-button">
       <CustomButton
+          @click="goToRegister"
           label="Registarse"
           type="default"/>
       <CustomButton

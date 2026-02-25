@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const client = axios.create({
-    // Detecta automáticamente si usa Render o Localhost
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
     timeout: 10000,
     headers: {
@@ -14,7 +13,6 @@ client.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('auth_token');
         if (token) {
-            // CORRECCIÓN: Se escribe "Authorization" (con 'z' y sin saltarse la 'o')
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -49,7 +47,6 @@ client.interceptors.response.use(
             }
         }
 
-        // Importante: retornamos el error para que los .catch() de tus composables lo lean
         return Promise.reject(mensajeAmigable);
     }
 );

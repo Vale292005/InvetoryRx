@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-  title: { type: String, default: 'texto' },
+  title: { type: String, default: 'Activar/Desactivar' },
   modelValue: { type: Boolean, default: false },
   error: { type: Boolean, default: false },
   errorMessage: { type: String, default: 'error' }

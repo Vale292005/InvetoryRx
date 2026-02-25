@@ -55,8 +55,6 @@ defineEmits(['update:modelValue'])
   max-width: 336px;
   gap: 10px;
 }
-
-/* LABEL */
 .custom-label {
   color: #355364;
   font-size: 28px;
@@ -69,7 +67,7 @@ defineEmits(['update:modelValue'])
 
 .custom-input {
   width: 100%;
-  max-width: 336px;
+  min-width: 250px;
   height: auto;
   border-radius: 6px;
   border: 2px solid var(--color-brand-40);
@@ -115,6 +113,7 @@ defineEmits(['update:modelValue'])
 }
 .text-button{
   color: var(--color-brand-30);
+  font-size: 22px;
 }
 .input-footer :deep(svg) {
   width: 14px;
