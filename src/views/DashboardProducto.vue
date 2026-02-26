@@ -5,9 +5,17 @@ import {ref} from "vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import {searchProductos} from "@/Composable/SearchProductos.js";
 import {useAuthStore} from "@/stores/auth.store.js";
+import {useRouter} from "vue-router";
 
 const authStore=useAuthStore();
 const username=authStore.user?.username||'Usuario';
+const route=useRouter();
+
+const handleMenu=(item)=>{
+  if(item==='Orden'){
+    route.push('/orden');
+  }
+}
 
 const productoColumnas = ref([
   { label: 'Producto', key: 'nombre' },
@@ -22,7 +30,7 @@ const props=defineProps({
   username:{type:String,default:'User'},
   menu:{
     type:Array,
-    default:()=>["Productos", "Categorias", "Activos", "Stock"]
+    default:()=>["Productos","Orden", "Categorias", "Activos", "Stock"]
   }
 });
 
