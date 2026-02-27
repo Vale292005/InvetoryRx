@@ -59,9 +59,10 @@ const seleccionar=(item)=>{
   display: flex;
   flex-direction: row;
   width: 100%;
+  max-width: 225px;
   height: auto;
-  padding: 8px 10px;
-  justify-content: space-around;
+  padding: 2px 6px;
+  justify-content: space-between;
   border-radius: 6px;
   box-sizing: border-box;
 
@@ -85,15 +86,19 @@ const seleccionar=(item)=>{
   list-style: none;
   padding: 0;
   margin: 0;
+  max-width: 225px;
 }
 .accordion-content li{
   width: 100%;
+  max-width: 225px;
+  margin: 0;
   height: auto;
   gap: 6px;
   padding: 4px 10px;
   border-radius: 6px;
   background-color: var(--color-brand-90);
   border: 2px solid var(--color-brand-40);
+  box-sizing: border-box;
 }
 .text-button{
   color: var(--color-brand-30);

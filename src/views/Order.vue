@@ -6,10 +6,21 @@ import {searchProductos} from "@/Composable/SearchProductos.js";
 import {useAuthStore} from "@/stores/auth.store.js";
 import {useOrderStore} from "@/stores/order.store.js";
 import CustomButton from "@/components/CustomButton.vue";
+import {useRouter} from "vue-router";
 
 const authStore=useAuthStore();
 const orderStore=useOrderStore();
 const username=authStore.user?.username||'Usuario';
+const route=useRouter();
+
+const handleMenu=(item)=>{
+  if(item==='Productos'){
+    route.push('/dashboard-producto');
+  }
+  if(item==='Orden'){
+    route.push('/orden');
+  }
+}
 
 const carrito=ref([]);
 

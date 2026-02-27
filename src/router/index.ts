@@ -8,6 +8,7 @@ import pruebas from "../views/pruebas.vue";
 import DashboardProducto from "../views/DashboardProducto.vue";
 import Register from "../views/Register.vue";
 import Order from "../views/Order.vue";
+import Categoria from "../views/Categoria.vue";
 
 export const router=createRouter({
     history:createWebHistory(),
@@ -33,6 +34,11 @@ export const router=createRouter({
             path:'/orden',
             component:Order,
             meta:{requiresAuth:true}
+        },
+        {
+            path:'/categoria',
+            component:Categoria,
+            meta:{requiresAuth:false}
         },
         {
             path:'/contrasenhaOlvidada',
