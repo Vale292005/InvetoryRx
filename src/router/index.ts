@@ -54,6 +54,11 @@ export const router=createRouter({
             path:'/registro',
             component:Register,
             meta:{requiresAuth:false}
+        },
+        {
+            path:'/prueba',
+            component:pruebas,
+            meta:{requiresAuth:false}
         }
     ]
 })

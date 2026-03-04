@@ -5,6 +5,7 @@ import SearchProduct from "@/components/SearchProduct.vue";
 import Accordion from "@/components/Accordion.vue";
 import {useAuthStore} from "@/stores/auth.store.js";
 import {useRouter} from "vue-router";
+import Sidebar from "@/components/Sidebar.vue";
 
 const route=useRouter();
 const authStore=useAuthStore();
@@ -41,7 +42,7 @@ const seleccionarCat = (cat) => {
 <template>
 <div class="dashboard-contaianer">
   <div class="header-container">
-    <img src="../assets/menu.png">
+    <Sidebar/>
   </div>
   <div class="hello-container">
     <h3>Bienvenido, {{username}}!</h3>

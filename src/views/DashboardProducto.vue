@@ -6,6 +6,7 @@ import SearchProduct from "@/components/SearchProduct.vue";
 import {searchProductos} from "@/Composable/SearchProductos.js";
 import {useAuthStore} from "@/stores/auth.store.js";
 import {useRouter} from "vue-router";
+import Sidebar from "@/components/Sidebar.vue";
 
 const authStore=useAuthStore();
 const username=authStore.user?.username||'Usuario';
@@ -47,7 +48,7 @@ const { searchQuery, productos, cargando } = searchProductos();
 <template>
 <div class="dashboard-contaianer">
   <div class="header-container">
-    <img src="../assets/menu.png">
+    <sidebar/>
   </div>
   <div class="hello-container">
     <h3>Bienvenido, {{username}}!</h3>

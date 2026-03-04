@@ -5,6 +5,7 @@ import CustomCard from "@/components/CustomCard.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import FormCrearProducto from "@/components/FormCrearProducto.vue";
+import Sidebar from "@/components/Sidebar.vue";
 
 const router=useRouter();
 

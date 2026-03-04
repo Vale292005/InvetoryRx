@@ -7,6 +7,7 @@ import {useAuthStore} from "@/stores/auth.store.js";
 import {useOrderStore} from "@/stores/order.store.js";
 import CustomButton from "@/components/CustomButton.vue";
 import {useRouter} from "vue-router";
+import Sidebar from "@/components/Sidebar.vue";
 
 const authStore=useAuthStore();
 const orderStore=useOrderStore();
@@ -98,7 +99,7 @@ const { searchQuery, productos, cargando } = searchProductos();
 <template>
 <div class="dashboard-contaianer">
   <div class="header-container">
-    <img src="../assets/menu.png">
+    <Sidebar/>
   </div>
   <div class="hello-container">
     <h3>Bienvenido, {{username}}!</h3>

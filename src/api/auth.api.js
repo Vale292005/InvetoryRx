@@ -4,7 +4,7 @@ export const login=(credentials)=>{
     return client.post('/auth/login',credentials).then(r=>r.data)
 }
 export const register=(userData)=>{
-    return client.post('/auth/register',userData).then(r=>r.data)
+    return client.post('/auth/registro',userData).then(r=>r.data)
 }
 export const getProfile=()=>{
     return client.get('/auth/profile').then(r=>r.data)
