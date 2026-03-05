@@ -58,10 +58,11 @@ const handleMenu = (path) => {
   position: absolute;
   display: flex;
   flex-direction: column;
-  width: auto;
+  width: fit-content;
   height: 100%;
   padding: 10px;
   gap: 10px;
+  pointer-events: none;
 }
 
 .sidebar-active {
