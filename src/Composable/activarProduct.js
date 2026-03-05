@@ -34,7 +34,7 @@ export function useToggleStatus() {
 
         try {
             // 3. Construimos la URL usando la BASE_URL dinámica
-            const response = await fetch(`${BASE_URL}/api/products/${idProducto.value}/toggle-status`, {
+            const response = await fetch(`${BASE_URL}/products/${idProducto.value}/toggle-status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

@@ -34,7 +34,7 @@ export function crearProduct() {
 
         try {
             // 2. Usamos la BASE_URL configurada
-            const response = await fetch(`${BASE_URL}/api/products`, {
+            const response = await fetch(`${BASE_URL}/products`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -17,7 +17,7 @@ export function useFilteredSearch() {
             const token = authStore.token;
             const config = { headers: { 'Authorization': `Bearer ${token}` } };
 
-            let url = `${BASE_URL}/api/products/search?name=${searchQuery.value}`;
+            let url = `${BASE_URL}/products/search?name=${searchQuery.value}`;
 
             if (categoriaSeleccionada.value !== 'Todos') {
                 url += `&category=${categoriaSeleccionada.value}`;

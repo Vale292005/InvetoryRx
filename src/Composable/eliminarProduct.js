@@ -35,7 +35,7 @@ export function useEliminarProducto() {
 
         try {
             // 3. Uso de la variable BASE_URL
-            const response = await fetch(`${BASE_URL}/api/products/${idProducto.value}`, {
+            const response = await fetch(`${BASE_URL}/products/${idProducto.value}`, {
                 method: 'DELETE',
                 headers: {
                     // Si implementas seguridad, añade el token aquí:

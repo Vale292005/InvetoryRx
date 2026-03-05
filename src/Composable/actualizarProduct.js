@@ -15,6 +15,8 @@ export function useActualizarProduct() {
     const loading = ref(false);
     const error = ref(null);
 
+    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
     // Esta función servirá para llenar el formulario desde el buscador
     const setProductoData = (producto) => {
         idProducto.value = producto.id;
@@ -36,7 +38,8 @@ export function useActualizarProduct() {
         error.value = null;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${idProducto.value}`, {
+            const url = `${BASE_URL}/products/${idProducto.value}`;
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)
