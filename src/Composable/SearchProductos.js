@@ -20,7 +20,7 @@ export function searchProductos() {
             };
 
             // Usamos la variable BASE_URL
-            const baseUrl = `${BASE_URL}/api/products`;
+            const baseUrl = `${BASE_URL}/products`;
             const query = termino.trim();
 
             // 1. Si el buscador está vacío
