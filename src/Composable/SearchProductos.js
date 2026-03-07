@@ -1,60 +1,50 @@
 import { onMounted, ref, watch } from "vue";
-import axios from "axios";
 import { useAuthStore } from "@/stores/auth.store.js";
+// Importamos las funciones necesarias de tu archivo API
+import {
+    searchProducts,
+    getProductById,
+    getProductByCode
+} from "@/api/inventory.api.js";
 
 export function searchProductos() {
     const authStore = useAuthStore();
     const searchQuery = ref('');
     const productos = ref([]);
 
-    // 1. URL dinámica para Render o Localhost
-    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
     const obtenerProductos = async (termino = '') => {
         try {
-            const token = authStore.token;
-            if (!token) return;
-
-            const config = {
-                headers: { 'Authorization': `Bearer ${token}` }
-            };
-
-            // Usamos la variable BASE_URL
-            const baseUrl = `${BASE_URL}/products`;
+            // No necesitas pasar el token aquí manualmente si tu 'client.js'
+            // ya tiene un interceptor que lo añade automáticamente.
             const query = termino.trim();
 
-            // 1. Si el buscador está vacío
+            // 1. Caso: Buscador vacío (Trae todos vía búsqueda vacía)
             if (query === '') {
-                const response = await axios.get(`${baseUrl}/search`, { ...config, params: { name: '' } });
-                productos.value = response.data;
+                productos.value = await searchProducts('');
                 return;
             }
 
-            // 2. ¿Es un ID?
+            // 2. Caso: ¿Es un ID numérico corto?
             if (/^\d+$/.test(query) && query.length < 6) {
-                const response = await axios.get(`${baseUrl}/${query}`, config);
-                productos.value = response.data ? [response.data] : [];
+                const data = await getProductById(query);
+                productos.value = data ? [data] : [];
             }
 
-            // 3. ¿Es un Código?
+            // 3. Caso: ¿Es un Código (Empieza con M o es largo)?
             else if (query.toLowerCase().startsWith('m') || query.length >= 8) {
-                const response = await axios.get(`${baseUrl}/code/${query}`, config);
-                productos.value = response.data ? [response.data] : [];
+                const data = await getProductByCode(query);
+                productos.value = data ? [data] : [];
             }
 
-            // 4. Búsqueda por Nombre (Default)
+            // 4. Caso: Búsqueda por Nombre (Default)
             else {
-                const response = await axios.get(`${baseUrl}/search`, {
-                    ...config,
-                    params: { name: query }
-                });
-                productos.value = response.data;
+                productos.value = await searchProducts(query);
             }
 
         } catch (error) {
-            // Manejo automático del 401 (Unauthorized)
+            // Manejo de errores centralizado
             if (error.response && error.response.status === 401) {
-                console.error("Sesión expirada o token inválido");
+                console.error("Sesión expirada");
                 authStore.logout();
             }
             productos.value = [];
@@ -65,7 +55,6 @@ export function searchProductos() {
 
     watch(searchQuery, (nuevoValor) => {
         const val = nuevoValor.trim();
-        // Disparamos búsqueda si hay 3 letras o si es un número (ID)
         if (val.length >= 3 || /^\d+$/.test(val)) {
             obtenerProductos(val);
         } else if (val.length === 0) {
