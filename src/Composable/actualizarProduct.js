@@ -1,7 +1,9 @@
 import { ref, reactive } from 'vue';
+// 1. Importamos la función desde tu archivo de API
+import { updateProduct as updateProductApi } from '@/api/inventory.api';
 
 export function useActualizarProduct() {
-    const idProducto = ref(null); // Guardamos el ID para el PUT /id
+    const idProducto = ref(null);
 
     const form = reactive({
         nombre: '',
@@ -15,49 +17,49 @@ export function useActualizarProduct() {
     const loading = ref(false);
     const error = ref(null);
 
-    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
-    // Esta función servirá para llenar el formulario desde el buscador
+    // Llena el formulario cuando seleccionas un producto de la lista
     const setProductoData = (producto) => {
         idProducto.value = producto.id;
+        // Mapeamos los campos del backend (name) a los del form (nombre)
         form.nombre = producto.name;
         form.descripcion = producto.description;
         form.precio = producto.price;
         form.stock = producto.stock;
         form.minimoStock = producto.minimoStock;
-        form.categoria = producto.categoria;
+        form.categoria = producto.category; // Ojo: verifica si es .category o .categoria en tu objeto
     };
 
-    const updateProduct = async () => {
+    const updateProductAction = async () => {
         if (!idProducto.value) {
-            error.value = "No hay un producto seleccionado para actualizar";
-            return;
+            const msg = "No hay un producto seleccionado para actualizar";
+            error.value = msg;
+            throw new Error(msg);
         }
 
         loading.value = true;
         error.value = null;
 
         try {
-            const url = `${BASE_URL}/products/${idProducto.value}`;
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
-            });
+            // 2. Usamos la función centralizada
+            // Pasamos el ID y el objeto 'form' completo
+            const data = await updateProductApi(idProducto.value, form);
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Error al actualizar');
-            }
-
-            return await response.json();
+            return data;
         } catch (err) {
-            error.value = err.message;
+            // 3. Capturamos el mensaje amigable de client.js
+            error.value = err;
             throw err;
         } finally {
             loading.value = false;
         }
     };
 
-    return { form, loading, error, updateProduct, setProductoData, idProducto };
+    return {
+        form,
+        loading,
+        error,
+        updateProduct: updateProductAction,
+        setProductoData,
+        idProducto
+    };
 }

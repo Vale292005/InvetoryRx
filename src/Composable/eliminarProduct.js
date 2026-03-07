@@ -1,10 +1,9 @@
 import { ref, reactive } from 'vue';
+// 1. Importamos la función desde tu archivo de API
+import { deleteProduct as deleteProductApi } from '@/api/inventory.api';
 
 export function useEliminarProducto() {
     const idProducto = ref(null);
-
-    // 1. URL dinámica para Render o Localhost
-    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
     const form = reactive({
         nombre: '',
@@ -22,8 +21,8 @@ export function useEliminarProducto() {
         form.categoria = producto.category;
     };
 
-    const deleteProduct = async () => {
-        // 2. Lanzamos error si no hay ID para detener el alert del componente
+    const eliminarProductoAction = async () => {
+        // Validación básica antes de llamar a la API
         if (!idProducto.value) {
             const msg = "Seleccione un producto para eliminar";
             error.value = msg;
@@ -34,37 +33,36 @@ export function useEliminarProducto() {
         error.value = null;
 
         try {
-            // 3. Uso de la variable BASE_URL
-            const response = await fetch(`${BASE_URL}/products/${idProducto.value}`, {
-                method: 'DELETE',
-                headers: {
-                    // Si implementas seguridad, añade el token aquí:
-                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
+            // 2. Usamos la función de tu inventario.api.js
+            // Esto ya incluye el /api/products/${id} y los headers necesarios
+            await deleteProductApi(idProducto.value);
 
-            if (!response.ok) {
-                // Manejo del 401 Unauthorized
-                if (response.status === 401) throw new Error("No tienes permiso para eliminar este producto.");
-
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'No se pudo eliminar el producto');
-            }
-
-            // Limpiamos el formulario tras eliminar con éxito
-            idProducto.value = null;
-            form.nombre = '';
-            form.descripcion = '';
-            form.categoria = '';
+            // 3. Limpiamos el estado tras éxito
+            resetForm();
 
             return true;
         } catch (err) {
-            error.value = err.message;
-            throw err; // Crucial para el try/catch del componente Vue
+            // Manejamos errores de Axios/Client
+            error.value = err.response?.data?.message || err.message || 'Error al eliminar';
+            throw err;
         } finally {
             loading.value = false;
         }
     };
 
-    return { form, loading, error, deleteProduct, setProductoData, idProducto };
+    const resetForm = () => {
+        idProducto.value = null;
+        form.nombre = '';
+        form.descripcion = '';
+        form.categoria = '';
+    };
+
+    return {
+        form,
+        loading,
+        error,
+        deleteProduct: eliminarProductoAction, // Mantenemos el nombre para el componente
+        setProductoData,
+        idProducto
+    };
 }

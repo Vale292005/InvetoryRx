@@ -1,9 +1,8 @@
 import { ref, reactive } from 'vue';
+// 1. Importamos la función desde tu archivo de API
+import { createProduct as createProductApi } from '@/api/inventory.api';
 
 export function crearProduct() {
-    // 1. URL dinámica para detectar si estamos en Render o en Localhost
-    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
     const getInitialState = () => ({
         nombre: '',
         descripcion: '',
@@ -22,7 +21,7 @@ export function crearProduct() {
     };
 
     const saveProduct = async () => {
-        // Validación básica antes de enviar
+        // Validación básica
         if (!form.nombre || !form.precio) {
             const msg = "El nombre y el precio son obligatorios";
             error.value = msg;
@@ -33,31 +32,18 @@ export function crearProduct() {
         error.value = null;
 
         try {
-            // 2. Usamos la BASE_URL configurada
-            const response = await fetch(`${BASE_URL}/products`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // Si el backend pide token, descomenta la siguiente línea:
-                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(form)
-            });
+            // 2. Usamos la función de tu archivo centralizado
+            // Pasamos 'form' directamente (Axios se encarga del JSON.stringify)
+            const data = await createProductApi(form);
 
-            if (!response.ok) {
-                // Manejo de error 401 si no hay permisos
-                if (response.status === 401) throw new Error("No tienes permiso para crear productos.");
-
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Error al guardar el producto');
-            }
-
-            const data = await response.json();
+            // 3. Si todo sale bien, limpiamos
             resetForm();
             return data;
 
         } catch (err) {
-            error.value = err.message;
+            // 4. Capturamos el error amigable que configuramos en client.js
+            // Si err es un string (por tu Promise.reject), lo usamos directamente
+            error.value = err;
             throw err;
         } finally {
             loading.value = false;
