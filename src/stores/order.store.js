@@ -10,7 +10,7 @@ export const useOrderStore = defineStore('order', {
             this.loading = true;
             try {
                 // Tu cliente ya tiene la baseURL y el Token, así que solo pides el endpoint
-                const response = await client.post('/orders', orderData);
+                const response = await client.post('/api/orders', orderData);
                 return response.data;
             } catch (error) {
                 // 'error' aquí ya es el 'mensajeAmigable' que configuraste en el interceptor
