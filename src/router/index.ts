@@ -21,11 +21,6 @@ export const router=createRouter({
             meta:{requiresAuth:false}
         },
         {
-            path:'/inventory',
-            component:InventoryView,
-            meta:{requiresAuth:true}
-        },
-        {
             path:'/dashboard-producto',
             component:DashboardProducto,
             meta:{requiresAuth:true}

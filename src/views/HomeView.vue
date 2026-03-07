@@ -37,7 +37,7 @@ onUnmounted(()=>{
 <template>
 <div class="homeView">
   <div class="menu">
-    <img src="../assets/meuDesplegable.png" alt="iconoMenu"/>
+    <img src="../assets/menuDesplegable.png" alt="iconoMenu"/>
 
     <div class="container-button">
       <CustomButton
@@ -63,7 +63,7 @@ onUnmounted(()=>{
 
   <div class="container-parraf">
     <div class="title">
-      <h1>FarmaClick</h1>
+      <h1>InventoryRX</h1>
     </div>
     <div class="container-description">
       <h3>"Somos una solución tecnológica especializada en la gestión de stocks para el sector salud. Ofrecemos una infraestructura de inventario flexible, creada por y para farmacias, que se adapta a tu volumen de operación y te permite optimizar el control de tus suministros de forma inteligente."</h3>

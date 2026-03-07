@@ -29,7 +29,7 @@ const handleMenu = (path) => {
 <template>
   <div class="sidebar" :class="{'sidebar-active':isMenuOpen}">
     <button @click="toggleMenu" class="btn-menu">
-      <img src="../assets/menu.png" class="img-trigger" alt="Menú"/>
+      <img src="../assets/menuDesplegable.png" class="img-trigger" alt="Menú"/>
     </button>
 
     <Transition name="slide-side">
