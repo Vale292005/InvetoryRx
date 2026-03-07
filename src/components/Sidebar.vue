@@ -58,15 +58,23 @@ const handleMenu = (path) => {
   position: absolute;
   display: flex;
   flex-direction: column;
-  width: fit-content;
+  width: auto;
   height: 100%;
   padding: 10px;
   gap: 10px;
   pointer-events: none;
+  margin: 0;
+  top: 0;
+  left: 0;
 }
 
 .sidebar-active {
   background: linear-gradient(to bottom, var(--color-brand-80)0%, var(--color-brand-90)100%);
+}
+
+.btn-menu,
+.options-container {
+  pointer-events: auto;
 }
 
 .btn-menu {
