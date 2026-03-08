@@ -17,6 +17,8 @@ const seleccionar = (p) => {
 };
 
 const {searchQuery,productos}=searchProductos();
+
+
 </script>
 
 <template>

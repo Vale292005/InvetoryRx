@@ -43,6 +43,7 @@ const handleSearch=(valor)=>{
 }
 
 const { searchQuery, productos, cargando } = searchProductos();
+
 </script>
 
 <template>

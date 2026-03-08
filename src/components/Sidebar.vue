@@ -55,7 +55,7 @@ const handleMenu = (path) => {
 
 <style scoped>
 .sidebar {
-  position: absolute;
+  position: fixed;
   display: flex;
   flex-direction: column;
   width: auto;
