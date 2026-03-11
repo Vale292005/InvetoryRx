@@ -1,5 +1,6 @@
 <script setup>
 
+import TheToast from "@/components/TheToast.vue";
 </script>
 
 <template>
@@ -9,7 +10,7 @@
         <component :is="Component"/>
       </div>
     </transition>
-  </router-view>
+  </router-view><TheToast />
 </template>
 
 <style>

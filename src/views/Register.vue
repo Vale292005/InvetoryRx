@@ -4,9 +4,12 @@ import {useRouter} from "vue-router";
 import {reactive, ref} from "vue";
 import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
+import { useNotification } from '@/composables/useNotification';
+const { notify } = useNotification();
 
 const authStore = useAuthStore();
 const router = useRouter();
+const showPassword=ref(false);
 
 const form = reactive({
   username: '',
@@ -28,9 +31,12 @@ const onSubmit = async () => {
   try {
     const {confirmPassword, ...userData} = form;
     await authStore.register(userData);
-    alert("¡Cuenta creada con éxito! Ahora puedes iniciar sesión.");
+    notify("¡Cuenta creada con éxito! Ahora puedes iniciar sesión.");
     router.push('/login');
   } catch (error) {
+    const msjError=authStore.error||"Hubo un problema al registrarte";
+    notify(msjError,"error")
+
     console.error("\"Error en el componente de registro:\", error");
   }
 };
