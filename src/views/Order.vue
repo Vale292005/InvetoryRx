@@ -111,7 +111,7 @@ const { searchQuery, productos, cargando } = searchProductos();
         :key="index"
         @click="handleMenu(item)"
         class="menu-item"
-        :class="{'subrayado':item==='Orden'}"
+        :class="{'subrayado':item.name==='Orden'}"
     >
       {{item}}</h3>
   </div>

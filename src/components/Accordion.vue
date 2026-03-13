@@ -48,7 +48,6 @@ const seleccionar=(item)=>{
   max-width: 336px;
   height: auto;
   gap: 10px;
-
   color: var(--color-brand-30);
 }
 .accordion-container text-button{

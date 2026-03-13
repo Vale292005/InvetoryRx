@@ -18,7 +18,7 @@ const props=defineProps({
     default:()=>[
       { name: "Productos", path: "/dashboard-producto" },
       { name: "Orden", path: "/orden" },
-      { name: "Categoria", path: "/categoria" },
+      { name: "Cliente", path: "/cliente" },
       { name: "Activos", path: "/activos" },
       { name: "Stock", path: "/stock" }
     ]
@@ -62,7 +62,7 @@ const seleccionarCat = (cat) => {
         :key="item.name"
         @click="handleMenu(item)"
         class="menu-item"
-        :class="{'subrayado':item==='Categorias'}"
+        :class="{'subrayado':item.name==='Cliente'}"
     >
       {{item.name}}</h3>
   </div>

@@ -8,7 +8,8 @@ import pruebas from "../views/pruebas.vue";
 import DashboardProducto from "../views/DashboardProducto.vue";
 import Register from "../views/Register.vue";
 import Order from "../views/Order.vue";
-import Categoria from "../views/Categoria.vue";
+import Manager from "../views/Manager.vue";
+import Cliente from "../views/Cliente.vue";
 
 export const router=createRouter({
     history:createWebHistory(),
@@ -23,7 +24,7 @@ export const router=createRouter({
         {
             path:'/dashboard-producto',
             component:DashboardProducto,
-            meta:{requiresAuth:true}
+            meta:{requiresAuth:false}
         },
         {
             path:'/orden',
@@ -31,8 +32,8 @@ export const router=createRouter({
             meta:{requiresAuth:true}
         },
         {
-            path:'/categoria',
-            component:Categoria,
+            path:'/cliente',
+            component:Cliente,
             meta:{requiresAuth:false}
         },
         {
@@ -51,8 +52,8 @@ export const router=createRouter({
             meta:{requiresAuth:false}
         },
         {
-            path:'/prueba',
-            component:pruebas,
+            path:'/manager',
+            component:Manager,
             meta:{requiresAuth:false}
         }
     ]

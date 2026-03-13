@@ -12,28 +12,6 @@ const authStore=useAuthStore();
 const username=authStore.user?.username||'Usuario';
 const route=useRouter();
 
-const props=defineProps({
-  username:{type:String,default:'User'},
-  menu:{
-    type:Array,
-    default:()=>[
-      { name: "Productos", path: "/dashboard-producto" },
-      { name: "Orden", path: "/orden" },
-      { name: "Cliente", path: "/cliente" },
-      { name: "Activos", path: "/activos" },
-      { name: "Stock", path: "/stock" }
-    ]
-  }
-});
-
-const handleMenu=(item)=>{
-  if(item.path){
-    route.push(item.path);
-  }else{
-    console.warn("error")
-  }
-}
-
 const productoColumnas = ref([
   { label: 'Producto', key: 'nombre' },
   { label: 'Cantidad', key: 'cantidad' },
@@ -63,43 +41,22 @@ const { searchQuery, productos, cargando } = searchProductos();
     <h3>Bienvenido, {{username}}!</h3>
   </div>
 
-  <div class="menu-container">
-    <h3
-        v-for="item in props.menu"
-        :key="item.name"
-        @click="handleMenu(item)"
-        class="menu-item"
-        :class="{'subrayado':item.name==='Productos'}"
-    >
-      {{item.name}}</h3>
-  </div>
-
   <div class="buttons-container">
     <div class="crear-container">
       <ButtonForm
-          title="Crear producto"/>
+          title="Crear usuario"/>
     </div>
     <div class="actualizar-container">
       <ButtonForm
-          title="Actualizar producto"/>
+          title="Actualizar usuario"/>
     </div>
     <div class="eliminar-container">
       <ButtonForm
-          title="Eliminar producto"/>
-    </div>
-    <div class="activar-container">
-      <ButtonForm
-          title="Activar/Desactivar"/>
+          title="Eliminar usuario"/>
     </div>
 
   </div>
   <SearchProduct
-      :productos="productos"
-      :cargando="cargando"
-      v-model:searchQuery="searchQuery"
-  />
-  <SearchProduct
-      placeholder="Buscar producto por código"
       :productos="productos"
       :cargando="cargando"
       v-model:searchQuery="searchQuery"
@@ -167,6 +124,7 @@ const { searchQuery, productos, cargando } = searchProductos();
   gap: 10px;
   padding: 10px 20px;
   align-items: center;
+  justify-content: center;
   box-sizing: border-box;
 }
 @media(min-width: 760px){
