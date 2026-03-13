@@ -66,16 +66,15 @@ const handleMenu = (path) => {
   margin: 0;
   top: 0;
   left: 0;
+  z-index: 9999;
 }
 
 .sidebar-active {
   background: linear-gradient(to bottom, var(--color-brand-80)0%, var(--color-brand-90)100%);
+  pointer-events: auto;
+  width: auto;
 }
 
-.btn-menu,
-.options-container {
-  pointer-events: auto;
-}
 
 .btn-menu {
   width: 210px;
@@ -87,7 +86,11 @@ const handleMenu = (path) => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  z-index: 20;
+  z-index: 100;
+
+  pointer-events: auto; 
+  position: relative;
+  z-index: 10001;
 }
 
 .options-container {
@@ -97,7 +100,7 @@ const handleMenu = (path) => {
   height: 100%;
   gap: 10px;
   padding: 0 10px;
-  z-index: 15;
+  z-index: 100;
 }
 
 .slide-side-enter-active,
