@@ -6,6 +6,7 @@ import Accordion from "@/components/Accordion.vue";
 import {useAuthStore} from "@/stores/auth.store.js";
 import {useRouter} from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
+import router from "@/router/index.js";
 
 const route=useRouter();
 const authStore=useAuthStore();
@@ -27,11 +28,11 @@ const props=defineProps({
 
 const handleMenu=(item)=>{
   if(item.path){
-    route.push(item.path);
+    router.push(item.path);
   }else{
-    console.warn("error")
+    console.warn('error')
   }
-}
+};
 
 const {
   searchQuery,
@@ -40,7 +41,7 @@ const {
   cargando
 } = useFilteredSearch();
 
-const listaCategorias = ["Todos", "Electronica", "Limpieza", "Hogar"];
+const listaCategorias = ["Activos","Desactivados"];
 
 const seleccionarCat = (cat) => {
   categoriaSeleccionada.value = cat;
@@ -48,41 +49,41 @@ const seleccionarCat = (cat) => {
 </script>
 
 <template>
-<div class="dashboard-contaianer">
-  <div class="header-container">
-    <Sidebar/>
-  </div>
-  <div class="hello-container">
-    <h3>Bienvenido, {{username}}!</h3>
-  </div>
+  <div class="dashboard-contaianer">
+    <div class="header-container">
+      <Sidebar/>
+    </div>
+    <div class="hello-container">
+      <h3>Bienvenido, {{username}}!</h3>
+    </div>
 
-  <div class="menu-container">
-    <h3
-        v-for="item in props.menu"
-        :key="item.name"
-        @click="handleMenu(item)"
-        class="menu-item"
-        :class="{'subrayado':item==='Categorias'}"
-    >
-      {{item.name}}</h3>
+    <div class="menu-container">
+      <h3
+          v-for="item in props.menu"
+          :key="item.name"
+          @click="handleMenu(item)"
+          class="menu-item"
+          :class="{'subrayado':item==='Categorias'}"
+      >
+        {{item.name}}</h3>
+    </div>
+
+    <div class="search-container">
+      <Accordion
+          title="Estado"
+          :text="categoriaSeleccionada"
+          :items="listaCategorias"
+          @select="seleccionarCat"
+      />
+
+      <SearchProduct
+          v-model:searchQuery="searchQuery"
+          :productos="productos"
+          :cargando="cargando"
+      />
+    </div>
+
   </div>
-
-  <div class="search-container">
-    <Accordion
-        title="Categorías"
-        :text="categoriaSeleccionada"
-        :items="listaCategorias"
-        @select="seleccionarCat"
-    />
-
-    <SearchProduct
-        v-model:searchQuery="searchQuery"
-        :productos="productos"
-        :cargando="cargando"
-    />
-  </div>
-
-</div>
 </template>
 
 <style scoped>

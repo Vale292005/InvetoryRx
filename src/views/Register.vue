@@ -4,7 +4,8 @@ import {useRouter} from "vue-router";
 import {reactive, ref} from "vue";
 import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
-import { useNotification } from '@/composables/useNotification';
+import { useNotification } from '@/Composable/useNotification.js';
+import CustomBack from "@/components/CustomBack.vue";
 const { notify } = useNotification();
 
 const authStore = useAuthStore();
@@ -16,8 +17,7 @@ const form = reactive({
   email: '',
   password: '',
   confirmPassword: '',
-  firstName: '',
-  lastName: ''
+  firstName: ''
 });
 
 const localError = ref(null);
@@ -50,6 +50,9 @@ const onSubmit = async () => {
     </div>
 
     <div class="form-container">
+
+      <CustomBack/>
+
       <div class="text-container">
         <span class="title">Crea tú usuario</span>
       </div>
@@ -58,11 +61,6 @@ const onSubmit = async () => {
           label="Primer nombre"
           v-model="form.firstName"
           placeholder="Ingrese su primer nombre"
-      />
-      <custom-input
-          label="Segundo nombre"
-          v-model="form.lastName"
-          placeholder="Ingrese su segundo nombre"
       />
       <custom-input
           label="Usuario 👤"
