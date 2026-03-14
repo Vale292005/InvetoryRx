@@ -12,8 +12,9 @@ export function useFilteredSearch(entity='products') {
     const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
     const configEntidad = {
-        products: { param: 'category', endpoint: 'products' },
-        users: { param: 'role', endpoint: 'users' },
+        products: { param: 'category', endpoint: 'api/products' },
+        users: { param: 'role', endpoint: 'api/users' },
+        customers: { param: 'status', endpoint: 'api/customers' }
     };
 
     const buscar = async () => {
@@ -27,7 +28,7 @@ export function useFilteredSearch(entity='products') {
             let url = `${BASE_URL}/${setup.endpoint}/search?name=${searchQuery.value.trim()}`;
 
             if (categoriaSeleccionada.value !== 'Todos') {
-                url += `&${setup.param}=${categoriaSeleccionada.value}`;
+                url += `&${setup.parm}=${categoriaSeleccionada.value}`;
             }
 
             const response = await axios.get(url, config);
