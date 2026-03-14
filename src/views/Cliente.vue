@@ -7,6 +7,7 @@ import {useAuthStore} from "@/stores/auth.store.js";
 import {useRouter} from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
 
+
 const route=useRouter();
 const authStore=useAuthStore();
 const username=authStore.user?.username||'Usuario';
@@ -25,6 +26,16 @@ const props=defineProps({
   }
 });
 
+const { 
+  searchQuery, 
+  categoriaSeleccionada, 
+  productos, 
+  cargando 
+} = useFilteredSearch('users');
+
+const roles = ["Todos", "Manager", "Sales", "Warehouse", "User"];
+
+
 const handleMenu=(item)=>{
   if(item.path){
     route.push(item.path);
@@ -32,15 +43,6 @@ const handleMenu=(item)=>{
     console.warn("error")
   }
 }
-
-const {
-  searchQuery,
-  categoriaSeleccionada,
-  productos,
-  cargando
-} = useFilteredSearch();
-
-const listaCategorias = ["Manager", "Sales", "Warehouse", "User"];
 
 const seleccionarCat = (cat) => {
   categoriaSeleccionada.value = cat;
@@ -69,9 +71,9 @@ const seleccionarCat = (cat) => {
 
   <div class="search-container">
     <Accordion
-        title="Categorías"
+        title="Roles"
         :text="categoriaSeleccionada"
-        :items="listaCategorias"
+        :items="roles"
         @select="seleccionarCat"
     />
 

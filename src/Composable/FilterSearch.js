@@ -5,11 +5,16 @@ import { useAuthStore } from "@/stores/auth.store.js";
 export function useFilteredSearch(entity='products') {
     const authStore = useAuthStore();
     const searchQuery = ref('');
-    const categoriaSeleccionada = ref('Todos'); // Nuevo estado
+    const categoriaSeleccionada = ref('Todos'); 
     const productos = ref([]);
     const cargando = ref(false);
 
     const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+    const configEntidad = {
+        products: { param: 'category', endpoint: 'products' },
+        users: { param: 'role', endpoint: 'users' },
+    };
 
     const buscar = async () => {
         cargando.value = true;
@@ -17,17 +22,18 @@ export function useFilteredSearch(entity='products') {
             const token = authStore.token;
             const config = { headers: { 'Authorization': `Bearer ${token}` } };
 
-            let url = `${BASE_URL}/${entity}/search?name=${searchQuery.value}`;
+            const setup = configEntidad[entity] || configEntidad.products;
+
+            let url = `${BASE_URL}/${setup.endpoint}/search?name=${searchQuery.value.trim()}`;
 
             if (categoriaSeleccionada.value !== 'Todos') {
-                const filterParam=entity==='users'?'role':'category';
-                url += `&${filterParam}=${categoriaSeleccionada.value}`;
+                url += `&${setup.param}=${categoriaSeleccionada.value}`;
             }
 
             const response = await axios.get(url, config);
             productos.value = response.data;
         } catch (error) {
-            console.error("Error en búsqueda filtrada", error);
+            console.error(`Error en búsqueda filtrada de ${entity}:`, error);
             productos.value = [];
         } finally {
             cargando.value = false;
