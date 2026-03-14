@@ -2,7 +2,7 @@ import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth.store.js";
 
-export function useFilteredSearch() {
+export function useFilteredSearch(entity='products') {
     const authStore = useAuthStore();
     const searchQuery = ref('');
     const categoriaSeleccionada = ref('Todos'); // Nuevo estado
@@ -17,10 +17,11 @@ export function useFilteredSearch() {
             const token = authStore.token;
             const config = { headers: { 'Authorization': `Bearer ${token}` } };
 
-            let url = `${BASE_URL}/products/search?name=${searchQuery.value}`;
+            let url = `${BASE_URL}/${entity}/search?name=${searchQuery.value}`;
 
             if (categoriaSeleccionada.value !== 'Todos') {
-                url += `&category=${categoriaSeleccionada.value}`;
+                const filterParam=entity==='users'?'role':'category';
+                url += `&${filterParam}=${categoriaSeleccionada.value}`;
             }
 
             const response = await axios.get(url, config);

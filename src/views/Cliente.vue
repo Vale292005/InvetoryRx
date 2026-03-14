@@ -40,7 +40,7 @@ const {
   cargando
 } = useFilteredSearch();
 
-const listaCategorias = ["Todos", "Electronica", "Limpieza", "Hogar"];
+const listaCategorias = ["Manager", "Sales", "Warehouse", "User"];
 
 const seleccionarCat = (cat) => {
   categoriaSeleccionada.value = cat;
