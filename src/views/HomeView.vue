@@ -37,7 +37,9 @@ onUnmounted(()=>{
 <template>
 <div class="homeView">
   <div class="menu">
-    <img src="../assets/menuDesplegable.png" alt="iconoMenu"/>
+    <div class="sidebar-container">
+      <Sidebar/>
+    </div>
 
     <div class="container-button">
       <CustomButton
@@ -96,12 +98,8 @@ onUnmounted(()=>{
   padding: 10px 20px;
   background-color: #DEE8ED;
 }
-.menu img{
-  width: auto;
-  max-width: 281px;
-  height: auto;
-  object-fit: contain;
-  padding: 0;
+.sidebar-continer{
+  width: 230px;
 }
 .container-button{
   display: flex;
@@ -109,6 +107,7 @@ onUnmounted(()=>{
   width: auto;
   height: auto;
   gap: 15px;
+  align-items: flex-end;
 }
 
 .carousel-container{

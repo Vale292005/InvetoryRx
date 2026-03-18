@@ -29,7 +29,7 @@ export const router=createRouter({
         {
             path:'/orden',
             component:Order,
-            meta:{requiresAuth:true}
+            meta:{requiresAuth:false}//solo pruebas 
         },
         {
             path:'/cliente',

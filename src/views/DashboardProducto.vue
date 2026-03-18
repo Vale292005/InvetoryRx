@@ -167,6 +167,7 @@ const { searchQuery, productos, cargando } = searchProductos();
   gap: 10px;
   padding: 10px 20px;
   align-items: center;
+  justify-content: center;
   box-sizing: border-box;
 }
 @media(min-width: 760px){

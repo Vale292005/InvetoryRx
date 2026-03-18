@@ -23,6 +23,10 @@ const selected = computed(() => {
 const handleMenu = (path) => {
   router.push(path)
 };
+const contacto=()=>{
+  router.push({ path: '/', query: { scroll: 'bottom' } }); 
+};
+
 
 </script>
 
@@ -45,7 +49,7 @@ const handleMenu = (path) => {
         {{ item.name }}
       </span>
         </div>
-        <span class="contac-text">Contáctanos</span>
+        <span @click="contacto" class="contac-text">Contáctanos</span>
       </div>
     </Transition>
   </div>

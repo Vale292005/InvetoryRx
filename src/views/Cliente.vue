@@ -1,5 +1,5 @@
 <script setup>
-
+import ButtonForm from "@/components/ButtonForm.vue";
 import {useFilteredSearch} from "@/Composable/FilterSearch.js";
 import SearchProduct from "@/components/SearchProduct.vue";
 import Accordion from "@/components/Accordion.vue";
@@ -67,6 +67,21 @@ const seleccionarCat = (cat) => {
         :class="{'subrayado':item.name==='Cliente'}"
     >
       {{item.name}}</h3>
+  </div>
+
+    <div class="buttons-container">
+    <div class="crear-container">
+      <ButtonForm
+          title="Crear cliente"/>
+    </div>
+    <div class="actualizar-container">
+      <ButtonForm
+          title="Actualizar cliente"/>
+    </div>
+    <div class="eliminar-container">
+      <ButtonForm
+          title="Eliminar producto"/>
+    </div>
   </div>
 
   <div class="search-container">
@@ -146,5 +161,33 @@ const seleccionarCat = (cat) => {
 }
 .subrayado{
   text-decoration: underline;
+}
+.buttons-container{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  gap: 10px;
+  padding: 10px 20px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+@media(min-width: 760px){
+  .menu-container{
+    gap: 0;
+    justify-content: space-between;
+  }
+  .buttons-container{
+    flex-direction: row;
+    align-items: start;
+  }
+}
+.crear-container,.actualizar-container,.eliminar-container{
+    width: auto;
+  height: auto;
+  border: 1px solid var(--color-brand-30);
+  border-radius: 6px;
+  background-color: #ffffff;
 }
 </style>

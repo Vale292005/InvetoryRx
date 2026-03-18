@@ -12,9 +12,9 @@ export function useFilteredSearch(entity='products') {
     const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
     const configEntidad = {
-        products: { param: 'category', endpoint: 'api/products' },
-        users: { param: 'role', endpoint: 'api/users' },
-        customers: { param: 'status', endpoint: 'api/customers' }
+        products: { param: 'category', endpoint: 'api/products',useSearch: true},
+        users: { param: 'role', endpoint: 'api/users',useSearch: false},
+        customers: { param: 'status', endpoint: 'api/customers',useSearch: false}
     };
 
     const buscar = async () => {
@@ -22,14 +22,23 @@ export function useFilteredSearch(entity='products') {
         try {
             const token = authStore.token;
             const config = { headers: { 'Authorization': `Bearer ${token}` } };
-
             const setup = configEntidad[entity] || configEntidad.products;
+            
+            const tieneTexto = searchQuery.value.trim().length > 0;
+            
+            let url = `${BASE_URL}/${setup.endpoint}`;
 
-            let url = `${BASE_URL}/${setup.endpoint}/search?name=${searchQuery.value.trim()}`;
-
-            if (categoriaSeleccionada.value !== 'Todos') {
-                url += `&${setup.parm}=${categoriaSeleccionada.value}`;
+            if (setup.useSearch) {
+                if (tieneTexto) url += '/search';
+                
+                const params = new URLSearchParams();
+                if (tieneTexto) params.append('name', searchQuery.value.trim());
+                if (categoriaSeleccionada.value !== 'Todos') params.append(setup.param, categoriaSeleccionada.value);
+                
+                if (params.toString()) url += `?${params.toString()}`;
             }
+
+            console.log(`📡 Petición a ${entity}:`, url);
 
             const response = await axios.get(url, config);
             productos.value = response.data;

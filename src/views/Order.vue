@@ -38,7 +38,7 @@ const props=defineProps({
   username:{type:String,default:'User'},
   menu:{
     type:Array,
-    default:()=>["Productos","Orden", "Categorias", "Activos", "Stock"]
+    default:()=>["Productos","Orden", "Cliente", "Activos", "Stock"]
   }
 });
 
