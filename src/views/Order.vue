@@ -8,6 +8,12 @@ import {useOrderStore} from "@/stores/order.store.js";
 import CustomButton from "@/components/CustomButton.vue";
 import {useRouter} from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
+import SearchOrders from "../components/SearchOrders.vue";
+
+const manejarSeleccion = (orden) => {
+  console.log("Orden recibida del componente hijo:", orden);
+  ordenSeleccionada.value = orden;
+};
 
 const authStore=useAuthStore();
 const orderStore=useOrderStore();
@@ -172,6 +178,27 @@ const { searchQuery, productos, cargando } = searchProductos();
 
   <p v-if="orderStore.loading">Procesando venta... por favor espera.</p>
 </div>
+
+
+
+
+<main>
+    <text-button>Panel de Administración</text-button>
+
+    <SearchOrders 
+      titulo="Mis Órdenes Recientes"
+      placeholder="Escribe el código de la orden..."
+      @select="manejarSeleccion" 
+    />
+
+    <div v-if="ordenSeleccionada" class="detalle">
+      <h3>Detalle de la Orden: {{ ordenSeleccionada.orderNumber }}</h3>
+      <p>Total a pagar: ${{ ordenSeleccionada.total }}</p>
+    </div>
+  </main>
+
+
+
 </template>
 
 <style scoped>

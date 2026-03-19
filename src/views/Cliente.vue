@@ -80,7 +80,7 @@ const seleccionarCat = (cat) => {
     </div>
     <div class="eliminar-container">
       <ButtonForm
-          title="Eliminar producto"/>
+          title="Eliminar cliente"/>
     </div>
   </div>
 
