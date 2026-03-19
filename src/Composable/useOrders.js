@@ -11,22 +11,10 @@ export function useOrders() {
         loading.value = true;
         error.value = null;
         try {
-            // const response = await apiCall();
-            // // Axios devuelve los datos en .data
-            // orders.value = Array.isArray(response.data) ? response.data : [response.data];
-
-
-
-            console.log("Cargando datos de prueba...");
-            orders.value = [
-                { id: 1, orderNumber: 'ORD-001', status: 'PENDING', total: 150.50 },
-                { id: 2, orderNumber: 'ORD-002', status: 'COMPLETED', total: 3200.00 },
-                { id: 3, orderNumber: 'ORD-003', status: 'CANCELLED', total: 45.00 }
-            ];
-
-
-
-
+            const response = await apiCall();
+            // Axios devuelve los datos en .data
+            orders.value = Array.isArray(response.data) ? response.data : [response.data];
+            
         } catch (err) {
             // Aquí 'err' ya es el "mensajeAmigable" de tu interceptor
             error.value = err; 
