@@ -21,11 +21,10 @@ const username=authStore.user?.username||'Usuario';
 const route=useRouter();
 
 const handleMenu=(item)=>{
-  if(item==='Productos'){
-    route.push('/dashboard-producto');
-  }
-  if(item==='Orden'){
-    route.push('/orden');
+  if(item.path){
+    route.push(item.path);
+  }else{
+    console.warn("error")
   }
 }
 
@@ -44,7 +43,13 @@ const props=defineProps({
   username:{type:String,default:'User'},
   menu:{
     type:Array,
-    default:()=>["Productos","Orden", "Cliente", "Activos", "Stock"]
+    default:()=>[
+      { name: "Productos", path: "/dashboard-producto" },
+      { name: "Orden", path: "/orden" },
+      { name: "Cliente", path: "/cliente" },
+      { name: "Activos", path: "/activos" },
+      { name: "Stock", path: "/stock" }
+    ]
   }
 });
 
@@ -119,7 +124,7 @@ const { searchQuery, productos, cargando } = searchProductos();
         class="menu-item"
         :class="{'subrayado':item.name==='Orden'}"
     >
-      {{item}}</h3>
+      {{item.name}}</h3>
   </div>
 
   <SearchProduct

@@ -35,3 +35,11 @@ export function updateUserRole(id, role) {
 export function updateUserStatus(id, status) {
     return client.patch(`/api/users/${id}/status`, { status }).then(r => r.data)
 }
+
+export function updateUserRole(id, roleName) {
+    // roleName debe ser 'SALES', 'ADMIN', 'USER', etc.
+    // El objeto { role: roleName } equivale al UpdateRoleRequestDTO de Java
+    return client.patch(`/users/${id}/role`, { 
+        role: roleName 
+    }).then(r => r.data);
+}

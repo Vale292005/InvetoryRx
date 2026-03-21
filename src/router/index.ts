@@ -10,6 +10,7 @@ import Register from "../views/Register.vue";
 import Order from "../views/Order.vue";
 import Manager from "../views/Manager.vue";
 import Cliente from "../views/Cliente.vue";
+import Activos from "../views/Activos.vue";
 
 export const router=createRouter({
     history:createWebHistory(),
@@ -54,6 +55,11 @@ export const router=createRouter({
         {
             path:'/manager',
             component:Manager,
+            meta:{requiresAuth:false}
+        },
+                {
+            path:'/activos',
+            component:Activos,
             meta:{requiresAuth:false}
         }
     ]
