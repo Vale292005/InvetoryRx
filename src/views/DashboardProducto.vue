@@ -170,7 +170,7 @@ const { searchQuery, productos, cargando } = searchProductos();
   justify-content: center;
   box-sizing: border-box;
 }
-@media(min-width: 760px){
+@media(min-width: 1300px){
   .menu-container{
     gap: 0;
     justify-content: space-between;
