@@ -24,12 +24,6 @@ export function deleteUser(id) {
    GESTIÓN DE ESTADO Y ROLES
 ====================== */
 
-// Cambiar rol de usuario
-// Se usa PATCH para actualizaciones parciales
-export function updateUserRole(id, role) {
-    return client.patch(`/api/users/${id}/role`, { role }).then(r => r.data)
-}
-
 // Activar/desactivar usuario
 // Enviamos el nuevo status (boolean o string según tu backend)
 export function updateUserStatus(id, status) {

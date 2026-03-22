@@ -2,6 +2,7 @@
 import SearchResults from "../components/SearchResults.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { useSearchClientes } from "../Composable/useSearchCliente";
+import {useSearchUsuarios} from "../Composable/useSearchUsuarios"
 import Accordion from "@/components/Accordion.vue";
 import { useAuthStore } from "@/stores/auth.store.js";
 import { useRouter } from "vue-router";
@@ -36,11 +37,18 @@ const handleMenu = (item) => {
 };
 
 const {
-  searchQuery,
+  searchQuery:searchQueryCliente,
   resultado,
   loadingSearch,
   obtenerClientes
 } = useSearchClientes();
+
+const {
+  searchQuery:searchQueryUsuarios,
+  usuarios,
+  loading,
+  obtenerUsuarios
+} = useSearchUsuarios();
 
 const listaCategorias = ["Activos", "Desactivados"];
 
@@ -49,7 +57,8 @@ const seleccionarCat = (cat) => {
 };
 
 onMounted(() => {
-  obtenerClientes(searchQuery.value);
+  obtenerClientes(searchQueryCliente.value);
+  obtenerUsuarios(searchQueryUsuarios.value);
 })
 </script>
 
@@ -76,7 +85,13 @@ onMounted(() => {
     <div class="searchCliente-container">
       <Accordion title="Estado" :text="categoriaSeleccionada" :items="listaCategorias" @select="seleccionarCat" />
       <SearchResults titulo="Listado de Clientes" placeholder="Buscar por nombre..." :productos="resultado"
-        v-model:searchQuery="searchQuery" />
+        v-model:searchQuery="searchQueryCliente" />
+    </div>
+
+    <div class="searchUser-container">
+      <Accordion title="Estado" :text="categoriaSeleccionada" :items="listaCategorias" @select="seleccionarCat" />
+      <SearchResults titulo="Listado de Usuarios" placeholder="Buscar por nombre..." :productos="usuarios"
+        v-model:searchQuery="searchQueryUsuarios" />
     </div>
 
   </div>
@@ -149,5 +164,11 @@ onMounted(() => {
 
 .subrayado {
   text-decoration: underline;
+}
+
+.searchProductos-container,
+.searchCliente-container,
+.searchUser-container {
+  padding: 10px 20px;
 }
 </style>
