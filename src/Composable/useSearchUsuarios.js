@@ -3,7 +3,7 @@ import { getUsers } from "../api/user";
 import { useAuthStore } from "../stores/auth.store";
 
 export function useSearchUsuarios() {
-    const authStore = useAuthStore;
+    const authStore = useAuthStore();
     const searchQuery = ref('');
     const usuarios = ref([]);
     const resultado = ref([]);
@@ -12,7 +12,7 @@ export function useSearchUsuarios() {
     let timeout = null;
 
     const obtenerUsuarios = async (termino = '') => {
-        loading.value(true);
+        loading.value=true;
         try {
             const token = authStore.token;
             const config = {
@@ -43,7 +43,7 @@ export function useSearchUsuarios() {
         } catch (err) {
             console.error(`Error en busqueda`, err);
             usuarios.value = [];
-        } finally { loadign.value = true; }
+        } finally { loading.value = false; }
     }
 
     watch(searchQuery,(valor)=>{

@@ -23,11 +23,9 @@ export function useSearchClientes() {
 
             if (query === 'Activos') {
                 resultado.value = clientes.value.filter(c => c.active === true);
-                return;
             }
             if (query === 'Inactivos') {
                 resultado.value = clientes.value.filter(c => c.active === false);
-                return;
             }
             if (query !== '') {
                 resultado.value = clientes.value.filter(c =>

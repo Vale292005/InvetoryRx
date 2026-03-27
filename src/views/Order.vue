@@ -1,12 +1,12 @@
 <script setup>
 import ButtonForm from "@/components/ButtonForm.vue";
-import {computed, ref} from "vue";
+import { computed, ref } from "vue";
 import SearchProduct from "@/components/SearchProduct.vue";
-import {searchProductos} from "@/Composable/SearchProductos.js";
-import {useAuthStore} from "@/stores/auth.store.js";
-import {useOrderStore} from "@/stores/order.store.js";
+import { searchProductos } from "@/Composable/SearchProductos.js";
+import { useAuthStore } from "@/stores/auth.store.js";
+import { useOrderStore } from "@/stores/order.store.js";
 import CustomButton from "@/components/CustomButton.vue";
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
 import SearchOrders from "../components/SearchOrders.vue";
 
@@ -15,20 +15,20 @@ const manejarSeleccion = (orden) => {
   ordenSeleccionada.value = orden;
 };
 
-const authStore=useAuthStore();
-const orderStore=useOrderStore();
-const username=authStore.user?.username||'Usuario';
-const route=useRouter();
+const authStore = useAuthStore();
+const orderStore = useOrderStore();
+const username = authStore.user?.username || 'Usuario';
+const route = useRouter();
 
-const handleMenu=(item)=>{
-  if(item.path){
+const handleMenu = (item) => {
+  if (item.path) {
     route.push(item.path);
-  }else{
+  } else {
     console.warn("error")
   }
 }
 
-const carrito=ref([]);
+const carrito = ref([]);
 
 const productoColumnas = ref([
   { label: 'Producto', key: 'nombre' },
@@ -39,11 +39,11 @@ const productoFilas = ref([
   { nombre: 'Producto de prueba', cantidad: 10, codigo: '001' }
 ]);
 
-const props=defineProps({
-  username:{type:String,default:'User'},
-  menu:{
-    type:Array,
-    default:()=>[
+const props = defineProps({
+  username: { type: String, default: 'User' },
+  menu: {
+    type: Array,
+    default: () => [
       { name: "Productos", path: "/dashboard-producto" },
       { name: "Orden", path: "/orden" },
       { name: "Cliente", path: "/cliente" },
@@ -97,10 +97,10 @@ const procesarOrden = async () => {
     alert(mensajeError);
   }
 };
-const busqueda=ref('');
+const busqueda = ref('');
 
-const handleSearch=(valor)=>{
-  busqueda.value=valor;
+const handleSearch = (valor) => {
+  busqueda.value = valor;
   console.log(busqueda.value);
 }
 
@@ -108,97 +108,76 @@ const { searchQuery, productos, cargando } = searchProductos();
 </script>
 
 <template>
-<div class="dashboard-contaianer">
-  <div class="header-container">
-    <Sidebar/>
-  </div>
-  <div class="hello-container">
-    <h3>Bienvenido, {{username}}!</h3>
-  </div>
-
-  <div class="menu-container">
-    <h3
-        v-for="(item,index) in menu"
-        :key="index"
-        @click="handleMenu(item)"
-        class="menu-item"
-        :class="{'subrayado':item.name==='Orden'}"
-    >
-      {{item.name}}</h3>
-  </div>
-
-  <SearchProduct
-      placeholder="Buscar producto..."
-      :productos="productos"
-      :cargando="cargando"
-      v-model:searchQuery="searchQuery"
-      @select="agregarAlCarrito"
-  />
-  <div class="carrito-container" v-if="carrito.length > 0">
-    <div class="carrito-header">
-      <h4>Detalle de la Orden</h4>
-      <span class="total-badge">Total: ${{ totalVenta.toFixed(2) }}</span>
+  <div class="dashboard-contaianer">
+    <div class="header-container">
+      <Sidebar />
+    </div>
+    <div class="hello-container">
+      <h3>Bienvenido, {{ username }}!</h3>
     </div>
 
-    <table class="carrito-table">
-      <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Código</th>
-        <th>Precio</th>
-        <th>Cantidad</th>
-        <th>Subtotal</th>
-        <th>Acción</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(item, index) in carrito" :key="item.id">
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.codigo }}</td>
-        <td>${{ item.precio }}</td>
-        <td>
-          <input
-              type="number"
-              v-model.number="item.cantidadSeleccionada"
-              min="1"
-              :max="item.stockMaximo"
-          >
-        </td>
-        <td>${{ (item.precio * item.cantidadSeleccionada).toFixed(2) }}</td>
-        <td>
-          <button @click="carrito.splice(index, 1)" class="btn-remove">❌</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-    <div class="actions-container">
-      <custom-button
-          label="Finalizar compra"
-          @click="procesarOrden"
-          :disabled="carrito.length === 0"
-      />
+    <div class="menu-container">
+      <h3 v-for="(item, index) in menu" :key="index" @click="handleMenu(item)" class="menu-item"
+        :class="{ 'subrayado': item.name === 'Orden' }">
+        {{ item.name }}</h3>
     </div>
+
+    <SearchProduct placeholder="Buscar producto..." :productos="productos" :cargando="cargando"
+      v-model:searchQuery="searchQuery" @select="agregarAlCarrito" />
+    <div class="carrito-container" v-if="carrito.length > 0">
+      <div class="carrito-header">
+        <h4>Detalle de la Orden</h4>
+        <span class="total-badge">Total: ${{ totalVenta.toFixed(2) }}</span>
+      </div>
+
+      <table class="carrito-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Código</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in carrito" :key="item.id">
+            <td>{{ item.nombre }}</td>
+            <td>{{ item.codigo }}</td>
+            <td>${{ item.precio }}</td>
+            <td>
+              <input type="number" v-model.number="item.cantidadSeleccionada" min="1" :max="item.stockMaximo">
+            </td>
+            <td>${{ (item.precio * item.cantidadSeleccionada).toFixed(2) }}</td>
+            <td>
+              <button @click="carrito.splice(index, 1)" class="btn-remove">❌</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="actions-container">
+        <custom-button label="Finalizar compra" @click="procesarOrden" :disabled="carrito.length === 0" />
+      </div>
+    </div>
+
+    <p v-if="orderStore.loading">Procesando venta... por favor espera.</p>
   </div>
 
-  <p v-if="orderStore.loading">Procesando venta... por favor espera.</p>
-</div>
 
 
 
+  <main>
+    <div class="orden-container">
+      <text-button>Panel de Administración</text-button>
+      <SearchOrders titulo="Mis Órdenes Recientes" placeholder="Escribe el código de la orden..."
+        @select="manejarSeleccion" />
 
-<main>
-    <text-button>Panel de Administración</text-button>
-
-    <SearchOrders 
-      titulo="Mis Órdenes Recientes"
-      placeholder="Escribe el código de la orden..."
-      @select="manejarSeleccion" 
-    />
-
-    <div v-if="ordenSeleccionada" class="detalle">
-      <h3>Detalle de la Orden: {{ ordenSeleccionada.orderNumber }}</h3>
-      <p>Total a pagar: ${{ ordenSeleccionada.total }}</p>
+      <div v-if="ordenSeleccionada" class="detalle">
+        <h3>Detalle de la Orden: {{ ordenSeleccionada.orderNumber }}</h3>
+        <p>Total a pagar: ${{ ordenSeleccionada.total }}</p>
+      </div>
     </div>
   </main>
 
@@ -207,28 +186,31 @@ const { searchQuery, productos, cargando } = searchProductos();
 </template>
 
 <style scoped>
-.dashboard-contaianer{
+.dashboard-contaianer {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: auto;
   gap: 10px;
 
-  background: linear-gradient(to bottom,var(--color-brand-90),#ffffff);
+  background: linear-gradient(to bottom, var(--color-brand-90), #ffffff);
 
 }
-.header-container{
+
+.header-container {
   width: 100%;
   height: auto;
   justify-content: left;
   padding: 10px;
-  background: linear-gradient(to bottom,var(--color-brand-80),var(--color-brand-90));
+  background: linear-gradient(to bottom, var(--color-brand-80), var(--color-brand-90));
 }
-.header-container img{
+
+.header-container img {
   width: 210px;
   height: auto;
 }
-.hello-container{
+
+.hello-container {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -239,8 +221,9 @@ const { searchQuery, productos, cargando } = searchProductos();
   padding: 10px 0;
   color: var(--color-brand-20);
 }
-.menu-container{
-  display:flex;
+
+.menu-container {
+  display: flex;
   width: auto;
   height: auto;
   gap: 16px;
@@ -249,23 +232,32 @@ const { searchQuery, productos, cargando } = searchProductos();
 
   scrollbar-width: none;
   -ms-overflow-style: none;
-  &::-webkit-scrollbar{
+
+  &::-webkit-scrollbar {
     display: none;
   }
 }
-.menu-item{
+
+.menu-item {
   cursor: pointer;
   margin: 0;
   color: var(--color-brand-30);
 }
-.carrito-container{
+
+.carrito-container,
+.orden-container{
   padding: 20px;
   gap: 20px;
-}
-.carrito-container h4, .total-badge{
+  margin: 0;
   color: var(--color-brand-30);
 }
-.buttons-container{
+
+.carrito-container h4,
+.total-badge {
+  color: var(--color-brand-30);
+}
+
+.buttons-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -275,17 +267,20 @@ const { searchQuery, productos, cargando } = searchProductos();
   align-items: center;
   box-sizing: border-box;
 }
-@media(min-width: 760px){
-  .menu-container{
+
+@media(min-width: 760px) {
+  .menu-container {
     gap: 0;
     justify-content: space-between;
   }
-  .buttons-container{
+
+  .buttons-container {
     flex-direction: row;
     align-items: start;
   }
 }
-.table-container{
+
+.table-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -293,7 +288,8 @@ const { searchQuery, productos, cargando } = searchProductos();
   gap: 10px;
   padding: 20px 20px;
 }
-.search-container{
+
+.search-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -301,19 +297,22 @@ const { searchQuery, productos, cargando } = searchProductos();
   gap: 10px;
   padding: 10px 20px;
 }
+
 .crear-container,
- .actualizar-container,
- .eliminar-container,
- .activar-container{
+.actualizar-container,
+.eliminar-container,
+.activar-container {
   width: auto;
   height: auto;
   border: 1px solid var(--color-brand-30);
   border-radius: 6px;
 }
-.subrayado{
+
+.subrayado {
   text-decoration: underline;
 }
-.button-container{
+
+.button-container {
   width: auto;
   height: auto;
 }
