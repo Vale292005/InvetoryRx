@@ -53,8 +53,8 @@ onMounted(() => {
 });
 
 //funcion para seleccionar usuario\
-const { searchQuery:searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
-const { searchQuery:searchQueryProveedores, proveedores, loading: loadingProveedores } = useSearchProveedores();
+const { searchQuery: searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
+const { searchQuery: searchQueryProveedores, proveedores, loading: loadingProveedores } = useSearchProveedores();
 
 const seleccionarUsuario = (usuario) => {
   console.log('Usuario seleccionado:', usuario);
@@ -110,7 +110,7 @@ const seleccionarProveedor = (proveedor) => {
 
         <div class="buttons-container">
           <div class="crear-container">
-            <ButtonForm title="Crear usuario" />
+            <ButtonForm title="Crear proveedor" />
           </div>
           <div class="actualizar-container">
             <ButtonForm title="Actualizar usuario" />
@@ -121,7 +121,7 @@ const seleccionarProveedor = (proveedor) => {
         </div>
 
         <SearchResults titulo="Proveedores" placeholder="Buscar proveedor..." :productos="proveedores"
-          v-model:searchQuery="searchQueryProveedores" @select="seleccionarProveedor"/>
+          v-model:searchQuery="searchQueryProveedores" @select="seleccionarProveedor" />
       </div>
     </div>
   </div>
@@ -257,11 +257,14 @@ const seleccionarProveedor = (proveedor) => {
 
 .tab-item.active {
   border-bottom: var(--color-brand-20) solid 2px;
+  background: linear-gradient(to bottom, var(--color-brand-90)0%, var(--color-brand-80)60%);
 }
 
 .seccion-container {
   padding: 20px;
   color: var(--color-brand-30);
+  background: var(--color-brand-90);
+  height: 100vh;
 }
 
 .hidden {

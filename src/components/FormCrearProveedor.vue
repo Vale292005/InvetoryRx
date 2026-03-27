@@ -1,31 +1,30 @@
 <script setup>
-import { useCrearUsuario } from '../Composable/useCrearUser';
+import { useCrearProveedor } from '../Composable/useCrearProveedor';
 import CustomInput from '@/components/CustomInput.vue';
 import CustomButton from '@/components/CustomButton.vue';
+import Accordion from '@/components/Accordion.vue';
 
-const { form, loading, error, resetForm, saveUsuario } = useCrearUsuario();
+const { form, loading, error, resetForm, saveProveedor } = useCrearProveedor();
 
 const handleCrear = async () => {
     try {
-        await saveUsuario();
+        await saveProveedor();
     } catch (e) {
-        console.error("Error al crear el usuario", e);
+        console.error("Error al crear el proveedor", e);
     }
 };
 </script>
 <template>
     <div class="container-card">
         <div class="container-form">
-            <Custom-input label="Usuario" placeholder="Ingrese el usuario" v-model="form.username" />
+            <Custom-input label="Proveedor" placeholder="Ingrese el nombre del proveedor" v-model="form.name" />
             <Custom-input label="Email" placeholder="Ingrese el email" v-model="form.email" />
-            <Custom-input label="Password" placeholder="Ingrese una contraseña" v-model="form.password" />
-
+            <Accordion title="Elija una opción" text="Estado" :items="['Activos', 'Inactivos']" />
             <CustomButton :label="loading ? 'Cargando...' : 'Crear'" :disabled="loading" @click="handleCrear" />
             <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
         </div>
     </div>
 </template>
-
 <style scoped>
 .container-card {
     display: flex;

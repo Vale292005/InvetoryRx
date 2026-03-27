@@ -8,6 +8,8 @@ import FormCrearCliente from "./FormCrearCliente.vue";
 import FormActualizarCliente from "./FormActualizarCliente.vue";
 import FormCrearUsuario from "./FormCrearUsuario.vue";
 import FormActualizarUsuario from "./FormActualizarUsuario.vue";
+import FormCrearProveedor from "./FormCrearProveedor.vue";
+import FormActualizarProveedor from "./FormActualizarProveedor.vue";
 
 const mostrarCard=ref(false);
 const props=defineProps({
@@ -23,7 +25,9 @@ const formsMap={
   'Actualizar cliente':FormActualizarCliente,
   //'Eliminar cliente':FormEliminarCliente
   'Crear usuario':FormCrearUsuario,
-  'Actualizar usuario':FormActualizarUsuario
+  'Actualizar usuario':FormActualizarUsuario,
+  'Crear proveedor':FormCrearProveedor,
+  'Actualizar proveedor':FormActualizarProveedor,
 };
 
 const componenteActual=computed(()=>{
