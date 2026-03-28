@@ -11,7 +11,7 @@ const toggleMenu = () => {
 const navegation = [
   { name: 'Manager', path: '/manager' },
   { name: 'Ventas', path: '/orden' },
-  { name: 'Bodega', path: '/dashboard-producto' }
+  { name: 'Bodega', path: '/bodega' }
 ];
 
 const router = useRouter();

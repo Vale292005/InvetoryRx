@@ -1,4 +1,4 @@
-import {createRouter,createWebHistory} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import InventoryView from "../views/InventoryView.vue";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
@@ -11,65 +11,71 @@ import Order from "../views/Order.vue";
 import Manager from "../views/Manager.vue";
 import Cliente from "../views/Cliente.vue";
 import Activos from "../views/Activos.vue";
+import Bodega from "../views/Bodega.vue";
 
-export const router=createRouter({
-    history:createWebHistory(),
-    routes:[
-        {path:'/',component:HomeView},
-        {path:'/Home',component:HomeView},
+export const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: '/', component: HomeView },
+        { path: '/Home', component: HomeView },
         {
-            path:'/login',
-            component:LoginView,
-            meta:{requiresAuth:false}
+            path: '/login',
+            component: LoginView,
+            meta: { requiresAuth: false }
         },
         {
-            path:'/dashboard-producto',
-            component:DashboardProducto,
-            meta:{requiresAuth:false}
+            path: '/dashboard-producto',
+            component: DashboardProducto,
+            meta: { requiresAuth: false }
         },
         {
-            path:'/orden',
-            component:Order,
-            meta:{requiresAuth:false}//solo pruebas 
+            path: '/orden',
+            component: Order,
+            meta: { requiresAuth: false }//solo pruebas 
         },
         {
-            path:'/cliente',
-            component:Cliente,
-            meta:{requiresAuth:false}
+            path: '/cliente',
+            component: Cliente,
+            meta: { requiresAuth: false }
         },
         {
-            path:'/contrasenhaOlvidada',
-            component:PerdidaContrasenha,
-            meta:{requiresAuth:false}
+            path: '/contrasenhaOlvidada',
+            component: PerdidaContrasenha,
+            meta: { requiresAuth: false }
         },
         {
-            path:'/confirmCode',
-            component:confirmContrasenha,
-            meta:{requiresAuth:false}
+            path: '/confirmCode',
+            component: confirmContrasenha,
+            meta: { requiresAuth: false }
         },
         {
-            path:'/registro',
-            component:Register,
-            meta:{requiresAuth:false}
+            path: '/registro',
+            component: Register,
+            meta: { requiresAuth: false }
         },
         {
-            path:'/manager',
-            component:Manager,
-            meta:{requiresAuth:false}
+            path: '/manager',
+            component: Manager,
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/activos',
+            component: Activos,
+            meta: { requiresAuth: false }
         },
                 {
-            path:'/activos',
-            component:Activos,
-            meta:{requiresAuth:false}
+            path: '/bodega',
+            component: Bodega,
+            meta: { requiresAuth: false }
         }
     ]
 })
-router.beforeEach((to,from,next)=>{
-    const token=localStorage.getItem('auth_token')
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('auth_token')
 
-    if(to.meta.requiresAuth&&!token){
+    if (to.meta.requiresAuth && !token) {
         next('/login')
-    }else{
+    } else {
         next()
     }
 })
