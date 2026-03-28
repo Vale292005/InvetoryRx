@@ -1,0 +1,66 @@
+cells:
+  - kind: 2
+    value: >-
+      SET SERVEROUTPUT ON;
+
+
+      DECLARE
+          -- 1. Declaración del Cursor Parametrizado
+          CURSOR cur_empleados_ajuste (p_id_depto NUMBER, p_salario_limite NUMBER) IS
+              SELECT first_name, last_name, salary
+              FROM employees
+              WHERE department_id = p_id_depto
+                AND salary <= p_salario_limite;
+
+          -- Variables para contadores y acumuladores
+          v_contador_empleados NUMBER := 0;
+          v_costo_total_aumentos NUMBER(12,2) := 0;
+          
+          -- Variables auxiliares para cálculos fila por fila
+          v_porcentaje_aumento NUMBER(3,2);
+          v_valor_aumento      NUMBER(10,2);
+
+      BEGIN
+          -- 2. Sección de Ejecución: Apertura y recorrido con Cursor FOR LOOP
+          -- Probando con Departamento 50 (Shipping) y Límite Salarial de 8000
+          DBMS_OUTPUT.PUT_LINE('PROCESANDO SIMULACIÓN DE AUMENTO SALARIAL...');
+          DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------');
+
+          FOR emp IN cur_empleados_ajuste(50, 8000) LOOP
+              -- Lógica de negocio para determinar el porcentaje de aumento
+              IF emp.salary < 4000 THEN
+                  v_porcentaje_aumento := 0.15; -- 15%
+              ELSIF emp.salary BETWEEN 4000 AND 6000 THEN
+                  v_porcentaje_aumento := 0.10; -- 10%
+              ELSE
+                  v_porcentaje_aumento := 0.05; -- 5%
+              END IF;
+
+              -- Cálculo del valor monetario del aumento (monto extra)
+              v_valor_aumento := emp.salary * v_porcentaje_aumento;
+              
+              -- Acumulación de totales
+              v_costo_total_aumentos := v_costo_total_aumentos + v_valor_aumento;
+              v_contador_empleados := v_contador_empleados + 1;
+
+              -- Detalle por empleado
+              DBMS_OUTPUT.PUT_LINE('Empleado: ' || rpad(emp.first_name || ' ' || emp.last_name, 25) || 
+                                   ' | Salario Actual: $' || lpad(emp.salary, 8) || 
+                                   ' | Valor Aumento: $' || lpad(v_valor_aumento, 8));
+          END LOOP;
+
+          -- Reporte Final Consolidado
+          DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------');
+          DBMS_OUTPUT.PUT_LINE('RESUMEN DE AJUSTE PRESUPUESTARIO');
+          DBMS_OUTPUT.PUT_LINE('Total de empleados evaluados: ' || v_contador_empleados);
+          DBMS_OUTPUT.PUT_LINE('Costo Total del Presupuesto para Aumentos: $' || TO_CHAR(v_costo_total_aumentos, '999,999.99'));
+          DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------');
+
+      EXCEPTION
+          -- 3. Manejo de Excepciones
+          WHEN OTHERS THEN
+              DBMS_OUTPUT.PUT_LINE('Ocurrió un error inesperado durante el procesamiento masivo.');
+              DBMS_OUTPUT.PUT_LINE('Código de error: ' || SQLCODE);
+              DBMS_OUTPUT.PUT_LINE('Mensaje de error: ' || SQLERRM);
+      END;
+    languageId: oracle-sql

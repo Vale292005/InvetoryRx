@@ -113,7 +113,7 @@ const seleccionarProveedor = (proveedor) => {
             <ButtonForm title="Crear proveedor" />
           </div>
           <div class="actualizar-container">
-            <ButtonForm title="Actualizar usuario" />
+            <ButtonForm title="Actualizar proveedor" />
           </div>
           <div class="eliminar-container">
             <ButtonForm title="Eliminar usuario" />

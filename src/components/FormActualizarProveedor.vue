@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from "vue";
 import { useActualizarProveedor } from "../Composable/useActualizarProveedor";
+import CustomInput from "@/components/CustomInput.vue";
+import CustomButton from "@/components/CustomButton.vue";
+import SearchResults from "@/components/SearchResults.vue";
+import { useSearchProveedores } from "@/Composable/useSearchProveedores";
 
 const proveedorBusqueda = ref("");
 const handleSearch = () => {
@@ -9,39 +13,41 @@ const handleSearch = () => {
 };
 // Importamos el composable para actualizar proveedor
 const {
-    form,
-    loading,
-    error,
-    idProveedor,
-    searchAndFill,
-    updateProveedor
-}= useActualizarProveedor();
+  form,
+  loading,
+  error,
+  updateProveedor,
+  resetForm
+} = useActualizarProveedor();
 
-const handleActualizar = async() => {
-    try{
-        await updateProveedor();
-    }catch(e){
-        console.error("Error al actualizar proveedor:", e);
-    }
+const handleActualizar = async () => {
+  try {
+    await updateProveedor();
+  } catch (e) {
+    console.error("Error al actualizar proveedor:", e);
+  }
+};
+
+// Logica para manjera busqueda y seleccion de proveedor
+const { searchQuery, proveedores, loading: loadingProveedores } = useSearchProveedores();
+
+const proveedorSeleccionado = (proveedor) => {
+  setProductorData(proveedor); // Esto rellena los campos automáticamente
 };
 </script>
 <template>
   <div class="container-card">
     <div class="container-form">
-      <!-- Sección de Búsqueda por Username -->
       <div class="search-section">
-        <Custom-input 
-          :label="labels[1]" 
-          v-model="usernameBusqueda" 
-          placeholder="Ej: valeria2026"
-          @keyup.enter="handleSearch"
-        />
-        <CustomButton 
-          label="Buscar" 
-          :disabled="loading" 
-          @click="handleSearch" 
-          class="btn-search"
-        />
+
+        <SearchResults titulo="Proveedores" placeholder="Buscar proveedor..." :productos="proveedores"
+                           v-model:searchQuery="searchQuery" @select="proveedorSeleccionado" />
+
+        <Custom-input label="Nombre" v-model="proveedorBusqueda" placeholder="Ej: valeria2026"
+          @keyup.enter="handleSearch" />
+          <Custom-input label="Email" v-model="proveedorBusqueda" placeholder="Ej: valeria2026"
+          @keyup.enter="handleSearch" />
+        <CustomButton label="Actualizar" :disabled="loading" @click="handleActualizar" class="btn-search" />
       </div>
 
       <hr class="separator" v-if="idUsuario" />
@@ -50,22 +56,15 @@ const handleActualizar = async() => {
       <div v-if="idUsuario" class="form-fields">
         <Custom-input label="Nombre" v-model="form.name" />
         <Custom-input label="Email" v-model="form.email" />
-        <Accordion
-          title="Elija una estado"
-          :text="form.active || 'Seleccione un estado'"
-          :items="{Activo: true, Inactivo: false}"
-          @select="(item) => form.role = item"
-        />
+        <Accordion title="Elija una estado" :text="form.active || 'Seleccione un estado'"
+          :items="{ Activo: true, Inactivo: false }" @select="(item) => form.role = item" />
 
         <p v-if="error" class="error-text">{{ error }}</p>
 
-        <CustomButton
-          :label="loading ? 'Guardando...' : 'Actualizar Usuario'"
-          :disabled="loading"
-          @click="handleActualizar"
-        />
+        <CustomButton :label="loading ? 'Guardando...' : 'Actualizar Usuario'" :disabled="loading"
+          @click="handleActualizar" />
       </div>
-      
+
       <p v-else class="info-text">Busca un usuario para editar sus datos.</p>
     </div>
   </div>
@@ -79,7 +78,7 @@ const handleActualizar = async() => {
   height: auto;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .container-form {
