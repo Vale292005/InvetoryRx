@@ -6,41 +6,44 @@ const hoveredId=ref(null);
 
 const plans=[
   {
-    id:1,
-    price:0,
-    isDefault:false,
-    features:[
+    id: 1,
+    name: 'Plan Básico',
+    price: 0,
+    isDefault: false,
+    features: [
       'Gestión de 1 sucursal.',
-      'Control básico de entradas y salidas.',
-      'Alertas de stock mínimo.',
+      'Control de entradas y salidas (Inventario).',
+      'Alertas de stock mínimo por email.',
       'Reporte de ventas diario.',
-      'Soporte por correo electrónico.'
+      'Soporte estándar por correo.'
     ]
   },
   {
-    id:2,
-    price:0,
-    isDefault:true,
-    features:[
-      'Gestión de 1 sucursal.',
-      'Control básico de entradas y salidas.',
-      'Alertas de stock mínimo.',
-      'Reporte de ventas diario.',
-      'Soporte por correo electrónico.'
+    id: 2,
+    name: 'Plan Profesional',
+    price: 49,
+    isDefault: true,
+    features: [
+      'Gestión de hasta 3 sucursales.',
+      'Sistema completo de Recepción de Mercancía.',
+      'Gestión de Clientes y Límites de Crédito.',
+      'Roles avanzados (Admin, Manager, Sales, Warehouse).',
+      'Auditoría completa de movimientos.'
     ]
   },
   {
-    id:3,
-    price:0,
-    isDefault:false,
-    features:[
-      'Gestión de 1 sucursal.',
-      'Control básico de entradas y salidas.',
-      'Alertas de stock mínimo.',
-      'Reporte de ventas diario.',
-      'Soporte por correo electrónico.'
+    id: 3,
+    name: 'Plan Enterprise',
+    price: 99,
+    isDefault: false,
+    features: [
+      'Sucursales ilimitadas.',
+      'API externa para integración de facturación.',
+      'Reportes predictivos de demanda.',
+      'Recuperación de contraseña y seguridad avanzada.',
+      'Soporte técnico 24/7 con prioridad.'
     ]
-  },
+  }
 ]
 </script>
 

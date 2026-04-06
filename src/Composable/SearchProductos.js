@@ -14,8 +14,6 @@ export function searchProductos() {
 
     const obtenerProductos = async (termino = '') => {
         try {
-            // No necesitas pasar el token aquí manualmente si tu 'client.js'
-            // ya tiene un interceptor que lo añade automáticamente.
             const query = termino.trim();
 
             // 1. Caso: Buscador vacío (Trae todos vía búsqueda vacía)

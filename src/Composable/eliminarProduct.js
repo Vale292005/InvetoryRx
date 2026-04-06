@@ -33,11 +33,7 @@ export function useEliminarProducto() {
         error.value = null;
 
         try {
-            // 2. Usamos la función de tu inventario.api.js
-            // Esto ya incluye el /api/products/${id} y los headers necesarios
             await deleteProductApi(idProducto.value);
-
-            // 3. Limpiamos el estado tras éxito
             resetForm();
 
             return true;

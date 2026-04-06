@@ -22,8 +22,7 @@ const props = defineProps({
       { name: "Productos", path: "/dashboard-producto" },
       { name: "Orden", path: "/orden" },
       { name: "Cliente", path: "/cliente" },
-      { name: "Activos", path: "/activos" },
-      { name: "Stock", path: "/stock" }
+      { name: "Activos", path: "/activos" }
     ]
   }
 });
