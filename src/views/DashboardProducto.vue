@@ -1,6 +1,7 @@
 <script setup>
 import ButtonForm from "@/components/ButtonForm.vue";
 import InputSearch from "@/components/InputSearch.vue";
+import Notification from "@/components/notification.vue";
 import {ref} from "vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import {searchProductos} from "@/Composable/SearchProductos.js";
@@ -60,6 +61,10 @@ const { searchQuery, productos, cargando } = searchProductos();
   </div>
   <div class="hello-container">
     <h3>Bienvenido, {{username}}!</h3>
+  </div>
+
+  <div class="notifications">
+    <notification/>
   </div>
 
   <div class="menu-container">
