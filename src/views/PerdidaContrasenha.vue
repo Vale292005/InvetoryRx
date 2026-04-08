@@ -4,36 +4,48 @@ import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import {useRouter} from "vue-router";
 import CustomBack from "@/components/CustomBack.vue";
+import { useAuthStore } from '@/stores/auth.store'
+
 const router= useRouter();
+const authStore = useAuthStore();
+
 // Estado del formulario
 const form = ref({
-  username: ''
-})
+  email: ''
+});
 
-const attemptedUser = ref(false)
+const attemptedUser = ref(false);
+const serverErrorMessage = ref('');
+const isSuccess = ref(false);
 
-const usernameError = computed(() => {
-  if (attemptedUser.value && !form.value.username) {
-    return 'El usuario es obligatorio para la recuperación'
+const emailError = computed(() => {
+  if (attemptedUser.value && !form.value.email) {
+    return 'El correo es obligatorio para la recuperación'
   }
   return ''
 })
 
 const buttonStatus = computed(() => {
-  return !form.value.username ? 'disable' : 'default'
+  return !form.value.email ? 'disable' : 'default'
 })
 
-const handleResetRequest = () => {
+const handleResetRequest = async() => {
   attemptedUser.value = true
+  serverErrorMessage.value = ''
 
-  if (!form.value.username) {
+  if (!form.value.email) {
     console.warn("Campo vacío")
     return
+  }try{
+    await authStore.forgotPassword(form.value.email)
+    isSuccess.value = true
+    setTimeout(()=>{
+      router.push('/confirmCode');
+    },3000)
+  }catch(e){
+    console.error("Error al enviar correo de recuperación:", e)
+    serverErrorMessage.value = 'No se pudo enviar el correo. Intente nuevamente.'
   }
-
-
-  router.push('/confirmCode');
-  console.log("Enviando correo para:", form.value.username)
 }
 </script>
 
@@ -54,15 +66,15 @@ const handleResetRequest = () => {
       </p>
 
       <custom-input
-          label="Confirme su usuario 👤"
-          v-model="form.username"
-          placeholder="Ingrese su usuario"
-          :hasError="!!usernameError"
+          label="Confirme su email ✉️"
+          v-model="form.email"
+          placeholder="Ingrese su email"
+          :hasError="!!emailError"
       />
 
       <custom-button
-          label="Enviar"
-          :type="buttonStatus"
+          :label="authStore.loading ? 'Enviando...':'Enviar'"
+          :type="authStore.loading ? 'disabled':'buttonStatus'"
           @click="handleResetRequest"
       />
     </div>

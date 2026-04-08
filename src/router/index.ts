@@ -67,6 +67,11 @@ export const router = createRouter({
             path: '/bodega',
             component: Bodega,
             meta: { requiresAuth: false }
+        },
+        {
+            path: '/forgot-password',
+            component: PerdidaContrasenha,
+            meta: { requiresAuth: false }
         }
     ]
 })

@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', {
                 // Guardar en el estado de Pinia
                 this.token = data.token;
                 this.user = {
-                    id: data.userid,
+                    id: data.userId,
                     username: data.username,
                     role: data.role
                 };
@@ -48,6 +48,30 @@ export const useAuthStore = defineStore('auth', {
             }finally {
                 this.loading=false;
             }
+        },
+        async forgotPassword(email){
+            this.loading=true;
+            this.error=null;
+            try{
+                return await authApi.forgotPassword(email);
+            }catch(e){
+                this.error=e;
+                throw e;
+            }finally {
+                this.loading=false;
+            }   
+        },
+        async resetPassword(resetData){
+            this.loading=true;
+            this.error=null;
+            try{
+                return await authApi.resetPassword(resetData);
+            }catch(e){
+                this.error=e;
+                throw e;
+            }finally {
+                this.loading=false;
+            }   
         },
         logout() {
             this.user = null;

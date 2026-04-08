@@ -4,35 +4,58 @@ import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import router from "@/router/index.js";
 import CustomBack from "@/components/CustomBack.vue";
+import { useAuthStore } from '@/stores/auth.store';
 
+const authStore = useAuthStore()
 
 const form = ref({
-  code: '' // Nombre correcto de la propiedad
+  token:'',
+  newPassword:'',
+  confirmPassword:''
 })
 
-const attemptedUser = ref(false)
+const attempted = ref(false)
+const serverErrorMessage = ref('')
 
-const codeError = computed(() => {
-  if (attemptedUser.value && !form.value.code) {
-    return 'El código es obligatorio'
+const tokenError = computed(() => (attempted.value && !form.value.token) ? 'El código es obligatorio' : '')
+const passwordError = computed(() => {
+  if (!attempted.value) return ''
+  if (!form.value.newPassword) return 'La contraseña es obligatoria'
+  if (form.value.newPassword.length < 6) return 'Debe tener al menos 6 caracteres'
+  return ''
+})
+const confirmError = computed(() => {
+  if (attempted.value && form.value.newPassword !== form.value.confirmPassword) {
+    return 'Las contraseñas no coinciden'
   }
   return ''
 })
 
 const buttonStatus = computed(() => {
-  return !form.value.code ? 'disable' : 'default'
+  const isInvalid = !form.value.token || !form.value.newPassword || (form.value.newPassword !== form.value.confirmPassword)
+  return isInvalid || authStore.loading ? 'disable' : 'default'
 })
 
-const handleResetRequest = () => {
-  attemptedUser.value = true
+const handleResetSubmit = async () => {
+  attempted.value = true
+  serverErrorMessage.value = ''
 
-  if (!form.value.code) {
-    return
+  if (tokenError.value || passwordError.value || confirmError.value) return
+
+  try {
+    // llamada al store con los datos que espera tu Backend
+    await authStore.resetPassword({
+      token: form.value.token,
+      newPassword: form.value.newPassword
+    })
+    
+    // Si sale bien, redirige al login
+    alert("Contraseña restablecida correctamente")
+    router.push('/login')
+  } catch (e) {
+    console.error(e)
+    serverErrorMessage.value = 'El código es inválido o ha expirado.'
   }
-
-  console.log("Validando código:", form.value.code)
-  // Aquí iría la lógica para enviar el código al servidor
-  router.push('/nuevaContrasenha')
 }
 </script>
 
@@ -49,21 +72,39 @@ const handleResetRequest = () => {
         <h4>Ingrese el código recibido.</h4>
       </div>
 
-      <p v-if="codeError" class="server-error">
-        {{ codeError }}
+      <p v-if="serverErrorMessage" class="server-error">
+        {{ serverErrorMessage }}
       </p>
 
       <custom-input
           label="Código 🔑"
-          v-model="form.code"
+          v-model="form.token"
           placeholder="Ingrese el código"
-          :hasError="!!codeError"
+          :hasError="!!tokenError"
+      />
+
+      <custom-input
+          label="Nueva Contraseña 🔒"
+          v-model="form.newPassword"
+          type="password"
+          placeholder="Mínimo 6 caracteres"
+          :hasError="!!passwordError"
+          :hasMsg="passwordError"
+      />
+
+      <custom-input
+          label="Confirmar Contraseña 🔒"
+          v-model="form.confirmPassword"
+          type="password"
+          placeholder="Repita su contraseña"
+          :hasError="!!confirmError"
+          :hasMsg="confirmError"
       />
 
       <custom-button
-          label="Enviar"
+          :label="authStore.loading ? 'Restableciendo...':'Restablecer contraseña'"
           :type="buttonStatus"
-          @click="handleResetRequest"
+          @click="handleResetSubmit"
       />
     </div>
   </div>

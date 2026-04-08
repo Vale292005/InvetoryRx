@@ -97,12 +97,8 @@ const handleLogin = async () => {
       </template>
 
       <template #msg>
-        <a
-            href="https://i.pinimg.com/236x/1e/a4/2f/1ea42fd2256e7d5a8e2bb165bcd52a92.jpg"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="message-link"
-        >
+        <router-link to="/forgot-password" class="message-link">
+    
           ¿Olvidó su contraseña?
 
           <svg
@@ -120,7 +116,7 @@ const handleLogin = async () => {
             <polyline points="15 3 21 3 21 9"></polyline>
             <line x1="10" y1="14" x2="21" y2="3"></line>
           </svg>
-        </a>
+        </router-link>
       </template>
     </custom-input>
 
