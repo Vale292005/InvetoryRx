@@ -80,7 +80,7 @@ const totalVenta = computed(() => {
 
 const procesarOrden = async () => {
   const payload = {
-    customerId: 1,
+    customerId: authStore.user?.id || '1',
     items: carrito.value.map(item => ({
       productId: item.id,
       quantity: item.cantidadSeleccionada
@@ -89,9 +89,10 @@ const procesarOrden = async () => {
   };
 
   try {
-    await orderStore.createOrder(payload);
+    const nuevaOrden = await orderStore.createOrder(payload);
     alert("¡Venta completada con éxito!");
     carrito.value = [];
+    route.push({name:'CheckoutPayment',params:{orderId:nuevaOrden.id}});
   } catch (mensajeError) {
     alert(mensajeError);
   }
@@ -104,6 +105,16 @@ const handleSearch = (valor) => {
 }
 
 const { searchQuery, productos, cargando } = searchProductos();
+
+
+//pagar orden
+const ordenSeleccionada = ref(null);
+const irAlPago = () => {
+  if (ordenSeleccionada.value) {
+    route.push({ name: 'CheckoutPayment', params: { orderId: ordenSeleccionada.value.id } });
+  }
+}
+
 </script>
 
 <template>

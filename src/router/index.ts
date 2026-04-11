@@ -12,6 +12,7 @@ import Manager from "../views/Manager.vue";
 import Cliente from "../views/Cliente.vue";
 import Activos from "../views/Activos.vue";
 import Bodega from "../views/Bodega.vue";
+import CheckoutPayment from "../views/CheckoutPayment.vue";
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -36,11 +37,6 @@ export const router = createRouter({
         {
             path: '/cliente',
             component: Cliente,
-            meta: { requiresAuth: false }
-        },
-        {
-            path: '/contrasenhaOlvidada',
-            component: PerdidaContrasenha,
             meta: { requiresAuth: false }
         },
         {
@@ -71,6 +67,16 @@ export const router = createRouter({
         {
             path: '/forgot-password',
             component: PerdidaContrasenha,
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/confirmCode',
+            component: confirmContrasenha,
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/pasarela-pago',
+            component: CheckoutPayment,
             meta: { requiresAuth: false }
         }
     ]
