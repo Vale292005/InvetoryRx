@@ -6,7 +6,7 @@ import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import { useNotification } from '@/Composable/useNotification.js';
 import CustomBack from "@/components/CustomBack.vue";
-const { notify } = useNotification();
+const { showNotification: notify, state } = useNotification();
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -25,7 +25,7 @@ const localError = ref(null);
 const onSubmit = async () => {
   localError.value = null;
   if (form.password !== form.confirmPassword) {
-    localError.value = "Las contrasñas no coinciden";
+    localError.value = "Las contraseñas no coinciden";
     return;
   }
   try {
@@ -104,6 +104,7 @@ const onSubmit = async () => {
           </button>
         </template>
       </custom-input>
+      <p v-if="localError" class="error-text">{{ localError }}</p>
       <p v-if="authStore.error" class="server-error">{{ authStore.error }}</p>
 
       <custom-button
