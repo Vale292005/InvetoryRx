@@ -6,19 +6,29 @@ export function useEliminarProducto() {
     const idProducto = ref(null);
 
     const form = reactive({
-        nombre: '',
-        descripcion: '',
-        categoria: ''
+        code: '',            // Obligatorio (ej: "MED001")
+        name: '',            // Obligatorio (ej: "Loratadina 10mg")
+        description: '',     // Opcional (pero recomendada)
+        price: 0,            // Obligatorio (Número/Decimal)
+        stock: 0,            // Obligatorio (Número entero)
+        minStock: 0,         // Obligatorio (Número entero)
+        category: '',        // Obligatorio (Debe coincidir con el Enum)
+        active: true
     });
 
     const loading = ref(false);
     const error = ref(null);
 
     const setProductoData = (producto) => {
-        idProducto.value = producto.id;
-        form.nombre = producto.name;
-        form.descripcion = producto.description;
-        form.categoria = producto.category;
+        idProducto.value = producto.id; // Asegúrate de que el producto tenga un ID
+        form.code = producto.code || '';
+        form.name = producto.name || '';
+        form.description = producto.description || '';
+        form.price = producto.price || 0;
+        form.stock = producto.stock || 0;
+        form.minStock = producto.minStock || 0;
+        form.category = producto.category || '';
+        form.active = producto.active !== undefined ? producto.active : true;
     };
 
     const eliminarProductoAction = async () => {

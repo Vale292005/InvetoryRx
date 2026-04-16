@@ -1,33 +1,24 @@
 <script setup>
-import {handleError, ref} from "vue";
+import { handleError, ref } from "vue";
 import Switch from "@/components/Switch.vue";
 import Accordion from "@/components/Accordion.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
-import {Categoria} from "@/enums/Categoria.js";
+import { Categoria } from "@/enums/Categoria.js";
 import SearchProduct from "@/components/SearchProduct.vue";
-import {useEliminarProducto} from "@/Composable/eliminarProduct.js";
+import { useEliminarProducto } from "@/Composable/eliminarProduct.js";
 const { form, idProducto, loading, error: apiError, setProductoData, deleteProduct } = useEliminarProducto();
 
-const eliminar=ref(false);
-const error=ref(false);
-const opciones=Object.values(Categoria);
+const eliminar = ref(false);
+const error = ref(false);
+const opciones = Object.values(Categoria);
 
 const productoSeleccionado = (prod) => {
   setProductoData(prod);
-  confirmarSwicth.value=false;
+  confirmarSwicth.value = false;
 };
 
-const title = ref([
-  'Eliminar Producto',      // 0: Header
-  'Nombre',              // 1: Label 1
-  'Ingrese el nombre',   // 2: Placeholder 1
-  'Descripción',         // 3: Label 2
-  'Ingrese descripción', // 4: Placeholder 2
-  'Categoría',            // 5: Accordion/Select
-  'Apruebo eliminar el producto ⚠️',
-  'Eliminar'
-]);
+const title = ref(['Eliminar Producto', 'Nombre', 'Ingrese nombre', 'Descripción', 'Ingrese descripción', 'Precio', 'Ingrese precio', 'Stock', 'Ingrese stock', 'Mínimo stock', 'Ingrese mínimo', 'Categoría']);
 
 const handleEliminar = async () => {
   try {
@@ -46,52 +37,35 @@ const handleEliminar = async () => {
 
     <div class="container-form">
 
-      <SearchProduct
-          :productos="productos"
-          :cargando="cargando"
-          v-model:searchQuery="searchQuery"
-          @select="productoSeleccionado"
-      />
-
-      <Custom-input
-          :label="title[1]"
-          :placeholder="title[2]"
-          v-model="form.nombre"
-      />
-
-      <Custom-input
-          :label="title[3]"
-          :placeholder="title[4]"
-          v-model="form.descripcion"
-      />
+      <SearchProduct :productos="productos" :cargando="cargando" v-model:searchQuery="searchQuery"
+        @select="productoSeleccionado" />
+      <Custom-input :label="title[1]" v-model="form.name" />
+      <Custom-input :label="title[3]" v-model="form.description" />
+      <Custom-input type="number" :label="title[5]" v-model.number="form.price" />
+      <Custom-input type="number" :label="title[7]" v-model.number="form.stock" />
+      <Custom-input type="number" :label="title[9]" v-model.number="form.minStock" />
+      <Custom-input label="Código del producto" v-model.number="form.code" />
+      <Switch v-model="form.active" label="Activo"></Switch> 
 
       <Accordion
-          :title="title[5]"
-          :text="form.categoria||'sin categoria'"
+          :title="title[11]"
+          :text="form.category || 'Seleccione una opción'"
           :items="opciones"
-          :error="error"
-      />
-
-      <Switch
-        :title="title[6]"
-        v-model="eliminar"
+          @select="(item) => form.category = item"
       />
 
       <p v-if="apiError" style="color: red; font-size: 14px; font-weight: bold; margin: 10px 0;">
         {{ apiError }}
       </p>
 
-      <CustomButton
-        :label="title[7]"
-        @click="handleEliminar"
-      />
+      <CustomButton label="Eliminar" @click="handleEliminar" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.container-card{
-  display:flex;
+.container-card {
+  display: flex;
   flex-direction: column;
   width: 325px;
   height: auto;
@@ -101,7 +75,8 @@ const handleEliminar = async () => {
   box-sizing: border-box;
   align-items: center;
 }
-.container-form{
+
+.container-form {
   display: flex;
   flex-direction: column;
   align-items: center;

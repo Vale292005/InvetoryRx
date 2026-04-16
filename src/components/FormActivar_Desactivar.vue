@@ -1,85 +1,71 @@
 <script setup>
-import {callWithAsyncErrorHandling, handleError, ref} from "vue";
+import { callWithAsyncErrorHandling, handleError, ref } from "vue";
 import InputSearch from "@/components/InputSearch.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import Switch from "@/components/Switch.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
-import {useToggleStatus} from "@/Composable/activarProduct.js";
+import { useToggleStatus } from "@/Composable/activarProduct.js";
 
-const resultado=ref([]);
-const cargando=ref(false);
-const textoInput=ref('');
+const resultado = ref([]);
+const cargando = ref(false);
+const textoInput = ref('');
 
-const productoActivo=ref(true);
-const { form, loading, error, toggleStatus, setProductoData, idProducto }=useToggleStatus();
+const productoActivo = ref(true);
+const { form, loading, error, toggleStatus, setProductoData, idProducto } = useToggleStatus();
 
-const handleActivar=async ()=>{
-  try{
+const handleActivar = async () => {
+  try {
     await toggleStatus();
     if (!error.value) {
       alert("Producto actualizado con éxito");
     }
-  } catch(e){
+  } catch (e) {
     console.error(e);
   }
 };
 const productoSeleccionado = (prod) => {
   setProductoData(prod);
-  confirmarSwicth.value=false;
+  confirmarSwicth.value = false;
 };
 
-const title=ref({
-  search: 'Ingrese el producto',//0
-  placeHolderSearch:'Ingrese el nombre del  producto',//1
-  Name:'Nombre',                                      //2
-  placeHolderName:'Ingrese el nombre',                //3
-  description:'Descripción',                          //4
-  placeHolderDescription:'Ingrese la descripción',    //5
-  swicth:'Activo'                                     //6
-});
+const title = ref(['Crear Producto', 'Nombre', 'Ingrese nombre', 'Descripción', 'Ingrese descripción', 'Precio', 'Ingrese precio', 'Stock', 'Ingrese stock', 'Mínimo stock', 'Ingrese mínimo', 'Categoría']);
 </script>
 
 <template>
-<div class="container-form">
+  <div class="container-form">
 
-  <SearchProduct
-      :productos="productos"
-      :cargando="cargando"
-      v-model:searchQuery="searchQuery"
-      @select="productoSeleccionado"
-  />
+    <SearchProduct :productos="productos" :cargando="cargando" v-model:searchQuery="searchQuery"
+      @select="productoSeleccionado" />
+      <Custom-input :label="title[1]" v-model="form.name" />
+      <Custom-input :label="title[3]" v-model="form.description" />
+      <Custom-input type="number" :label="title[5]" v-model.number="form.price" />
+      <Custom-input type="number" :label="title[7]" v-model.number="form.stock" />
+      <Custom-input type="number" :label="title[9]" v-model.number="form.minStock" />
+      <Custom-input label="Código del producto" v-model.number="form.code" />
+      <Switch v-model="form.active" label="Activo"></Switch> 
 
-  <custom-input
-    :label="title.Name"
-    :placeholder="title.placeHolderName"
-    v-model="form.nombre"
-  />
+      <Accordion
+          :title="title[11]"
+          :text="form.category || 'Seleccione una opción'"
+          :items="opciones"
+          @select="(item) => form.category = item"
+      />
 
-  <custom-input
-      :label="title.description"
-      :placeholder="title.placeHolderDescription"
-      v-model="form.descripcion"
-  />
+      <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
 
-  <Switch
-    :title="title.swicth"
-    v-model="productoActivo"
-  />
+      <CustomButton
+          :label="loading ? 'Actualizando...' : 'Actualizar'"
+          :disabled="loading"
+          @click="handleActualizar"
+      />
 
-  <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
-
-  <CustomButton
-    label="Aceptar"
-    @click="handleActivar"
-  />
-
-</div>
+  </div>
 </template>
 
 <style scoped>
-.container-form{
-  display:flex;
+.container-form {
+  display: flex;
   flex-direction: column;
   width: 325px;
   height: auto;
@@ -89,17 +75,19 @@ const title=ref({
   box-sizing: border-box;
   align-items: center;
 }
-.funtional-card{
+
+.funtional-card {
   display: flex;
   flex-direction: row;
   width: 325px;
   height: auto;
   align-items: center;
-  gap:10px;
+  gap: 10px;
   padding: 10px 20px;
   border-radius: 6px;
 }
-.text-button{
+
+.text-button {
   color: var(--color-brand-30);
 }
 </style>

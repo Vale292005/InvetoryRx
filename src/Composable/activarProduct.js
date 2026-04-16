@@ -10,14 +10,26 @@ export function useToggleStatus() {
     const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
     const form = reactive({
-        nombre: '',
-        descripcion: '',
+        code: '',         // Código interno (ej: 'MED001') - Usado en existsByCode
+        name: '',         // Nombre del producto - Antes tenías 'nombre'
+        description: '',  // Descripción - Antes tenías 'descripcion'
+        price: 0,         // Precio - Antes tenías 'precio' (BigDecimal en Java)
+        stock: 0,         // Cantidad actual en inventario
+        minStock: 0,      // Stock mínimo - Antes tenías 'minimoStock'
+        category: '',     // Categoría - Antes tenías 'categoria' (ej: 'Medicamentos')
+        active: true      // Estado - Usado para el toggle y filtros de búsqueda
     });
 
     const setProductoData = (producto) => {
-        idProducto.value = producto.id;
-        form.nombre = producto.name;
-        form.descripcion = producto.description;
+        idProducto.value = producto.id; // Asegúrate de que el producto tenga un ID
+        form.code = producto.code || '';
+        form.name = producto.name || '';
+        form.description = producto.description || '';
+        form.price = producto.price || 0;
+        form.stock = producto.stock || 0;
+        form.minStock = producto.minStock || 0;
+        form.category = producto.category || '';
+        form.active = producto.active !== undefined ? producto.active : true;
     };
 
     const toggleStatus = async () => {

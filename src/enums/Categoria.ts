@@ -1,4 +1,8 @@
 export enum Categoria{
-    NOSE='NOSE1',
-    QUIEN_SABE='QUIEN_SABE'
+    MEDICAMENTOS= 'Medicamentos',
+    ANTIBIOTICOS= 'Antibióticos',
+    VITAMINAS= 'Vitaminas',
+    SUPLEMENTOS= 'Suplementos',
+    CUIDADO_PERSONAL= 'Cuidado Personal',
+    DISPOSITIVOS= 'Dispositivos'
 }

@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { Categoria } from "@/enums/Categoria.js";
 import { searchProductos } from "@/Composable/SearchProductos.js";
 import { useActualizarProduct } from "@/Composable/actualizarProduct.js";
+import Switch from "@/components/Switch.vue";
 
 // Componentes
 import CustomInput from "@/components/CustomInput.vue";
@@ -44,17 +45,19 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese nombre', 'Descripción',
           @select="productoSeleccionado"
       />
 
-      <Custom-input :label="title[1]" v-model="form.nombre" />
-      <Custom-input :label="title[3]" v-model="form.descripcion" />
-      <Custom-input type="number" :label="title[5]" v-model.number="form.precio" />
+      <Custom-input :label="title[1]" v-model="form.name" />
+      <Custom-input :label="title[3]" v-model="form.description" />
+      <Custom-input type="number" :label="title[5]" v-model.number="form.price" />
       <Custom-input type="number" :label="title[7]" v-model.number="form.stock" />
-      <Custom-input type="number" :label="title[9]" v-model.number="form.minimoStock" />
+      <Custom-input type="number" :label="title[9]" v-model.number="form.minStock" />
+      <Custom-input label="Código del producto" v-model.number="form.code" />
+      <Switch v-model="form.active" label="Activo"></Switch> 
 
       <Accordion
           :title="title[11]"
-          :text="form.categoria || 'Seleccione una opción'"
+          :text="form.category || 'Seleccione una opción'"
           :items="opciones"
-          @select="(item) => form.categoria = item"
+          @select="(item) => form.category = item"
       />
 
       <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
