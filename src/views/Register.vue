@@ -6,7 +6,7 @@ import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import { useNotification } from '@/Composable/useNotification.js';
 import CustomBack from "@/components/CustomBack.vue";
-const { showNotification: notify, state } = useNotification();
+const { notify } = useNotification();
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -16,7 +16,6 @@ const form = reactive({
   username: '',
   email: '',
   password: '',
-  confirmPassword: '',
   firstName: ''
 });
 
