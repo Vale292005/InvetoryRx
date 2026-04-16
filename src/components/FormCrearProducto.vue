@@ -1,8 +1,8 @@
 <script setup>
 
-import {crearProduct} from "@/Composable/crearProduct.js";
-import {Categoria} from "@/enums/Categoria.js";
-import {ref} from "vue";
+import { crearProduct } from "@/Composable/crearProduct.js";
+import { Categoria } from "@/enums/Categoria.js";
+import { ref } from "vue";
 import CustomButton from "@/components/CustomButton.vue";
 import Switch from "@/components/Switch.vue";
 import Accordion from "@/components/Accordion.vue";
@@ -32,48 +32,24 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese el nombre', 'Descripció
 <template>
   <div class="container-card">
     <div class="container-form">
-      <Custom-input
-          :label="title[1]"
-          :placeholder="title[2]"
-          v-model="form.nombre" />
+      <Custom-input :label="title[1]" :placeholder="title[2]" v-model="form.nombre" />
 
-      <Custom-input
-          :label="title[3]"
-          :placeholder="title[4]"
-          v-model="form.descripcion" />
+      <Custom-input :label="title[3]" :placeholder="title[4]" v-model="form.descripcion" />
 
-      <Custom-input
-          type="number"
-          :label="title[5]"
-          :placeholder="title[6]"
-          v-model.number="form.precio" />
+      <Custom-input type="number" :label="title[5]" :placeholder="title[6]" v-model.number="form.precio" />
 
-      <Custom-input
-          type="number"
-          :label="title[7]"
-          :placeholder="title[8]"
-          v-model.number="form.stock" />
+      <Custom-input label="Código del producto" placeholder="Ingrese código" v-model.number="form.code" />
 
-      <Custom-input
-          type="number"
-          :label="title[9]"
-          :placeholder="title[10]"
-          v-model.number="form.minimoStock" />
+      <Custom-input type="number" :label="title[7]" :placeholder="title[8]" v-model.number="form.stock" />
 
-      <Accordion
-          :title="title[11]"
-          :text="form.categoria || 'Seleccione una opción'"
-          :items="opciones"
-          @select="alSeleccionar"
-      />
+      <Custom-input type="number" :label="title[9]" :placeholder="title[10]" v-model.number="form.minimoStock" />
+
+      <Accordion :title="title[11]" :text="form.categoria || 'Seleccione una opción'" :items="opciones"
+        @select="alSeleccionar" />
 
       <Switch v-model="form.activo"></Switch>
 
-      <CustomButton
-          :label="loading ? 'Cargando...' : 'Crear'"
-          :disabled="loading"
-          @click="handleCrear"
-      />
+      <CustomButton :label="loading ? 'Cargando...' : 'Crear'" :disabled="loading" @click="handleCrear" />
 
       <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
     </div>
@@ -81,14 +57,15 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese el nombre', 'Descripció
 </template>
 
 <style scoped>
-.container-card{
+.container-card {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: auto;
   background: white;
 }
-.container-button{
+
+.container-button {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -97,7 +74,8 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese el nombre', 'Descripció
   padding: 10px 20px;
   border-radius: 6px;
 }
-.container-form{
+
+.container-form {
   display: flex;
   flex-direction: column;
   width: 100%;

@@ -4,12 +4,14 @@ import { createProduct as createProductApi } from '@/api/inventory.api';
 
 export function crearProduct() {
     const getInitialState = () => ({
-        nombre: '',
-        descripcion: '',
-        precio: 0,
+        code: '',        // Campo obligatorio según el test (existsByCode)
+        name: '',        // En lugar de 'nombre'
+        description: '', // En lugar de 'descripcion'
+        price: 0,        // En lugar de 'precio'
         stock: 0,
-        minimoStock: 0,
-        categoria: ''
+        minStock: 0,     // En lugar de 'minimoStock'
+        category: '',    // En lugar de 'categoria'
+        active: true     // El test espera que sea true
     });
 
     const form = reactive(getInitialState());
@@ -22,8 +24,8 @@ export function crearProduct() {
 
     const saveProduct = async () => {
         // Validación básica
-        if (!form.nombre || !form.precio) {
-            const msg = "El nombre y el precio son obligatorios";
+        if (!form.name || !form.price || !form.code) {
+            const msg = "El nombre, el precio y el código son obligatorios";
             error.value = msg;
             throw new Error(msg);
         }

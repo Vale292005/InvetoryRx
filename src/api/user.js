@@ -1,4 +1,3 @@
-// src/api/users.api.js
 import client from './client' // Importas la configuración centralizada
 
 /* ======================
