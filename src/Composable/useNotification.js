@@ -16,5 +16,7 @@ export function useNotification(){
         },3000);
     };
     const close=()=>state.isVisible=false;
-    return{state,showNotification,close};
+    return{state,
+        notify:showNotification,
+        close};
 }
