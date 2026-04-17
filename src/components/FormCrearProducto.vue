@@ -7,6 +7,8 @@ import CustomButton from "@/components/CustomButton.vue";
 import Switch from "@/components/Switch.vue";
 import Accordion from "@/components/Accordion.vue";
 import CustomInput from "@/components/CustomInput.vue";
+import { useNotification } from '@/Composable/useNotification.js';
+const { notify } = useNotification();
 
 const { form, loading, error, saveProduct } = crearProduct();
 
