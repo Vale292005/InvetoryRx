@@ -24,10 +24,11 @@ const handleEliminar = async () => {
   try {
     await deleteProduct();
     if (!error.value) {
-      alert("Producto eliminado con éxito");
+      notify("Producto eliminado con éxito");
     }
   } catch (e) {
     console.error(e);
+    notify("Error al eliminar el producto");
   }
 };
 </script>

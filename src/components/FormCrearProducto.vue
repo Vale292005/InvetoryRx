@@ -19,9 +19,10 @@ const alSeleccionar = (item) => {
 const handleCrear = async () => {
   try {
     const nuevoProducto = await saveProduct();
-    alert(`Producto "${nuevoProducto.nombre}" creado con éxito`);
+    notify("Producto creado con éxito");
   } catch (e) {
     console.error("Error al crear:", e);
+    notify("Error al crear el producto");
   }
 };
 

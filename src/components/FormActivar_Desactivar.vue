@@ -18,10 +18,11 @@ const handleActivar = async () => {
   try {
     await toggleStatus();
     if (!error.value) {
-      alert("Producto actualizado con éxito");
+      notify("Producto actualizado con éxito");
     }
   } catch (e) {
     console.error(e);
+    notify("Error al actualizar el producto");
   }
 };
 const productoSeleccionado = (prod) => {
