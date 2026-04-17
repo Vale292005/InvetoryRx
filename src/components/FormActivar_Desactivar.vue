@@ -6,6 +6,8 @@ import Switch from "@/components/Switch.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { useToggleStatus } from "@/Composable/activarProduct.js";
+import { useNotification } from '@/Composable/useNotification.js';
+const { notify } = useNotification();
 
 const resultado = ref([]);
 const cargando = ref(false);

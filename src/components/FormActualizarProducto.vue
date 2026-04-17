@@ -10,7 +10,8 @@ import CustomInput from "@/components/CustomInput.vue";
 import Accordion from "@/components/Accordion.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
-import { notify } from "@/utils/notify.js";
+import { useNotification } from '@/Composable/useNotification.js';
+const { notify } = useNotification();
 
 const { searchQuery, productos, cargando } = searchProductos();
 const { form, loading, error, updateProduct, setProductoData } = useActualizarProduct();
@@ -30,6 +31,7 @@ const handleActualizar = async () => {
     }
   } catch (e) {
     console.error(e);
+    notify("Error al actualizar el producto");
   }
 };
 

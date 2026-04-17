@@ -7,7 +7,11 @@ import CustomButton from "@/components/CustomButton.vue";
 import { Categoria } from "@/enums/Categoria.js";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { useEliminarProducto } from "@/Composable/eliminarProduct.js";
+import { useNotification } from '@/Composable/useNotification.js';
+const { notify } = useNotification();
+
 const { form, idProducto, loading, error: apiError, setProductoData, deleteProduct } = useEliminarProducto();
+
 
 const eliminar = ref(false);
 const error = ref(false);
