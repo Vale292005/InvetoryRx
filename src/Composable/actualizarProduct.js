@@ -6,12 +6,14 @@ export function useActualizarProduct() {
     const idProducto = ref(null);
 
     const form = reactive({
-        nombre: '',
-        descripcion: '',
-        precio: 0,
+        code: '',         // ¡Importante! El test usa "MED001"
+        name: '',         // Antes era nombre
+        description: '',  // Antes era descripcion
+        price: 0,         // Antes era precio
         stock: 0,
-        minimoStock: 0,
-        categoria: ''
+        minStock: 0,      // Antes era minimoStock
+        category: '',     // Antes era categoria
+        active: true      // El test de actualización lo incluye
     });
 
     const loading = ref(false);
@@ -19,14 +21,14 @@ export function useActualizarProduct() {
 
     // Llena el formulario cuando seleccionas un producto de la lista
     const setProductoData = (producto) => {
-        idProducto.value = producto.id;
-        // Mapeamos los campos del backend (name) a los del form (nombre)
-        form.nombre = producto.name;
-        form.descripcion = producto.description;
-        form.precio = producto.price;
-        form.stock = producto.stock;
-        form.minimoStock = producto.minimoStock;
-        form.categoria = producto.category; // Ojo: verifica si es .category o .categoria en tu objeto
+        form.code = producto.code || producto.codigo || '';
+        form.name = producto.name || producto.nombre || '';
+        form.description = producto.description || producto.descripcion || '';
+        form.price = producto.price || producto.precio || 0;
+        form.stock = producto.stock || 0;
+        form.minStock = producto.minStock || producto.minimoStock || 0;
+        form.category = producto.category || producto.categoria || '';
+        form.active = producto.active !== undefined ? producto.active : true;
     };
 
     const updateProductAction = async () => {
