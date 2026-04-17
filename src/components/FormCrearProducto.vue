@@ -32,11 +32,11 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese el nombre', 'Descripció
 <template>
   <div class="container-card">
     <div class="container-form">
-      <Custom-input :label="title[1]" :placeholder="title[2]" v-model="form.nombre" />
+      <Custom-input :label="title[1]" :placeholder="title[2]" v-model="form.name" />
 
-      <Custom-input :label="title[3]" :placeholder="title[4]" v-model="form.descripcion" />
+      <Custom-input :label="title[3]" :placeholder="title[4]" v-model="form.description" />
 
-      <Custom-input type="number" :label="title[5]" :placeholder="title[6]" v-model.number="form.precio" />
+      <Custom-input type="number" :label="title[5]" :placeholder="title[6]" v-model.number="form.price" />
 
       <Custom-input label="Código del producto" placeholder="Ingrese código" v-model.number="form.code" />
 

@@ -50,7 +50,7 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese nombre', 'Descripción',
       <Custom-input type="number" :label="title[5]" v-model.number="form.price" />
       <Custom-input type="number" :label="title[7]" v-model.number="form.stock" />
       <Custom-input type="number" :label="title[9]" v-model.number="form.minStock" />
-      <Custom-input label="Código del producto" v-model.number="form.code" />
+      <Custom-input label="Código del producto" v-model="form.code" />
       <Switch v-model="form.active" label="Activo"></Switch> 
 
       <Accordion
