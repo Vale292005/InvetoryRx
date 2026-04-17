@@ -21,6 +21,7 @@ export function useActualizarProduct() {
 
     // Llena el formulario cuando seleccionas un producto de la lista
     const setProductoData = (producto) => {
+        producto.id && (idProducto.value = producto.id); 
         form.code = producto.code || producto.codigo || '';
         form.name = producto.name || producto.nombre || '';
         form.description = producto.description || producto.descripcion || '';
