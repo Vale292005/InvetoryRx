@@ -69,22 +69,30 @@ const handleEliminar = async () => {
 </template>
 
 <style scoped>
-.container-card {
+.container-form {
   display: flex;
   flex-direction: column;
   width: 325px;
   height: auto;
   gap: 10px;
-  padding: 16px 24px;
+  padding: 17px 24px;
   background: white;
   box-sizing: border-box;
   align-items: center;
 }
 
-.container-form {
+.funtional-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  width: 325px;
+  height: auto;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 6px;
+}
+
+.text-button {
+  color: var(--color-brand-30);
 }
 </style>
