@@ -15,6 +15,10 @@ const handleCrear = async () => {
         console.error("Error al crear el usuario", e);
     }
 };
+
+const alSeleccionar = (item) => {
+    form.value.role = item; 
+};
 </script>
 <template>
     <div class="container-card">
