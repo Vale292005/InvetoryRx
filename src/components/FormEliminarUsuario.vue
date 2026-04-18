@@ -5,6 +5,9 @@ import CustomButton from '@/components/CustomButton.vue';
 import { useNotification } from '@/Composable/useNotification';
 import SearchResults from './SearchResults.vue';
 import Accordion from '@/components/Accordion.vue';
+import { useSearchUsuarios } from '@/Composable/useSearchUsuarios';
+
+const { searchQuery: searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
 const notify = useNotification();
 
 const { form, loading, error, resetForm, deleteUsuario, setUserData } = useEliminarUsuario();
