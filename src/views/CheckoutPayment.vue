@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useOrderStore } from '@/stores/order.store';
 import CustomButton from "@/components/CustomButton.vue";
 import CustomBack from "@/components/CustomBack.vue";
+import {orderApi} from "@/api/order.api.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -12,6 +13,7 @@ const orderStore = useOrderStore();
 const orderId = route.params.orderId;
 const loading = ref(false);
 const errorMessage = ref('');
+const ordenCargada = ref(null);
 
 // Aquí guardaremos la instancia de Stripe
 let stripe = null;
@@ -19,6 +21,11 @@ let elements = null;
 let cardElement = null;
 
 onMounted(async () => {
+  try{
+    ordenCargada.value=await orderApi.getById(orderId);
+  }catch (err) {
+    errorMessage.value = "No se pudo cargar la información de la orden.";
+  }
   // 1. Inicializar Stripe con tu llave pública (la de desarrollo inicia con pk_test)
   stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN'); 
   
