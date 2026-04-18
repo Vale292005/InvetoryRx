@@ -17,7 +17,12 @@ const handleCrear = async () => {
 };
 
 const alSeleccionar = (item) => {
-    form.value.role = item; 
+if (form) {
+        form.role = item; 
+        console.log("Rol seleccionado:", form.role);
+    } else {
+        console.error("El objeto form no está definido");
+    }
 };
 </script>
 <template>
