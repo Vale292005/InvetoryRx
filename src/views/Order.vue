@@ -102,17 +102,17 @@ const procesarOrden = async () => {
 
   try {
     const nuevaOrden = await orderStore.createOrder(payload);
-    
+
     if (nuevaOrden && nuevaOrden.id) {
       notify("¡Venta completada con éxito!", "success");
-      
-      const idStr = nuevaOrden.id.toString(); 
-      
-      carrito.value = []; 
+
+      const idStr = nuevaOrden.id.toString();
+
+      carrito.value = [];
 
       console.log("Navegando a la URL con ID:", idStr);
 
-      await route.push(`/pasarela-pago/${idStr}`); 
+      await route.push(`/pasarela-pago/${idStr}`);
 
     } else {
       throw new Error("El servidor no devolvió un ID de orden.");
@@ -204,18 +204,16 @@ const irAlPago = () => {
 
 
 
-  <main>
-    <div class="orden-container">
-      <text-button>Panel de Administración</text-button>
-      <SearchOrders titulo="Mis Órdenes Recientes" placeholder="Escribe el código de la orden..."
-        @select="manejarSeleccion" />
+  <div class="orden-container">
+    <text-button>Panel de Administración</text-button>
+    <SearchOrders titulo="Mis Órdenes Recientes" placeholder="Escribe el código de la orden..."
+      @select="manejarSeleccion" />
 
-      <div v-if="ordenSeleccionada" class="detalle">
-        <h3>Detalle de la Orden: {{ ordenSeleccionada.orderNumber }}</h3>
-        <p>Total a pagar: ${{ ordenSeleccionada.total }}</p>
-      </div>
+    <div v-if="ordenSeleccionada" class="detalle">
+      <h3>Detalle de la Orden: {{ ordenSeleccionada.orderNumber }}</h3>
+      <p>Total a pagar: ${{ ordenSeleccionada.total }}</p>
     </div>
-  </main>
+  </div>
 
 
 

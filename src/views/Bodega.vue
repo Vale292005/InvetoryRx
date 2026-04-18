@@ -54,11 +54,8 @@ const handleSearch = (valor) => {
         </div>
 
         <div class="search-container">
-            <SearchResults
-                placeholder="Buscar mercancía por nombre o código..."
-                titulo="Resultados de búsqueda"
-                v-model:searchQuery="searchQuery" 
-            />
+            <SearchResults titulo="Mercancías" placeholder="Buscar mercancía..." :productos="mercancias"
+                v-model:searchQuery="searchQuery" @select="mercanciaSeleccionada" />
         </div>
     </div>
 </template>
@@ -157,5 +154,4 @@ const handleSearch = (valor) => {
     border: 1px solid var(--color-brand-30);
     border-radius: 6px;
 }
-
 </style>
