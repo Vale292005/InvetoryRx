@@ -1,6 +1,10 @@
 <script setup>
 import { onMounted, watch } from "vue";
-import { useOrders } from "@/Composable/useOrders.js"; 
+import { useOrders } from "@/Composable/useOrders.js";
+import { useNotification } from '@/Composable/useNotification.js';
+import { useRouter } from "vue-router";
+import CustomInput from "@/components/CustomInput.vue";
+import CustomButton from "@/components/CustomButton.vue";
 
 const emit = defineEmits(['select']);
 const props = defineProps({
@@ -17,7 +21,7 @@ const props = defineProps({
 const { orders, loading, error, getAll, getByStatus } = useOrders();
 
 onMounted(() => {
-  getAll(); 
+  getAll();
 });
 
 const seleccionar = (order) => {
@@ -30,13 +34,10 @@ const seleccionar = (order) => {
 <template>
   <div class="container">
     <div class="input-container">
-      <text-button>{{ props.titulo }}</text-button>
-      
-      <input
-          placeholder="Props.placeholder"
-          class="search-input"
-      >
-      
+      <h4>{{ props.titulo }}</h4>
+
+      <input :placeholder="placeholder" class="search-input">
+
       <div class="filter-chips">
         <button @click="getByStatus('PENDING')">Pendientes</button>
         <button @click="getByStatus('COMPLETED')">Listas</button>
@@ -44,28 +45,28 @@ const seleccionar = (order) => {
     </div>
 
     <div v-if="loading" class="loading-state">
-      <overline>Cargando órdenes desde el servidor...</overline>
+      <span v-if="error" class="text-overline">{{ error }}</span>
     </div>
 
     <div v-else-if="orders && orders.length > 0" class="table-wrapper">
       <table class="product-table">
         <thead>
-        <tr>
-          <th>N° Orden</th>
-          <th>Estado</th>
-          <th>Total</th>
-        </tr>
+          <tr>
+            <th>N° Orden</th>
+            <th>Estado</th>
+            <th>Total</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(o, index) in orders" :key="o.id || index" @click="seleccionar(o)">
-          <td>{{ o.orderNumber }}</td>
-          <td>
-            <span :class="'status-' + o.status.toLowerCase()">
-              {{ o.status }}
-            </span>
-          </td>
-          <td>${{ o.total }}</td>
-        </tr>
+          <tr v-for="(o, index) in orders" :key="o.id || index" @click="seleccionar(o)">
+            <td>{{ o.orderNumber }}</td>
+            <td>
+              <span :class="'status-' + o.status.toLowerCase()">
+                {{ o.status }}
+              </span>
+            </td>
+            <td>${{ o.total }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -140,7 +141,8 @@ const seleccionar = (order) => {
 
 /* Tabla y Scroll */
 .table-wrapper {
-  max-height: 132px; /* Según tu estilo solicitado */
+  max-height: 132px;
+  /* Según tu estilo solicitado */
   overflow-y: auto;
   border: 1px solid var(--color-brand-80);
   border-radius: 4px;
@@ -181,9 +183,23 @@ tbody tr:hover {
 }
 
 /* Colores de Estado */
-.status-pending { color: orange; font-weight: bold; }
-.status-completed { color: green; font-weight: bold; }
-.status-cancelled { color: red; font-weight: bold; }
+.status-pending {
+  color: orange;
+  font-weight: bold;
+}
 
-.error-msg { color: red; font-weight: bold; }
+.status-completed {
+  color: green;
+  font-weight: bold;
+}
+
+.status-cancelled {
+  color: red;
+  font-weight: bold;
+}
+
+.error-msg {
+  color: red;
+  font-weight: bold;
+}
 </style>
