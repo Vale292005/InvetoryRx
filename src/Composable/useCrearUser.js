@@ -27,7 +27,8 @@ export function useCrearUsuario() {
     };
 
     const saveUsuario = async () => {
-        if (!form.username || !form.email || !form.firstname || !form.lastname || !form.password) {
+
+        if (!form.username || !form.email || !form.firstName || !form.lastName || !form.password) {
             const msg = "Todos los campos son obligatorios";
             error.value = msg;
             notify(msg, 'error');
