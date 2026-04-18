@@ -81,7 +81,7 @@ const labels = ref([
           @click="handleActualizar" />
       </div>
 
-      <p v-else class="info-text">Busca un usuario para editar sus datos.</p>
+      <p class="info-text">Busca un usuario para editar sus datos.</p>
     </div>
   </div>
 </template>
