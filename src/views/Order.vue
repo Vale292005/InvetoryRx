@@ -1,6 +1,6 @@
 <script setup>
 import ButtonForm from "@/components/ButtonForm.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { searchProductos } from "@/Composable/SearchProductos.js";
 import { useAuthStore } from "@/stores/auth.store.js";
@@ -9,6 +9,17 @@ import CustomButton from "@/components/CustomButton.vue";
 import { useRouter } from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
 import SearchOrders from "../components/SearchOrders.vue";
+import { useNotification } from '@/Composable/useNotification.js';
+import {useOrders} from "@/Composable/useOrders.js";
+
+const { orders, loadingOrders, getAll } = useOrders();
+onMounted((async()=>{
+  await getAll();
+
+}));
+
+
+const { notify } = useNotification();
 
 const manejarSeleccion = (orden) => {
   console.log("Orden recibida del componente hijo:", orden);
@@ -79,6 +90,9 @@ const totalVenta = computed(() => {
 
 
 const procesarOrden = async () => {
+
+  if (carrito.value.length === 0) return;
+
   const payload = {
     customerId: authStore.user?.id || '1',
     items: carrito.value.map(item => ({
@@ -90,11 +104,18 @@ const procesarOrden = async () => {
 
   try {
     const nuevaOrden = await orderStore.createOrder(payload);
-    alert("¡Venta completada con éxito!");
+    if (nuevaOrden && nuevaOrden.id) {
+    notify("¡Venta completada con éxito!", "success");
     carrito.value = [];
-    route.push({name:'CheckoutPayment',params:{orderId:nuevaOrden.id}});
+    await route.push({ 
+        name: 'CheckoutPayment', 
+        params: { orderId: nuevaOrden.id.toString() } 
+      });
+      } else {
+      throw new Error("La orden se creó pero no se recibió un ID válido.");
+    }
   } catch (mensajeError) {
-    alert(mensajeError);
+    notify("Error al procesar la orden", "error");
   }
 };
 const busqueda = ref('');

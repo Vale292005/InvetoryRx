@@ -20,7 +20,7 @@ export function useEliminarProducto() {
     const error = ref(null);
 
     const setProductoData = (producto) => {
-        idProducto.value = producto.id; // Asegúrate de que el producto tenga un ID
+        idProducto.value = producto.id; 
         form.code = producto.code || '';
         form.name = producto.name || '';
         form.description = producto.description || '';

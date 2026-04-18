@@ -1,6 +1,5 @@
 <script setup>
-import { callWithAsyncErrorHandling, handleError, ref } from "vue";
-import InputSearch from "@/components/InputSearch.vue";
+import { ref } from "vue";
 import CustomInput from "@/components/CustomInput.vue";
 import Switch from "@/components/Switch.vue";
 import CustomButton from "@/components/CustomButton.vue";
@@ -12,8 +11,8 @@ const { notify } = useNotification();
 const resultado = ref([]);
 const cargando = ref(false);
 const textoInput = ref('');
+const confirmarSwicth = ref(false);
 
-const productoActivo = ref(true);
 const { form, loading, error, toggleStatus, setProductoData, idProducto } = useToggleStatus();
 
 const handleActivar = async () => {
@@ -60,7 +59,7 @@ const title = ref(['Crear Producto', 'Nombre', 'Ingrese nombre', 'Descripción',
       <CustomButton
           :label="loading ? 'Actualizando...' : 'Actualizar'"
           :disabled="loading"
-          @click="handleActualizar"
+          @click="handleActivar"
       />
 
   </div>
