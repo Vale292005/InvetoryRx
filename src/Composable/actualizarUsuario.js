@@ -18,7 +18,7 @@ export const updateUserApi = (id, userData) => {
  */
 export function useUpdateUser() {
     const { notify } = useNotification();
-    
+
     const idUsuario = ref(null);
     const loading = ref(false);
     const error = ref(null);
@@ -31,16 +31,26 @@ export function useUpdateUser() {
         role: 'USER'
     });
 
+    const setUserData = (user) => {
+        user.id && (idUsuario.value = user.id);
+        form.username = user.username || '';
+        form.email = user.email || '';
+        form.firstname = user.firstname || '';
+        form.lastname = user.lastname || '';
+        form.role = user.role || 'USER';
+    };
+
+
     // 1. Función para rellenar el formulario (El "Buscador")
     const searchAndFill = async (usernameToSearch) => {
         if (!usernameToSearch) return;
-        
+
         loading.value = true;
         error.value = null;
 
         try {
             const user = await findUserByUsername(usernameToSearch);
-            
+
             // Rellenamos los datos reactivos
             idUsuario.value = user.id;
             form.username = user.username;
