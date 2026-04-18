@@ -19,6 +19,7 @@ const {
 const { searchQuery: searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
 const seleccionarUsuario = (usuario) => {
   setUserData(usuario);
+  idUsuario.value = usuario.id;
 };
 
 // Definimos el estado para el campo de búsqueda de username
