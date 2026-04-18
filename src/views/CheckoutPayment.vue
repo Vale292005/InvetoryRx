@@ -20,12 +20,15 @@ let stripe = null;
 let elements = null;
 let cardElement = null;
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 onMounted(async () => {
   try{
     ordenCargada.value=await orderApi.getById(orderId);
   }catch (err) {
     errorMessage.value = "No se pudo cargar la información de la orden.";
   }
+  if (window.Stripe) {
   // 1. Inicializar Stripe con tu llave pública (la de desarrollo inicia con pk_test)
   stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN'); 
   
@@ -38,6 +41,9 @@ onMounted(async () => {
 
   // 2. Montar el input de la tarjeta en el div con id "card-element"
   cardElement.mount('#card-element');
+}else {
+    errorMessage.value = "Stripe no pudo cargarse. Revisa tu index.html";
+  }
 });
 
 const handlePayment = async () => {
@@ -47,7 +53,7 @@ const handlePayment = async () => {
   try {
     // 3. Llamar a tu backend para iniciar el proceso de Stripe
     // Este endpoint debe devolver el client_secret del PaymentIntent
-    const response = await fetch(`/api/payments/process`, {
+    const response = await fetch(`${BASE_URL}/api/payments/process`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ orderId: orderId })
@@ -108,7 +114,7 @@ const handlePayment = async () => {
         <hr class="divider" />
         
         <div class="order-items">
-          <div v-for="item in carrito" :key="item.id" class="item">
+          <div v-for="item in ordenCargada" :key="item.id" class="item">
             <span>{{ item.cantidadSeleccionada }}x {{ item.nombre }}</span>
             <span>${{ (item.precio * item.cantidadSeleccionada).toFixed(2) }}</span>
           </div>
