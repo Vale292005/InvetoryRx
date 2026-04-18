@@ -89,10 +89,7 @@ const totalVenta = computed(() => {
 
 
 const procesarOrden = async () => {
-  if (carrito.value.length === 0) {
-    console.warn("Intento de procesar orden con carrito vacío");
-    return;
-  }
+  if (carrito.value.length === 0) return;
 
   const payload = {
     customerId: authStore.user?.id || '1',
@@ -103,25 +100,22 @@ const procesarOrden = async () => {
     notes: "Venta desde Dashboard"
   };
 
-  console.log("Enviando Payload:", payload); // DEBUG 1
-
   try {
     const nuevaOrden = await orderStore.createOrder(payload);
-
-    console.log("Respuesta del servidor (nuevaOrden):", nuevaOrden); // DEBUG 2
-
+    
     if (nuevaOrden && nuevaOrden.id) {
       notify("¡Venta completada con éxito!", "success");
+      
+      const idStr = nuevaOrden.id.toString(); 
+      
+      carrito.value = []; 
 
-      const orderIdString = nuevaOrden.id.toString();
-      carrito.value = [];
+      console.log("Navegando a la URL con ID:", idStr);
 
-      console.log("Intentando navegar a CheckoutPayment con ID:", orderIdString);
-
-      await route.push(`/pasarela-pago/${idStr}`);
+      await route.push(`/pasarela-pago/${idStr}`); 
 
     } else {
-      throw new Error("El servidor respondió pero no devolvió un ID de orden.");
+      throw new Error("El servidor no devolvió un ID de orden.");
     }
   } catch (err) {
     console.error("ERROR CRÍTICO EN PROCESAR ORDEN:", err);
