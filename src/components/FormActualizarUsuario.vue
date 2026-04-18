@@ -4,6 +4,10 @@ import { useUpdateUser } from "@/Composable/actualizarUsuario";
 import CustomInput from "@/components/CustomInput.vue";
 import Accordion from "@/components/Accordion.vue";
 import CustomButton from "@/components/CustomButton.vue";
+import SearchResults from "@/components/SearchResults.vue";
+import { useSearchUsuarios } from '@/Composable/useSearchUsuarios';
+
+const { searchQuery: searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
 
 const { 
   form, 
@@ -48,18 +52,8 @@ const labels = ref([
     <div class="container-form">
       <!-- Sección de Búsqueda por Username -->
       <div class="search-section">
-        <Custom-input 
-          :label="labels[1]" 
-          v-model="usernameBusqueda" 
-          placeholder="Ej: valeria2026"
-          @keyup.enter="handleSearch"
-        />
-        <CustomButton 
-          label="Buscar" 
-          :disabled="loading" 
-          @click="handleSearch" 
-          class="btn-search"
-        />
+        <SearchResults titulo="Usuarios" placeholder="Buscar usuario..." :productos="usuarios"
+          v-model:searchQuery="searchQueryUsuarios" @select="seleccionarUsuario" />
       </div>
 
       <hr class="separator" v-if="idUsuario" />

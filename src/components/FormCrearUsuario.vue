@@ -33,7 +33,7 @@ if (form) {
             <Custom-input label="Password" placeholder="Ingrese una contraseña" v-model="form.password" />
             <Custom-input label="Nombres" placeholder="Ingrese su nombre" v-model="form.firstName" />
             <Custom-input label="Apellido" placeholder="Ingrese su apellido" v-model="form.lastName" />
-                  <Accordion title="Categoría" :text="form.role || 'Seleccione una opción'" :items="opciones"
+                  <Accordion title="Rol" :text="form.role || 'Seleccione una opción'" :items="opciones"
         @select="alSeleccionar" />
 
             <CustomButton :label="loading ? 'Cargando...' : 'Crear'" :disabled="loading" @click="handleCrear" />
