@@ -27,11 +27,6 @@ const usernameBusqueda = ref("");
 // Roles disponibles en tu sistema (puedes usar un Enum si lo tienes)
 const opcionesRoles = ['USER', 'ADMIN', 'SALES'];
 
-const handleSearch = async () => {
-  if (!usernameBusqueda.value) return;
-  await searchAndFill(usernameBusqueda.value);
-};
-
 const handleActualizar = async () => {
   try {
     await updateUser();
@@ -63,15 +58,14 @@ const labels = ref([
 
       <!-- Campos del Formulario (se llenan tras la búsqueda) -->
       <div class="form-fields">
-            <CustomInput label='Numero de documento' placeholder='Ingrese cedula' v-model="form.documentNumber" />
+            <CustomInput label='Usuario' placeholder='Ingrese el nombre de usuario' v-model="form.username" />
 
-            <CustomInput label="Nombres" placeholder="Ingrese el nombre" v-model="form.firstName" />
+            <CustomInput label="Email" placeholder="Ingrese su email" v-model="form.email" />
 
-            <CustomInput label="Apellidos" placeholder="Ingrese los apellidos" v-model="form.lastName" />
+            <CustomInput label="Nombre" placeholder="Ingrese los nombres" v-model="form.firstName" />
 
-            <CustomInput label="Email" placeholder="Ingrese un Email" v-model="form.email" />
+            <CustomInput label="Apellido" placeholder="Ingrese los apellidos" v-model="form.lastName" />
 
-            <CustomButton :label="loading ? 'Cargando...' : 'Crear'" :disabled="loading" @click="handleCrear" />
         <Accordion :title="labels[5]" :text="form.role || 'Seleccione un rol'" :items="opcionesRoles"
           @select="(item) => form.role = item" />
 
