@@ -12,7 +12,7 @@ import SearchOrders from "../components/SearchOrders.vue";
 import { useNotification } from '@/Composable/useNotification.js';
 import {useOrders} from "@/Composable/useOrders.js";
 
-const { orders, loadingOrders, getAll } = useOrders();
+const { orders, loading:loadingOrders, getAll } = useOrders();
 onMounted((async()=>{
   await getAll();
 }));
@@ -192,7 +192,7 @@ const irAlPago = () => {
       </div>
     </div>
 
-    <p v-if="orderStore.loadingOrders">Procesando venta... por favor espera.</p>
+    <p v-if="orderStore.loading">Procesando venta... por favor espera.</p>
   </div>
 
 
