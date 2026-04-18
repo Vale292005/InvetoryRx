@@ -19,7 +19,6 @@ const {
 const { searchQuery: searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
 const seleccionarUsuario = (usuario) => {
   setUserData(usuario);
-  idUsuario.value = usuario.id;
 };
 
 // Definimos el estado para el campo de búsqueda de username
@@ -63,7 +62,7 @@ const labels = ref([
       <hr class="separator" v-if="idUsuario" />
 
       <!-- Campos del Formulario (se llenan tras la búsqueda) -->
-      <div v-if="idUsuario" class="form-fields">
+      <div class="form-fields">
             <CustomInput label='Numero de documento' placeholder='Ingrese cedula' v-model="form.documentNumber" />
 
             <CustomInput label="Nombres" placeholder="Ingrese el nombre" v-model="form.firstName" />
