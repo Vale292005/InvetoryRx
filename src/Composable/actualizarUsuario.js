@@ -26,18 +26,20 @@ export function useUpdateUser() {
     const form = reactive({
         username: '',
         email: '',
-        firstname: '',
-        lastname: '',
-        role: 'USER'
+        firstName: '',
+        lastName: '',
+        role: 'USER',
+        active: true
     });
 
     const setUserData = (user) => {
         user.id && (idUsuario.value = user.id);
         form.username = user.username || '';
         form.email = user.email || '';
-        form.firstname = user.firstname || '';
-        form.lastname = user.lastname || '';
+        form.firstName = user.firstName || '';
+        form.lastName = user.lastName || '';
         form.role = user.role || 'USER';
+        form.active = user.active !== undefined ? user.active : true;
     };
 
 
@@ -55,8 +57,8 @@ export function useUpdateUser() {
             idUsuario.value = user.id;
             form.username = user.username;
             form.email = user.email;
-            form.firstname = user.firstname;
-            form.lastname = user.lastname;
+            form.firstName = user.firstName;
+            form.lastName = user.lastName;
             form.role = user.role;
 
             notify("Usuario encontrado", "success");
@@ -102,6 +104,7 @@ export function useUpdateUser() {
         error,
         idUsuario,
         searchAndFill, // Usa esta en tu input de búsqueda
-        updateUser: updateUserAction
+        updateUser: updateUserAction,
+        setUserData
     };
 }
