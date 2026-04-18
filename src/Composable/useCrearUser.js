@@ -15,7 +15,8 @@ export function useCrearUsuario() {
         password: '',
         firstName: '',
         lastName: '',
-        role: 'USER'
+        role: 'USER',
+        active: true
     });
 
     const form = reactive(getInitialState());
