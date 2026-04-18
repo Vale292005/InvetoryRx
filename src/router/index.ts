@@ -75,7 +75,7 @@ export const router = createRouter({
             meta: { requiresAuth: false }
         },
         {
-            path: '/pasarela-pago',
+            path: '/pasarela-pago/:orderId',
             component: CheckoutPayment,
             meta: { requiresAuth: false }
         }
