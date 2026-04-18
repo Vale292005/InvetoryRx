@@ -89,8 +89,10 @@ const totalVenta = computed(() => {
 
 
 const procesarOrden = async () => {
-
-  if (carrito.value.length === 0) return;
+  if (carrito.value.length === 0) {
+    console.warn("Intento de procesar orden con carrito vacío");
+    return;
+  }
 
   const payload = {
     customerId: authStore.user?.id || '1',
@@ -101,22 +103,39 @@ const procesarOrden = async () => {
     notes: "Venta desde Dashboard"
   };
 
+  console.log("Enviando Payload:", payload); // DEBUG 1
+
   try {
     const nuevaOrden = await orderStore.createOrder(payload);
+    
+    console.log("Respuesta del servidor (nuevaOrden):", nuevaOrden); // DEBUG 2
+
     if (nuevaOrden && nuevaOrden.id) {
-    notify("¡Venta completada con éxito!", "success");
-    carrito.value = [];
-    await route.push({ 
+      notify("¡Venta completada con éxito!", "success");
+      
+      const orderIdString = nuevaOrden.id.toString();
+      carrito.value = []; 
+
+      // DEBUG 3: Verificar redirección
+      console.log("Intentando navegar a CheckoutPayment con ID:", orderIdString);
+      
+      await route.push({ 
         name: 'CheckoutPayment', 
-        params: { orderId: nuevaOrden.id.toString() } 
+        params: { orderId: orderIdString } 
       });
-      } else {
-      throw new Error("La orden se creó pero no se recibió un ID válido.");
+
+    } else {
+      throw new Error("El servidor respondió pero no devolvió un ID de orden.");
     }
-  } catch (mensajeError) {
-    notify("Error al procesar la orden", "error");
+  } catch (err) {
+    // ESTO ES LO MÁS IMPORTANTE: Ahora el error aparecerá en tu consola (F12)
+    console.error("ERROR CRÍTICO EN PROCESAR ORDEN:", err); 
+    
+    // Mostramos el mensaje real en el notify si existe
+    notify(err.message || "Error al procesar la orden", "error");
   }
 };
+
 const busqueda = ref('');
 
 const handleSearch = (valor) => {
