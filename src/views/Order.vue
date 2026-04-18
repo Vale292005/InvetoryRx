@@ -10,10 +10,10 @@ import { useRouter } from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
 import SearchOrders from "../components/SearchOrders.vue";
 import { useNotification } from '@/Composable/useNotification.js';
-import {useOrders} from "@/Composable/useOrders.js";
+import { useOrders } from "@/Composable/useOrders.js";
 
-const { orders, loading:loadingOrders, getAll } = useOrders();
-onMounted((async()=>{
+const { orders, loading: loadingOrders, getAll } = useOrders();
+onMounted((async () => {
   await getAll();
 }));
 
@@ -107,31 +107,24 @@ const procesarOrden = async () => {
 
   try {
     const nuevaOrden = await orderStore.createOrder(payload);
-    
+
     console.log("Respuesta del servidor (nuevaOrden):", nuevaOrden); // DEBUG 2
 
     if (nuevaOrden && nuevaOrden.id) {
       notify("¡Venta completada con éxito!", "success");
-      
-      const orderIdString = nuevaOrden.id.toString();
-      carrito.value = []; 
 
-      // DEBUG 3: Verificar redirección
+      const orderIdString = nuevaOrden.id.toString();
+      carrito.value = [];
+
       console.log("Intentando navegar a CheckoutPayment con ID:", orderIdString);
-      
-      await route.push({ 
-        name: 'CheckoutPayment', 
-        params: { orderId: orderIdString } 
-      });
+
+      await route.push(`/pasarela-pago/${idStr}`);
 
     } else {
       throw new Error("El servidor respondió pero no devolvió un ID de orden.");
     }
   } catch (err) {
-    // ESTO ES LO MÁS IMPORTANTE: Ahora el error aparecerá en tu consola (F12)
-    console.error("ERROR CRÍTICO EN PROCESAR ORDEN:", err); 
-    
-    // Mostramos el mensaje real en el notify si existe
+    console.error("ERROR CRÍTICO EN PROCESAR ORDEN:", err);
     notify(err.message || "Error al procesar la orden", "error");
   }
 };
@@ -294,7 +287,7 @@ const irAlPago = () => {
 }
 
 .carrito-container,
-.orden-container{
+.orden-container {
   padding: 20px;
   gap: 20px;
   margin: 0;
