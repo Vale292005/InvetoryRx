@@ -5,7 +5,7 @@ export function createSupplier(supplierData) {
 }
 
 export function updateSupplier(id, supplierData) {
-    return client.post(`/api/suppliers/${id}`, supplierData).then(r => r.data);
+    return client.put(`/api/suppliers/${id}`, supplierData).then(r => r.data);
 }
 export function getSupplierById(id){
     return client.get('/api/suppliers/${id}').then(r => r.data);
