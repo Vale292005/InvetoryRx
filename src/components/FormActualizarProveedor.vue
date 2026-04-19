@@ -33,7 +33,7 @@ const handleActualizar = async () => {
 const { searchQuery, proveedores, loading: loadingProveedores } = useSearchProveedores();
 
 const proveedorSeleccionado = (proveedor) => {
-  setProductorData(proveedor); // Esto rellena los campos automáticamente
+  setProveedorData(proveedor); 
 };
 </script>
 <template>
