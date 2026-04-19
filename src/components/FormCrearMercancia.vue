@@ -4,7 +4,7 @@ import { useNotification } from "../Composable/useNotification";
 import { searchProductos } from "@/Composable/searchProductos.js"; // Tu buscador
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
-import SearchProduct from "@/components/SearchProduct.vue"; // Tu componente de búsqueda
+import SearchProduct from "@/components/SearchProduct.vue";
 import { ref, reactive } from "vue";
 
 const { notify } = useNotification();
