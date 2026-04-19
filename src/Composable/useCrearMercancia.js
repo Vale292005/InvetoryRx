@@ -7,14 +7,14 @@ export function createGoodsReceiptAPI(goodsReceiptData) {
 
 export function useCrearMercancia() {
     const getInitialState = () => ({
-        receiptNumber: 1,      // Nuevo: según tu JSON
+        receiptNumber: "1",       // <-- Forzado a 1 como pediste
         orderId: '',
-        orderNumber: '',       // Nuevo: según tu JSON
-        supplierId: '',        // Nuevo: según tu JSON
-        supplierName: '',      // Nuevo: según tu JSON
-        status: 'PENDING',     // Nuevo: según tu JSON
+        orderNumber: '',
+        supplierId: 1,            // Valor por defecto para cumplir el JSON
+        supplierName: '',
+        status: 'PENDING',
         notes: '',
-        expectedDeliveryDate: '', // Nuevo: según tu JSON
+        expectedDeliveryDate: new Date().toISOString().split('T')[0], // Fecha hoy
         items: []
     });
 
@@ -28,7 +28,7 @@ export function useCrearMercancia() {
 
         if (!idParaRevisar) {
             console.error("El producto no tiene ID (se esperaba 'id' o 'productId'):", producto);
-            return; 
+            return;
         }
 
         form.items.push({
@@ -56,7 +56,7 @@ export function useCrearMercancia() {
 
         loading.value = true;
         error.value = null;
-        
+
         try {
             const data = await createGoodsReceiptAPI(form);
             resetForm();

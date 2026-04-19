@@ -28,27 +28,36 @@ const seleccionarDesdeBusqueda = (prod) => {
     tempItem.productCode = prod.code;
     notify(`Seleccionado: ${prod.name}`, "info");
 };
-
 const handleAñadirALista = () => {
-if (!tempItem.idReal) {
-        notify("Primero busca y selecciona un producto", "error");
+    // 1. Validación preventiva en el componente
+    if (!tempItem.idReal) {
+        notify("Debes seleccionar un producto del buscador", "error");
         return;
     }
     
-    // Enviamos 'id' para que el if (!producto.id) del composable pase
-    agregarItem({
-        id: tempItem.idReal, 
-        code: tempItem.productCode,
-        name: tempItem.productName,
-        receivedQuantity: tempItem.receivedQuantity,
-        orderedQuantity: tempItem.receivedQuantity // O la cantidad original de la orden
-    });
+    try {
+        // 2. Intentamos agregar al composable
+        agregarItem({
+            id: tempItem.idReal, 
+            code: tempItem.productCode,
+            name: tempItem.productName,
+            receivedQuantity: tempItem.receivedQuantity,
+            orderedQuantity: tempItem.receivedQuantity 
+        });
 
-    // Limpiamos
-    tempItem.idReal = null;
-    tempItem.productName = '';
-    tempItem.productCode = '';
-    tempItem.receivedQuantity = 1;
+        // 3. Si tuvo éxito, notificamos y limpiamos
+        notify(`Añadido: ${tempItem.productName}`, "success");
+
+        tempItem.idReal = null;
+        tempItem.productName = '';
+        tempItem.productCode = '';
+        tempItem.receivedQuantity = 1;
+
+    } catch (err) {
+        // 4. Si el composable lanzó el Error ("El producto no tiene ID"), lo capturamos aquí
+        console.error("Error al añadir producto:", err);
+        notify(err.message || "Error al agregar el producto", "error");
+    }
 };
 
 const handleCrear = async () => {
