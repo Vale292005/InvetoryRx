@@ -99,14 +99,12 @@ const totalVenta = computed(() => {
 const procesarOrden = async () => {
   if (carrito.value.length === 0) return;
 
-const payload = {
-    // Forzamos Number para evitar errores de tipo en el backend
-    supplierId: 1, 
-    customerId: Number(authStore.user?.id) || 1, 
+  const payload = {
+    supplierId: 1, // El que te pidieron agregar
+    customerId: authStore.user?.id || '1',
     items: carrito.value.map(item => ({
-      productId: Number(item.id),
-      quantity: Number(item.cantidadSeleccionada),
-      price: Number(item.precio) // Enviar el precio actual es buena práctica (Price Snapshot)
+      productId: item.id,
+      quantity: item.cantidadSeleccionada
     })),
     notes: "Venta desde Dashboard"
   };
@@ -115,22 +113,19 @@ const payload = {
     const nuevaOrden = await orderStore.createOrder(payload);
 
     if (nuevaOrden && nuevaOrden.id) {
+      // IMPORTANTE: Antes de limpiar el carrito, podrías necesitar 
+      // guardar el total en un estado global si la pasarela lo requiere
+      // orderStore.setLastOrderTotal(totalVenta.value); 
+
       notify("¡Venta completada con éxito!", "success");
-
+      
       const idStr = nuevaOrden.id.toString();
-
-      carrito.value = [];
-
-      console.log("Navegando a la URL con ID:", idStr);
+      carrito.value = []; // Aquí se limpia el local, asegúrate de que el store tenga la info
 
       await route.push(`/pasarela-pago/${idStr}`);
-
-    } else {
-      throw new Error("El servidor no devolvió un ID de orden.");
     }
   } catch (err) {
-    console.error("ERROR CRÍTICO EN PROCESAR ORDEN:", err);
-    notify(err.message || "Error al procesar la orden", "error");
+    console.error("Error:", err);
   }
 };
 
