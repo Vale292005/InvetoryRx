@@ -2,52 +2,34 @@
 import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { searchProductos } from "@/Composable/SearchProductos.js";
 import { useOrders } from "@/Composable/useOrders.js";
-// Importamos el nuevo composable de proveedores
 import { useSearchProveedores } from "@/Composable/useSearchProveedores.js"; 
 
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
+import SearchOrders from "./SearchOrders.vue"; // Componente respetado
+import SearchResults from "./SearchResults.vue"; // Componente respetado
 import { ref, reactive, onMounted } from "vue";
-import SearchOrders from "./SearchOrders.vue";
-import SearchResults from "./SearchResults.vue";
 
-// 1. Lógica de creación y órdenes
 const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
 const { orders, getAll: fetchOrders, loading: loadingOrders } = useOrders();
-
-// 2. Lógica de búsqueda de productos
 const { searchQuery, productos, cargando } = searchProductos();
+const { searchQuery: searchQueryProveedores, proveedores } = useSearchProveedores();
 
-// 3. Lógica de búsqueda de proveedores
-const { 
-    searchQuery: searchQueryProveedores, 
-    proveedores, 
-    loading: loadingProveedores 
-} = useSearchProveedores();
-
-// Estado temporal para el producto seleccionado
 const tempItem = reactive({
     idReal: null,
     productName: '',
     productCode: '',
-    receivedQuantity: 1
+    receivedQuantity: 1,
+    orderedQuantity: 1 // <-- Nuevo estado para la cantidad pedida
 });
 
-onMounted(() => {
-    fetchOrders(); 
-});
+onMounted(() => { fetchOrders(); });
 
-// Funciones de selección
-const seleccionarOrden = (orden) => {
-    setOrdenSeleccionada(orden);
-};
+const seleccionarOrden = (orden) => { setOrdenSeleccionada(orden); };
 
 const seleccionarProveedor = (prov) => {
-    console.log("🏢 Proveedor seleccionado:", prov);
     form.supplierId = prov.id;
-    // Opcional: podrías guardar el nombre en el form si el backend lo requiere
-    // form.supplierName = prov.name; 
 };
 
 const seleccionarDesdeBusqueda = (prod) => {
@@ -55,17 +37,25 @@ const seleccionarDesdeBusqueda = (prod) => {
     tempItem.productName = prod.name;
     tempItem.productCode = prod.code;
     tempItem.receivedQuantity = 1;
+    tempItem.orderedQuantity = 1; // Inicializamos en 1
 };
 
 const handleAñadirALista = () => {
     if (!tempItem.idReal) return;
+    
     agregarItem({
         id: tempItem.idReal,
         code: tempItem.productCode,
         name: tempItem.productName,
-        receivedQuantity: tempItem.receivedQuantity
+        receivedQuantity: tempItem.receivedQuantity,
+        orderedQuantity: tempItem.orderedQuantity // <-- Ahora pasa la cantidad del input
     });
+
     tempItem.idReal = null;
+    tempItem.productName = '';
+    tempItem.productCode = '';
+    tempItem.receivedQuantity = 1;
+    tempItem.orderedQuantity = 1;
 };
 
 const handleCrear = async () => {
@@ -135,7 +125,20 @@ const handleCrear = async () => {
 
                 <div v-if="tempItem.idReal" class="selection-confirm">
                     <p>Producto: <strong>{{ tempItem.productName }}</strong></p>
-                    <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
+                    
+                    <div class="qty-inputs">
+                        <CustomInput 
+                            label="Cant. Pedida (Orden)" 
+                            type="number" 
+                            v-model.number="tempItem.orderedQuantity" 
+                        />
+                        <CustomInput 
+                            label="Cant. Recibida Ahora" 
+                            type="number" 
+                            v-model.number="tempItem.receivedQuantity" 
+                        />
+                    </div>
+
                     <button class="btn-add-item" @click="handleAñadirALista">Confirmar e Incluir</button>
                     <button class="delete-link" @click="tempItem.idReal = null">Cancelar</button>
                 </div>
@@ -146,13 +149,15 @@ const handleCrear = async () => {
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Cant.</th>
+                            <th>Pedida</th>
+                            <th>Recibida</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(item, index) in form.items" :key="index">
                             <td>{{ item.productName }}</td>
+                            <td>{{ item.orderedQuantity }}</td>
                             <td>{{ item.receivedQuantity }}</td>
                             <td><button @click="form.items.splice(index, 1)" class="delete-link">×</button></td>
                         </tr>
