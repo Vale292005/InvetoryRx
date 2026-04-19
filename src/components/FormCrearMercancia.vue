@@ -1,17 +1,20 @@
 <script setup>
 import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { searchProductos } from "@/Composable/SearchProductos.js";
+import { useOrders } from "@/Composable/useOrders.js"; // Composable de órdenes
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 
-const { form, loading, error, saveGoodsReceipt, agregarItem, setMercanciaData } = useCrearMercancia();
+// 1. Lógica de creación y órdenes
+const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
+const { orders, getAll: fetchOrders, loading: loadingOrders } = useOrders();
 
-// Importamos la lógica de búsqueda de productos
+// 2. Lógica de búsqueda de productos
 const { searchQuery, productos, cargando } = searchProductos();
 
-// Estado para el producto SELECCIONADO desde el buscador
+// Estado temporal para el producto que se está configurando antes de añadir a la lista
 const tempItem = reactive({
     idReal: null,
     productName: '',
@@ -19,52 +22,50 @@ const tempItem = reactive({
     receivedQuantity: 1
 });
 
-// ... (imports iguales)
+onMounted(() => {
+    fetchOrders(); // Carga las órdenes disponibles al montar el componente
+});
 
+// Función cuando el usuario selecciona una ORDEN
+const seleccionarOrden = (orden) => {
+    setOrdenSeleccionada(orden);
+};
+
+// Función cuando el usuario selecciona un PRODUCTO
 const seleccionarDesdeBusqueda = (prod) => {
-    console.log("🔍 [Search] Producto seleccionado:", prod); // LOG 1
     tempItem.idReal = prod.id;
     tempItem.productName = prod.name;
     tempItem.productCode = prod.code;
+    tempItem.receivedQuantity = 1;
 };
 
 const handleAñadirALista = () => {
-    console.log("➕ [Action] Intentando añadir item:", { ...tempItem }); // LOG 2
-    
-    if (!tempItem.idReal) {
-        console.warn("⚠️ [Validation] idReal es nulo o indefinido.");
-        return;
-    }
+    if (!tempItem.idReal) return;
     
     try {
         agregarItem({
             id: tempItem.idReal, 
             code: tempItem.productCode,
             name: tempItem.productName,
-            receivedQuantity: tempItem.receivedQuantity,
-            orderedQuantity: tempItem.receivedQuantity 
+            receivedQuantity: tempItem.receivedQuantity
         });
-        
-        console.log("✅ [Success] Item procesado por el composable");
 
-        // Limpieza
+        // Limpiar selección temporal
         tempItem.idReal = null;
         tempItem.productName = '';
         tempItem.productCode = '';
         tempItem.receivedQuantity = 1;
-
     } catch (err) {
-        console.error("❌ [Error] Falló agregarItem en el componente:", err);
+        console.error("Error al añadir producto:", err);
     }
 };
 
 const handleCrear = async () => {
-    console.log("🚀 [Final] Iniciando saveGoodsReceipt con form:", JSON.parse(JSON.stringify(form))); // LOG 3
     try {
         await saveGoodsReceipt();
-        console.log("🎉 [Server] Guardado exitoso");
+        alert("Recepción creada con éxito");
     } catch (e) {
-        console.error("❌ [Server] Error en la petición:", e.response?.data || e.message);
+        console.error("Error final:", e);
     }
 };
 </script>
@@ -73,19 +74,34 @@ const handleCrear = async () => {
   <div class="container-card">
     <div class="container-form">
       
-      <CustomInput label="ID de la Orden" type="number" v-model="form.orderId" placeholder="ID de la orden real" />
+      <div class="add-product-box">
+          <h4 class="sub-title">1. Seleccionar Orden de Compra</h4>
+          <SearchProduct 
+              placeholder="Buscar orden por número o ID..." 
+              :productos="orders" 
+              :cargando="loadingOrders"
+              @select="seleccionarOrden" 
+          />
+          
+          <div v-if="form.orderId" class="selection-confirm" style="background: #e3f2fd;">
+              <p>Orden activa: <strong>{{ form.orderNumber }}</strong></p>
+              <p style="font-size: 11px; color: #666;">ID Proveedor: {{ form.supplierId }}</p>
+          </div>
+      </div>
 
       <hr class="separator" />
 
-      <div class="add-product-box">
-          <h4 class="sub-title">1. Buscar y Seleccionar</h4>
+      <div class="add-product-box" :style="{ opacity: form.orderId ? 1 : 0.5 }">
+          <h4 class="sub-title">2. Buscar y Añadir Productos</h4>
           
           <SearchProduct 
+              :disabled="!form.orderId"
               placeholder="Buscar por código o nombre..." 
               :productos="productos" 
               :cargando="cargando"
               v-model:searchQuery="searchQuery" 
-              @select="seleccionarDesdeBusqueda" />
+              @select="seleccionarDesdeBusqueda" 
+          />
 
           <div v-if="tempItem.idReal" class="selection-confirm">
               <p>Vas a recibir: <strong>{{ tempItem.productName }}</strong></p>
@@ -96,6 +112,7 @@ const handleCrear = async () => {
       </div>
 
       <div class="items-wrapper" v-if="form.items.length > 0">
+          <h4 class="sub-title">Items en esta recepción</h4>
           <table class="styled-table">
               <thead>
                   <tr>
@@ -117,7 +134,7 @@ const handleCrear = async () => {
       <div class="container-button">
           <CustomButton
               :label="loading ? 'Enviando...' : 'Finalizar Recepción'"
-              :disabled="loading || form.items.length === 0"
+              :disabled="loading || form.items.length === 0 || !form.orderId"
               @click="handleCrear"
           />
       </div>
@@ -126,38 +143,15 @@ const handleCrear = async () => {
     </div>
   </div>
 
-<div class="json-debug">
-    <h4 style="color: #666; font-size: 12px;">DEBUG: JSON A ENVIAR</h4>
-    <pre>{{ form }}</pre> 
-</div>
+  <div class="json-debug">
+      <h4 style="color: #666; font-size: 10px;">DATOS A ENVIAR:</h4>
+      <pre>{{ form }}</pre> 
+  </div>
 </template>
 
 <style scoped>
-/* Tus estilos anteriores + estos ajustes */
-.search-results {
-    background: white;
-    border: 1px solid #ddd;
-    max-height: 150px;
-    overflow-y: auto;
-    width: 100%;
-}
-.result-item {
-    padding: 8px;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-    font-size: 13px;
-}
-.result-item:hover { background: #f0f0f0; }
-.selection-confirm {
-    margin-top: 10px;
-    padding: 10px;
-    background: #eef9ee;
-    border-radius: 5px;
-    width: 100%;
-}
-.separator { width: 100%; border-top: 1px solid #eee; margin: 15px 0; }
-.container-card { width: 100%; background: white; }
-.container-form { display: flex; flex-direction: column; padding: 16px 24px; gap: 10px; align-items: center; }
+.container-card { width: 100%; background: white; border-radius: 8px; }
+.container-form { display: flex; flex-direction: column; padding: 16px 24px; gap: 15px; align-items: center; }
 
 .add-product-box {
     width: 100%;
@@ -167,27 +161,48 @@ const handleCrear = async () => {
     background: #fafafa;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
-.sub-title { margin: 0; color: #666; font-size: 14px; text-transform: uppercase; }
+.sub-title { margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+
+.selection-confirm {
+    margin-top: 10px;
+    padding: 12px;
+    background: #eef9ee;
+    border-radius: 6px;
+    width: 100%;
+    border: 1px solid #c8e6c9;
+}
 
 .btn-add-item {
-    background: #444;
+    background: #2e7d32;
     color: white;
     border: none;
-    padding: 8px;
+    padding: 10px;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 5px;
+    margin-top: 10px;
+    width: 100%;
+    font-weight: bold;
 }
 
-.items-wrapper { width: 100%; margin-top: 15px; }
+.items-wrapper { width: 100%; margin-top: 10px; }
 .styled-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.styled-table th { text-align: left; padding: 8px; border-bottom: 2px solid #eee; }
-.styled-table td { padding: 8px; border-bottom: 1px solid #eee; }
+.styled-table th { text-align: left; padding: 10px; border-bottom: 2px solid #eee; color: #888; }
+.styled-table td { padding: 10px; border-bottom: 1px solid #eee; }
 
-.delete-link { background: none; border: none; color: red; cursor: pointer; font-size: 11px; }
-.separator { width: 100%; border: 0; border-top: 1px solid #eee; margin: 10px 0; }
-.error-msg { color: red; font-size: 12px; }
+.delete-link { background: none; border: none; color: #d32f2f; cursor: pointer; font-weight: bold; }
+.separator { width: 100%; border: 0; border-top: 1px solid #eee; margin: 5px 0; }
+.error-msg { color: #d32f2f; font-size: 12px; font-weight: bold; }
+
+.json-debug {
+    background: #f4f4f4;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 4px;
+    font-size: 11px;
+    max-height: 200px;
+    overflow-y: auto;
+}
 </style>

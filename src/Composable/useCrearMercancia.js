@@ -7,33 +7,38 @@ export function createGoodsReceiptAPI(goodsReceiptData) {
 
 export function useCrearMercancia() {
     const getInitialState = () => ({
-        receiptNumber: "1",           // Requerimiento de usuario
-        orderId: 1,                   // Coincide con tu Proxy id: 1
-        orderNumber: 'ORD-2024-001',  // Coincide con tu Proxy orderNumber
-        supplierId: 1,                // Valor por defecto según tu JSON anterior
+        receiptNumber: "",           // Ahora vacío para que el usuario o sistema lo asigne
+        orderId: null,               // Dinámico
+        orderNumber: '',             // Dinámico
+        supplierId: null,            // Dinámico
         status: "PENDING",
-        notes: "Recepción de Farmacia Central",
+        notes: "",
         items: []
     });
 
     const form = reactive(getInitialState());
+
+    const setOrdenSeleccionada = (orden) => {
+        console.log("📍 [Composable] Seteando orden seleccionada:", orden);
+        form.orderId = orden.id;
+        form.orderNumber = orden.orderNumber || orden.number;
+        form.supplierId = orden.supplierId || orden.supplier_id;
+        form.notes = `Recepción basada en orden ${form.orderNumber}`;
+    };
+
     const loading = ref(false);
     const error = ref(null);
 
     const agregarItem = (producto) => {
         const idParaRevisar = producto.id || producto.productId;
-
-        if (!idParaRevisar) {
-            console.error("El producto no tiene ID (se esperaba 'id' o 'productId'):", producto);
-            return;
-        }
+        if (!idParaRevisar) return;
 
         form.items.push({
-            productId: producto.id,       // Será 100L
-            productCode: producto.code,   // Será "MED-TEST"
-            productName: producto.name,   // Será "Test Product"
-            orderedQuantity: 10,          // Cantidad de prueba
-            receivedQuantity: Number(producto.receivedQuantity) || 10
+            productId: idParaRevisar,
+            productCode: producto.code,
+            productName: producto.name,
+            orderedQuantity: producto.orderedQuantity || 0, // Tomar de la orden si existe
+            receivedQuantity: Number(producto.receivedQuantity) || 0
         });
     };
 
@@ -68,5 +73,5 @@ export function useCrearMercancia() {
         }
     };
 
-    return { form, loading, error, agregarItem, saveGoodsReceipt, resetForm };
+    return { form, loading, error, agregarItem, saveGoodsReceipt, resetForm, setOrdenSeleccionada };
 }

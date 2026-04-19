@@ -9,6 +9,10 @@ import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { useNotification } from "../Composable/useNotification";
 import SearchResults from "../components/SearchResults.vue";
 import { useSearchMercancia } from "../Composable/SearchMercancia";
+import SearchMercancia from "../components/SearchMercancia.vue";
+import { useSearchMercancia } from "../Composable/SearchMercancia";
+
+const { searchQuery, mercancias, obtenerMercancias } = useSearchMercancia();
 
 
 const notify = useNotification();
@@ -53,6 +57,10 @@ const handleSearch = (valor) => {
             <div class="actualizar-container">
                 <ButtonForm title="Eliminar mercancía" />
             </div>
+        </div>
+        <div class="prodc-container">
+            <SearchMercancia placeholder="Buscar mercancía por nombre" :productos="mercancias" :cargando="cargando"
+                v-model:searchQuery="searchQuery" />
         </div>
         <div class="prodc-container">
             <SearchProduct placeholder="Buscar producto por código" :productos="productos" :cargando="cargando"
