@@ -34,7 +34,7 @@ export function useActualizarProveedor() {
     };
 
     const saveProveedor = async () => {
-        if (!form.code || !form.name || !form.email || !form.active || !form.build) {
+        if (!form.name || !form.email) {
             const msg = "Todos los campos son obligatorios";
             error.value = msg;
             return;
