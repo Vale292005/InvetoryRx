@@ -30,36 +30,27 @@ const seleccionarDesdeBusqueda = (prod) => {
 };
 
 const handleAñadirALista = () => {
-    if (!tempItem.idReal) {
+if (!tempItem.idReal) {
         notify("Primero busca y selecciona un producto", "error");
         return;
     }
     
-    // El objeto debe coincidir con lo que el backend espera (según tu test)
-    // y con lo que useCrearMercancia procesa internamente
-    const nuevoItem = {
-        productId: tempItem.idReal,
-        productName: tempItem.productName,
-        productCode: tempItem.productCode,
+    // Enviamos 'id' para que el if (!producto.id) del composable pase
+    agregarItem({
+        id: tempItem.idReal, 
+        code: tempItem.productCode,
+        name: tempItem.productName,
         receivedQuantity: tempItem.receivedQuantity,
-        orderedQuantity: tempItem.receivedQuantity // El backend lo pide en el test
-    };
+        orderedQuantity: tempItem.receivedQuantity // O la cantidad original de la orden
+    });
 
-    try {
-        agregarItem(nuevoItem);
-        // Si llegamos aquí sin que el composable lance error:
-        notify("Producto añadido a la lista", "success");
-        
-        // Limpiamos el buscador
-        tempItem.idReal = null;
-        tempItem.productName = '';
-        tempItem.productCode = '';
-        tempItem.receivedQuantity = 1;
-    } catch (e) {
-        // Si el composable tiene validaciones internas, saltará aquí
-        console.error("Error al agregar:", e);
-    }
+    // Limpiamos
+    tempItem.idReal = null;
+    tempItem.productName = '';
+    tempItem.productCode = '';
+    tempItem.receivedQuantity = 1;
 };
+
 const handleCrear = async () => {
     try {
         await saveGoodsReceipt();

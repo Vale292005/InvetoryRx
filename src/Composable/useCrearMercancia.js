@@ -6,10 +6,15 @@ export function createGoodsReceiptAPI(goodsReceiptData) {
 }
 
 export function useCrearMercancia() {
-
     const getInitialState = () => ({
+        receiptNumber: '',      // Nuevo: según tu JSON
         orderId: '',
+        orderNumber: '',       // Nuevo: según tu JSON
+        supplierId: '',        // Nuevo: según tu JSON
+        supplierName: '',      // Nuevo: según tu JSON
+        status: 'PENDING',     // Nuevo: según tu JSON
         notes: '',
+        expectedDeliveryDate: '', // Nuevo: según tu JSON
         items: []
     });
 
@@ -18,35 +23,34 @@ export function useCrearMercancia() {
     const error = ref(null);
 
     const agregarItem = (producto) => {
-        // Validación interna para evitar objetos vacíos
-        if (!producto.id) {
-            console.error("El producto no tiene ID:", producto);
+        // CORRECCIÓN CLAVE: Ahora aceptamos id o productId
+        const idParaRevisar = producto.id || producto.productId;
+
+        if (!idParaRevisar) {
+            console.error("El producto no tiene ID (se esperaba 'id' o 'productId'):", producto);
             return; 
         }
 
         form.items.push({
-            productId: producto.id,
-            productCode: producto.code || '',
-            productName: producto.name || '',
+            productId: idParaRevisar,
+            productCode: producto.productCode || producto.code || '',
+            productName: producto.productName || producto.name || '',
             orderedQuantity: Number(producto.orderedQuantity) || 0,
             receivedQuantity: Number(producto.receivedQuantity) || 0
         });
-        
     };
 
     const resetForm = () => {
-        form.orderId = '';
-        form.notes = '';
-        form.items = [];
+        Object.assign(form, getInitialState());
     };
 
     const saveGoodsReceipt = async () => {
         if (!form.orderId) {
-            const msg = "Falta el ID de la orden";
+            error.value = "Falta el ID de la orden";
             return;
         }
         if (form.items.length === 0) {
-            const msg = "La lista de productos está vacía";
+            error.value = "La lista de productos está vacía";
             return;
         }
 
@@ -58,6 +62,7 @@ export function useCrearMercancia() {
             resetForm();
             return data;
         } catch (err) {
+            // Capturamos el mensaje del backend que vimos antes (Status Cancelled, etc)
             const serverMsg = err.response?.data?.message || "Error en el servidor";
             error.value = serverMsg;
             throw err;
