@@ -20,29 +20,37 @@ export function useCrearMercancia() {
     const loading = ref(false);
     const error = ref(null);
 
-    const agregarItem = (producto) => {
-        // CORRECCIÓN CLAVE: Ahora aceptamos id o productId
+const agregarItem = (producto) => {
+        console.log("📦 [Composable] Recibiendo en agregarItem:", producto); // LOG 4
+
         const idParaRevisar = producto.id || producto.productId;
 
         if (!idParaRevisar) {
-            console.error("El producto no tiene ID (se esperaba 'id' o 'productId'):", producto);
+            console.error("🚨 [Critical] No se encontró ID en el objeto recibido:", producto);
             return;
         }
 
-        form.items.push({
-            productId: producto.id,       // Será 100L
-            productCode: producto.code,   // Será "MED-TEST"
-            productName: producto.name,   // Será "Test Product"
-            orderedQuantity: 10,          // Cantidad de prueba
-            receivedQuantity: Number(producto.receivedQuantity) || 10
-        });
+        const newItem = {
+            productId: idParaRevisar,       
+            productCode: producto.code,   
+            productName: producto.name,   
+            orderedQuantity: 10,          
+            receivedQuantity: Number(producto.receivedQuantity) || 0
+        };
+
+        console.log("📝 [Composable] Insertando en form.items:", newItem); // LOG 5
+        form.items.push(newItem);
     };
 
     const resetForm = () => {
         Object.assign(form, getInitialState());
     };
 
-    const saveGoodsReceipt = async () => {
+const saveGoodsReceipt = async () => {
+        // Log para ver el JSON final exacto antes de viajar por red
+        const payload = JSON.parse(JSON.stringify(form));
+        console.log("📡 [API] Enviando este JSON al backend:", payload); 
+
         if (!form.orderId) {
             error.value = "Falta el ID de la orden";
             return;

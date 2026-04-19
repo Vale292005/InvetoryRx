@@ -6,7 +6,7 @@ import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { ref, reactive } from "vue";
 
-const { form, loading, error, saveGoodsReceipt, agregarItem } = useCrearMercancia();
+const { form, loading, error, saveGoodsReceipt, agregarItem, setMercanciaData } = useCrearMercancia();
 
 // Importamos la lógica de búsqueda de productos
 const { searchQuery, productos, cargando } = searchProductos();
@@ -19,21 +19,24 @@ const tempItem = reactive({
     receivedQuantity: 1
 });
 
-// Función que se ejecuta cuando el usuario selecciona un producto del buscador
+// ... (imports iguales)
+
 const seleccionarDesdeBusqueda = (prod) => {
+    console.log("🔍 [Search] Producto seleccionado:", prod); // LOG 1
     tempItem.idReal = prod.id;
     tempItem.productName = prod.name;
     tempItem.productCode = prod.code;
 };
+
 const handleAñadirALista = () => {
-    // 1. Validación preventiva en el componente
+    console.log("➕ [Action] Intentando añadir item:", { ...tempItem }); // LOG 2
+    
     if (!tempItem.idReal) {
-        console.warn("No hay producto seleccionado para añadir.");
+        console.warn("⚠️ [Validation] idReal es nulo o indefinido.");
         return;
     }
     
     try {
-        // 2. Intentamos agregar al composable
         agregarItem({
             id: tempItem.idReal, 
             code: tempItem.productCode,
@@ -41,23 +44,27 @@ const handleAñadirALista = () => {
             receivedQuantity: tempItem.receivedQuantity,
             orderedQuantity: tempItem.receivedQuantity 
         });
+        
+        console.log("✅ [Success] Item procesado por el composable");
 
+        // Limpieza
         tempItem.idReal = null;
         tempItem.productName = '';
         tempItem.productCode = '';
         tempItem.receivedQuantity = 1;
 
     } catch (err) {
-        // 4. Si el composable lanzó el Error ("El producto no tiene ID"), lo capturamos aquí
-        console.error("Error al añadir producto:", err);
+        console.error("❌ [Error] Falló agregarItem en el componente:", err);
     }
 };
 
 const handleCrear = async () => {
+    console.log("🚀 [Final] Iniciando saveGoodsReceipt con form:", JSON.parse(JSON.stringify(form))); // LOG 3
     try {
         await saveGoodsReceipt();
+        console.log("🎉 [Server] Guardado exitoso");
     } catch (e) {
-        console.error("Error:", e);
+        console.error("❌ [Server] Error en la petición:", e.response?.data || e.message);
     }
 };
 </script>

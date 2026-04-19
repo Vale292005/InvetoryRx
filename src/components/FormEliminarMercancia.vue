@@ -4,7 +4,7 @@ import { useNotification } from "../Composable/useNotification";
 import { useSearchMercancia } from "../Composable/SearchMercancia";
 import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
-import SearchResults from "./SearchResults.vue";
+import SearchMercancia from "./SearchMercancia.vue";
 
 const notify = useNotification();
 const { eliminarMercancia, loading,idMercancia } = useEliminarMercancia();
@@ -30,7 +30,7 @@ const mercanciaSeleccionada = (mercancia) => {
 <template>
     <div class="container-card">
         <div class="container-form">
-            <SearchResults titulo="Mercancías" placeholder="Buscar mercancía..." :productos="mercancias"
+            <SearchMercancia titulo="Mercancías" placeholder="Buscar mercancía..." :productos="mercancias"
                 v-model:searchQuery="searchQuery" @select="mercanciaSeleccionada" />
             <Custom-input label="Nombre" placeholder="Ingrese el nombre" v-model="idMercancia" />
 
