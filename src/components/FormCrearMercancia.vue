@@ -7,6 +7,7 @@ import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue"; // Componente reutilizable
 import { reactive, onMounted } from "vue";
+import SearchOrders from "./SearchOrders.vue";
 
 // 1. Lógica de creación y órdenes
 const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
@@ -79,7 +80,7 @@ const handleCrear = async () => {
 
             <div class="add-product-box">
                 <h4 class="sub-title">1. Seleccionar Orden de Compra</h4>
-                <SearchProduct 
+                <SearchOrders 
                     placeholder="Buscar orden por número o ID..." 
                     :productos="orders"
                     :cargando="loadingOrders" 
