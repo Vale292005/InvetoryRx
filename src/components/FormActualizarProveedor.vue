@@ -18,7 +18,7 @@ const {
   error,
   updateProveedor,
   resetForm,
-  setProductorData
+  setProveedorData
 } = useActualizarProveedor();
 
 const handleActualizar = async () => {
