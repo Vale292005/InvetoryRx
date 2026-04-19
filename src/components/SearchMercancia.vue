@@ -1,4 +1,5 @@
 <script setup>
+import { watch, defineProps, defineEmits } from 'vue';
 const emit = defineEmits(['select', 'update:searchQuery']);
 
 // Dentro del <script setup> del componente de la tabla
