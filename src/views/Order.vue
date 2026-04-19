@@ -62,7 +62,6 @@ const props = defineProps({
   }
 });
 
-
 const agregarAlCarrito = (producto) => {
   const existe = carrito.value.find(item => item.id === producto.id);
 
@@ -73,9 +72,9 @@ const agregarAlCarrito = (producto) => {
   } else {
     carrito.value.push({
       id: producto.id,
-      nombre: producto.name,
+      nombre: producto.name,   // Asegúrate que esto sea 'name' si el backend lo pide así
       codigo: producto.code,
-      precio: producto.price,
+      precio: producto.price,  // El backend lo recibirá como 'price'
       stockMaximo: producto.stock,
       cantidadSeleccionada: 1
     });

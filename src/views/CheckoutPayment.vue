@@ -1,97 +1,105 @@
 <script setup>
+import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useOrderStore } from '@/stores/order.store';
 import CustomButton from "@/components/CustomButton.vue";
 import CustomBack from "@/components/CustomBack.vue";
-import {orderApi} from "@/api/order.api.js";
-import { onMounted, ref, computed } from 'vue';
-
-const totalVenta = computed(() => {
-  // Si la orden aún no carga o no es una lista, el total es 0
-  if (!ordenCargada.value || !Array.isArray(ordenCargada.value)) {
-    return 0;
-  }
-  
-  // Sumamos: precio * cantidad de cada item
-  return ordenCargada.value.reduce((acc, item) => {
-    const precio = Number(item.precio) || 0;
-    const cantidad = Number(item.cantidadSeleccionada) || 0;
-    return acc + (precio * cantidad);
-  }, 0);
-});
+import { orderApi } from "@/api/order.api.js";
 
 const route = useRoute();
 const router = useRouter();
-const orderStore = useOrderStore();
-
 const orderId = route.params.orderId;
-const loading = ref(false);
+
+// Estados
+const loading = ref(true); // Empezamos en true para el estado de carga
+const paying = ref(false); // Para el botón de pago
 const errorMessage = ref('');
 const ordenCargada = ref(null);
 
-// Aquí guardaremos la instancia de Stripe
+// Stripe Refs
 let stripe = null;
 let elements = null;
 let cardElement = null;
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-onMounted(async () => {
-  try{
-    ordenCargada.value=await orderApi.getById(orderId);
-  }catch (err) {
-    errorMessage.value = "No se pudo cargar la información de la orden.";
-  }
-  if (window.Stripe) {
-  // 1. Inicializar Stripe con tu llave pública (la de desarrollo inicia con pk_test)
-  stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN'); 
-  
-  elements = stripe.elements();
-  cardElement = elements.create('card', {
-    style: {
-      base: { fontSize: '16px', color: '#32325d' }
-    }
-  });
+// COMPUTED: Cálculo del total blindado
+const totalVenta = computed(() => {
+  // Verificamos si es un array o si los items están dentro de una propiedad 'items'
+  const items = Array.isArray(ordenCargada.value) 
+                ? ordenCargada.value 
+                : (ordenCargada.value?.items || []);
 
-  // 2. Montar el input de la tarjeta en el div con id "card-element"
-  cardElement.mount('#card-element');
-}else {
-    errorMessage.value = "Stripe no pudo cargarse. Revisa tu index.html";
+  return items.reduce((acc, item) => {
+    const precio = Number(item.precio || item.price || 0);
+    const cantidad = Number(item.cantidadSeleccionada || item.quantity || 0);
+    return acc + (precio * cantidad);
+  }, 0);
+});
+
+// COMPUTED: Para iterar en el template con seguridad
+const listaProductos = computed(() => {
+    if (!ordenCargada.value) return [];
+    return Array.isArray(ordenCargada.value) 
+           ? ordenCargada.value 
+           : (ordenCargada.value.items || []);
+});
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    const data = await orderApi.getById(orderId);
+    console.log("Datos recibidos de la API:", data); // Debug clave
+    ordenCargada.value = data;
+  } catch (err) {
+    console.error(err);
+    errorMessage.value = "No se pudo cargar la información de la orden.";
+  } finally {
+    loading.value = false;
+  }
+
+  // Inicialización de Stripe
+  if (window.Stripe) {
+    // RECUERDA: Usa pk_test para pruebas
+    stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN'); 
+    elements = stripe.elements();
+    cardElement = elements.create('card', {
+      style: { base: { fontSize: '16px', color: '#32325d' } }
+    });
+    cardElement.mount('#card-element');
+  } else {
+    errorMessage.value = "Error: Stripe no detectado. Revisa index.html";
   }
 });
 
 const handlePayment = async () => {
-  loading.value = true;
+  paying.value = true;
   errorMessage.value = '';
 
   try {
-    // 3. Llamar a tu backend para iniciar el proceso de Stripe
-    // Este endpoint debe devolver el client_secret del PaymentIntent
     const response = await fetch(`${BASE_URL}/api/payments/process`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ orderId: orderId })
     });
     
+    if (!response.ok) throw new Error("Error al procesar el pago en el servidor");
+    
     const { clientSecret } = await response.json();
 
-    // 4. Confirmar el pago con Stripe
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: { card: cardElement }
     });
 
     if (result.error) {
       errorMessage.value = result.error.message;
-    } else {
-      if (result.paymentIntent.status === 'succeeded') {
-        // ¡Éxito! Redirigir a la vista de éxito
-        router.push('/payment-success');
-      }
+    } else if (result.paymentIntent.status === 'succeeded') {
+      router.push('/payment-success');
     }
   } catch (err) {
-    errorMessage.value = "Error en el servidor de pagos";
+    errorMessage.value = err.message || "Error en el servidor de pagos";
   } finally {
-    loading.value = false;
+    paying.value = false;
   }
 };
 </script>
@@ -105,55 +113,49 @@ const handlePayment = async () => {
         
         <div class="stripe-container">
           <label class="label">Tarjeta de Crédito o Débito 💳</label>
-          <p class="helper-text">Introduce el número, fecha y CVC de tu tarjeta.</p>
-          
-          <div id="card-element" class="stripe-input">
-            </div>
-          
+          <div id="card-element" class="stripe-input"></div>
           <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
         </div>
 
-        <custom-button 
-          :label="loading ? 'Procesando...' : 'Pagar Ahora'" 
+        <CustomButton 
+          :label="paying ? 'Procesando...' : 'Pagar Ahora'" 
           @click="handlePayment"
-          :disabled="loading"
+          :disabled="paying || loading"
           class="btn-pay"
         />
       </div>
     </div>
 
-<div class="summary-section">
-  <div class="summary-content" v-if="ordenCargada && ordenCargada.length > 0">
-    <h3>Resumen de tu Orden #{{ orderId }}</h3>
-    <hr class="divider" />
-    
-    <div class="order-items">
-      <div v-for="item in ordenCargada" :key="item.id" class="item">
-        <span>{{ item.cantidadSeleccionada || item.quantity }}x {{ item.nombre || item.name }}</span>
-        <span>${{ ((item.precio || item.price || 0) * (item.cantidadSeleccionada || item.quantity || 0)).toFixed(2) }}</span>
+    <div class="summary-section">
+      <div class="summary-content">
+        <h3>Resumen de tu Orden #{{ orderId }}</h3>
+        <hr class="divider" />
+        
+        <div v-if="loading" class="loading-state">Cargando productos...</div>
+
+        <div v-else-if="listaProductos.length > 0" class="order-items">
+          <div v-for="item in listaProductos" :key="item.id" class="item">
+            <span>{{ item.cantidadSeleccionada || item.quantity || 0 }}x {{ item.nombre || item.name }}</span>
+            <span>${{ ((item.precio || item.price || 0) * (item.cantidadSeleccionada || item.quantity || 0)).toFixed(2) }}</span>
+          </div>
+          
+          <hr class="divider" />
+          
+          <div class="total-row">
+            <span>Total a pagar</span>
+            <span class="total-amount">${{ totalVenta.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <div v-else class="empty-state">
+          No se encontraron productos en esta orden.
+        </div>
+
+        <div class="security-note">
+          <p>🔒 Pago protegido con encriptación AES-256.</p>
+        </div>
       </div>
     </div>
-
-    <hr class="divider" />
-    
-    <div class="total-row">
-      <span>Total a pagar</span>
-      <span class="total-amount">${{ totalVenta.toFixed(2) }}</span>
-    </div>
-
-    <div class="security-note">
-      <p>🔒 Tu pago está protegido con encriptación de nivel bancario (AES-256).</p>
-    </div>
-  </div>
-
-  <div v-else-if="loading" class="summary-content">
-     <p>Cargando detalles de la orden...</p>
-  </div>
-
-  <div v-else class="summary-content">
-     <p>No se encontraron productos en esta orden.</p>
-  </div>
-</div>
   </div>
 </template>
 
