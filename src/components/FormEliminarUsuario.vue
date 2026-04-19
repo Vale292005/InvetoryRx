@@ -12,16 +12,16 @@ const { notify } = useNotification();
 
 const { form, loading, error, resetForm, deleteUsuario, setUserData } = useEliminarUsuario();
 
-const handleEliminar = async()=>{
-    try{
+const handleEliminar = async () => {
+    try {
         await deleteUsuario();
-        if(!error.value){
-            notify("Usuario eliminado con éxito", "success" );
+        if (!error.value) {
+            notify("Usuario eliminado con éxito", "success");
             resetForm();
         }
-    }catch(e){
+    } catch (e) {
         console.error(e);
-        notify("Error al eliminar usuario","error" );
+        notify("Error al eliminar usuario", "error");
     }
 };
 
@@ -34,14 +34,17 @@ const usuarioSeleccionado = (usuario) => {
     <div class="container-card">
         <div class="container-form">
             <SearchResults titulo="Usuarios" placeholder="Buscar usuario..." :productos="usuarios"
-                           v-model:searchQuery="searchQueryUsuarios" @select="usuarioSeleccionado" />
+                v-model:searchQuery="searchQueryUsuarios" @select="usuarioSeleccionado" />
             <CustomInput label="Usuario" placeholder="Ingrese el usuario" v-model="form.username" />
             <CustomInput label="Email" placeholder="Ingrese el email" v-model="form.email" />
             <CustomInput label="Nombre" placeholder="Ingrese el nombre" v-model="form.firstname" />
-            <Accordion title="Rol" :text="form.role||'Ingrese el rol'" />
+            <Accordion title="Rol" :text="form.role || 'Ingrese el rol'" />
 
-            <CustomButton :label="loading ? 'Cargando...' : 'Eliminar'" :disabled="loading" @click="handleEliminar" />
+            <CustomButton :label="loading ? 'Guardando...' : 'Eliminar Usuario'" :disabled="loading"
+                @click="handleEliminar" />
             <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
+
+
         </div>
     </div>
 </template>
