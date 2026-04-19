@@ -6,7 +6,6 @@ export const updateSupplierAPI = (supplierData) => {
 };
 
 export function useActualizarProveedor() {
-    const { notify } = useNotification();
     const getInitialState = () => ({
         code: '',            // Corresponde a existsByCode
         name: '',            // Nombre comercial
