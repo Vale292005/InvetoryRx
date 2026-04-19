@@ -115,9 +115,6 @@ const seleccionarProveedor = (proveedor) => {
           <div class="actualizar-container">
             <ButtonForm title="Actualizar proveedor" />
           </div>
-          <div class="eliminar-container">
-            <ButtonForm title="Eliminar usuario" />
-          </div>
         </div>
 
         <SearchResults titulo="Proveedores" placeholder="Buscar proveedor..." :productos="proveedores"
