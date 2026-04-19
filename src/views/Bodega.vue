@@ -155,6 +155,7 @@ const handleSearch = (valor) => {
 .eliminar-container,
 .activar-container {
     width: auto;
+    max-width: 325px;
     height: auto;
     border: 1px solid var(--color-brand-30);
     border-radius: 6px;

@@ -23,7 +23,7 @@ export function useCrearMercancia() {
         form.orderId = orden.id;
         form.orderNumber = orden.orderNumber || orden.number;
         form.supplierId = orden.supplierId || orden.supplier_id;
-        form.notes = `Recepción basada en orden ${form.orderNumber}`||orden.notes;
+        form.notes = orden.notes||`Recepción basada en orden ${form.orderNumber}`;
     };
 
     const loading = ref(false);
