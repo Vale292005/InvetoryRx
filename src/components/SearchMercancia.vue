@@ -29,6 +29,8 @@ const seleccionar = (p) => {
 
 const handleInput = (e) => {
     emit('update:searchQuery', e.target.value);
+    console.log("⌨️ [Search Component] Escribiendo:", valor);
+    emit('update:searchQuery', valor);
 };
 </script>
 
