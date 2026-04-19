@@ -1,13 +1,14 @@
 <script setup>
-import { useCrearMercancia } from "@/Composable/useCrearMercancia.js"; 
+import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { searchProductos } from "@/Composable/SearchProductos.js";
-import { useSearchMercancia } from "@/Composable/SearchMercancia.js"; // Corregido: Importar como función
-import { useOrders } from "@/Composable/useOrders.js"; 
+import { useOrders } from "@/Composable/useOrders.js";
+// Importamos el nuevo composable de proveedores
+import { useSearchProveedores } from "@/Composable/useSearchProveedores.js"; 
+
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
-import SearchProduct from "@/components/SearchProduct.vue"; // Componente reutilizable
-import { reactive, onMounted } from "vue";
-import SearchOrders from "./SearchOrders.vue";
+import SearchProduct from "@/components/SearchProduct.vue";
+import { ref, reactive, onMounted } from "vue";
 
 // 1. Lógica de creación y órdenes
 const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
@@ -16,8 +17,12 @@ const { orders, getAll: fetchOrders, loading: loadingOrders } = useOrders();
 // 2. Lógica de búsqueda de productos
 const { searchQuery, productos, cargando } = searchProductos();
 
-// Si necesitas la lógica de búsqueda de mercancías previas por algún motivo:
-// const { mercancias, obtenerMercancias } = useSearchMercancia();
+// 3. Lógica de búsqueda de proveedores
+const { 
+    searchQuery: searchQueryProveedores, 
+    proveedores, 
+    loading: loadingProveedores 
+} = useSearchProveedores();
 
 // Estado temporal para el producto seleccionado
 const tempItem = reactive({
@@ -31,9 +36,16 @@ onMounted(() => {
     fetchOrders(); 
 });
 
+// Funciones de selección
 const seleccionarOrden = (orden) => {
     setOrdenSeleccionada(orden);
-    console.log("✅ Orden seleccionada para el formulario:", orden);
+};
+
+const seleccionarProveedor = (prov) => {
+    console.log("🏢 Proveedor seleccionado:", prov);
+    form.supplierId = prov.id;
+    // Opcional: podrías guardar el nombre en el form si el backend lo requiere
+    // form.supplierName = prov.name; 
 };
 
 const seleccionarDesdeBusqueda = (prod) => {
@@ -45,23 +57,13 @@ const seleccionarDesdeBusqueda = (prod) => {
 
 const handleAñadirALista = () => {
     if (!tempItem.idReal) return;
-
-    try {
-        agregarItem({
-            id: tempItem.idReal,
-            code: tempItem.productCode,
-            name: tempItem.productName,
-            receivedQuantity: tempItem.receivedQuantity
-        });
-
-        // Reset
-        tempItem.idReal = null;
-        tempItem.productName = '';
-        tempItem.productCode = '';
-        tempItem.receivedQuantity = 1;
-    } catch (err) {
-        console.error("Error al añadir producto:", err);
-    }
+    agregarItem({
+        id: tempItem.idReal,
+        code: tempItem.productCode,
+        name: tempItem.productName,
+        receivedQuantity: tempItem.receivedQuantity
+    });
+    tempItem.idReal = null;
 };
 
 const handleCrear = async () => {
@@ -79,28 +81,50 @@ const handleCrear = async () => {
         <div class="container-form">
 
             <div class="add-product-box">
-                <h4 class="sub-title">1. Seleccionar Orden de Compra</h4>
-                <SearchOrders 
-                    placeholder="Buscar orden por número o ID..." 
+                <h4 class="sub-title">1. Información de Recepción</h4>
+                
+                <CustomInput 
+                    label="Número de Recibo / Factura" 
+                    v-model="form.receiptNumber" 
+                    placeholder="Ej: FAC-2024-001" 
+                />
+
+                <div class="separator-mini"></div>
+
+                <label class="label-lite">Seleccionar Orden (Opcional)</label>
+                <SearchProduct 
+                    placeholder="Buscar orden..." 
                     :productos="orders"
                     :cargando="loadingOrders" 
                     @select="seleccionarOrden" 
                 />
 
-                <div v-if="form.orderId" class="selection-confirm" style="background: #e3f2fd; border: 1px solid #bbdefb;">
-                    <p>Orden activa: <strong>{{ form.orderNumber }}</strong></p>
-                    <p style="font-size: 11px; color: #666;">ID Proveedor: {{ form.supplierId }}</p>
+                <div v-if="form.orderId" class="info-tag-blue">
+                    Orden: <strong>{{ form.orderNumber }}</strong>
+                </div>
+            </div>
+
+            <div class="add-product-box">
+                <h4 class="sub-title">2. Proveedor</h4>
+                <SearchProduct 
+                    titulo="Proveedores" 
+                    placeholder="Buscar proveedor..." 
+                    :productos="proveedores"
+                    v-model:searchQuery="searchQueryProveedores" 
+                    @select="seleccionarProveedor" 
+                />
+                
+                <div v-if="form.supplierId" class="info-tag-green">
+                    ID Proveedor seleccionado: <strong>{{ form.supplierId }}</strong>
                 </div>
             </div>
 
             <hr class="separator" />
 
-            <div class="add-product-box" :style="{ opacity: form.orderId ? 1 : 0.5, pointerEvents: form.orderId ? 'auto' : 'none' }">
-                <h4 class="sub-title">2. Buscar y Añadir Productos</h4>
-
+            <div class="add-product-box" :style="{ opacity: form.supplierId ? 1 : 0.5 }">
+                <h4 class="sub-title">3. Productos Recibidos</h4>
                 <SearchProduct 
-                    titulo="Listado de Productos"
-                    placeholder="Escribe el código o nombre del producto..."
+                    placeholder="Buscar producto..." 
                     :productos="productos"
                     :cargando="cargando"
                     v-model:searchQuery="searchQuery"
@@ -108,15 +132,14 @@ const handleCrear = async () => {
                 />
 
                 <div v-if="tempItem.idReal" class="selection-confirm">
-                    <p>Vas a recibir: <strong>{{ tempItem.productName }}</strong></p>
+                    <p>Producto: <strong>{{ tempItem.productName }}</strong></p>
                     <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
                     <button class="btn-add-item" @click="handleAñadirALista">Confirmar e Incluir</button>
-                    <button class="delete-link" @click="tempItem.idReal = null" style="margin-left: 10px;">Cancelar</button>
+                    <button class="delete-link" @click="tempItem.idReal = null">Cancelar</button>
                 </div>
             </div>
 
             <div class="items-wrapper" v-if="form.items.length > 0">
-                <h4 class="sub-title">Items en esta recepción</h4>
                 <table class="styled-table">
                     <thead>
                         <tr>
@@ -137,8 +160,8 @@ const handleCrear = async () => {
 
             <div class="container-button">
                 <CustomButton 
-                    :label="loading ? 'Enviando...' : 'Finalizar Recepción'"
-                    :disabled="loading || form.items.length === 0 || !form.orderId" 
+                    :label="loading ? 'Procesando...' : 'Finalizar Recepción'"
+                    :disabled="loading || form.items.length === 0 || !form.supplierId || !form.receiptNumber" 
                     @click="handleCrear" 
                 />
             </div>
@@ -147,8 +170,7 @@ const handleCrear = async () => {
         </div>
     </div>
 
-    <div class="json-debug" v-if="form.orderId">
-        <h4 style="color: #666; font-size: 10px;">DATOS A ENVIAR (DEBUG):</h4>
+    <div class="json-debug">
         <pre>{{ form }}</pre>
     </div>
 </template>
