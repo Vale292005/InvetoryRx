@@ -1,36 +1,51 @@
 <script setup>
 import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { useNotification } from "../Composable/useNotification";
+import { searchProductos } from "@/Composable/searchProductos.js"; // Tu buscador
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
+import SearchProduct from "@/components/SearchProduct.vue"; // Tu componente de búsqueda
 import { ref, reactive } from "vue";
 
 const { notify } = useNotification();
 const { form, loading, error, saveGoodsReceipt, agregarItem } = useCrearMercancia();
 
-// Estado temporal para el producto que estás escribiendo antes de añadirlo
+// Importamos la lógica de búsqueda de productos
+const { searchQuery, productos, cargando } = searchProductos();
+
+// Estado para el producto SELECCIONADO desde el buscador
 const tempItem = reactive({
+    idReal: null,
     productName: '',
     productCode: '',
     receivedQuantity: 1
 });
 
+// Función que se ejecuta cuando el usuario selecciona un producto del buscador
+const seleccionarDesdeBusqueda = (prod) => {
+    tempItem.idReal = prod.id;
+    tempItem.productName = prod.name;
+    tempItem.productCode = prod.code;
+    notify(`Seleccionado: ${prod.name}`, "info");
+};
+
 const handleAñadirALista = () => {
-    if (!tempItem.productName || !tempItem.productCode) {
-        notify("Escribe el nombre y código del producto", "error");
+    if (!tempItem.idReal) {
+        notify("Primero busca y selecciona un producto", "error");
         return;
     }
     
-    // Pasamos los datos al composable
+    // ✅ ENVIAMOS EL ID REAL AL BACKEND
     agregarItem({
-        id: Date.now(), // ID temporal
-        name: tempItem.productName,
-        code: tempItem.productCode,
+        productId: tempItem.idReal, 
+        productName: tempItem.productName,
+        productCode: tempItem.productCode,
         receivedQuantity: tempItem.receivedQuantity,
-        orderedQuantity: tempItem.receivedQuantity // Asumimos que es igual si no hay orden previa
+        orderedQuantity: tempItem.receivedQuantity
     });
 
-    // Limpiamos los campos para el siguiente producto
+    // Limpiamos
+    tempItem.idReal = null;
     tempItem.productName = '';
     tempItem.productCode = '';
     tempItem.receivedQuantity = 1;
@@ -39,9 +54,9 @@ const handleAñadirALista = () => {
 const handleCrear = async () => {
     try {
         await saveGoodsReceipt();
-        notify("Recepción enviada al servidor", "success");
+        notify("Recepción creada con éxito", "success");
     } catch (e) {
-        console.error("Error detallado:", e);
+        console.error("Error:", e);
     }
 };
 </script>
@@ -50,19 +65,32 @@ const handleCrear = async () => {
   <div class="container-card">
     <div class="container-form">
       
-      <CustomInput label="ID de la Orden" v-model="form.orderId" placeholder="Ej: 1" />
+      <CustomInput label="ID de la Orden" v-model="form.orderId" placeholder="ID de la orden real" />
 
       <hr class="separator" />
 
       <div class="add-product-box">
-          <h4 class="sub-title">Añadir Producto</h4>
-          <CustomInput label="Nombre del Producto" v-model="tempItem.productName" />
-          <CustomInput label="Código" v-model="tempItem.productCode" />
-          <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
+          <h4 class="sub-title">1. Buscar y Seleccionar</h4>
           
-          <button class="btn-add-item" @click="handleAñadirALista">
-              Confirmar e Incluir en Lista
-          </button>
+          <SearchProduct 
+              placeholder="Buscar por código o nombre..." 
+              :productos="productos" 
+              :cargando="cargando"
+              v-model:searchQuery="searchQuery" 
+          />
+
+          <div v-if="productos.length > 0 && !tempItem.idReal" class="search-results">
+              <div v-for="p in productos" :key="p.id" @click="seleccionarDesdeBusqueda(p)" class="result-item">
+                  {{ p.name }} - <small>{{ p.code }}</small>
+              </div>
+          </div>
+
+          <div v-if="tempItem.idReal" class="selection-confirm">
+              <p>Vas a recibir: <strong>{{ tempItem.productName }}</strong></p>
+              <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
+              <button class="btn-add-item" @click="handleAñadirALista">Confirmar e Incluir</button>
+              <button class="delete-link" @click="tempItem.idReal = null">Cancelar</button>
+          </div>
       </div>
 
       <div class="items-wrapper" v-if="form.items.length > 0">
@@ -76,9 +104,9 @@ const handleCrear = async () => {
               </thead>
               <tbody>
                   <tr v-for="(item, index) in form.items" :key="index">
-                      <td>{{ item.productName }} ({{ item.productCode }})</td>
+                      <td>{{ item.productName }}</td>
                       <td>{{ item.receivedQuantity }}</td>
-                      <td><button @click="form.items.splice(index, 1)" class="delete-link">Quitar</button></td>
+                      <td><button @click="form.items.splice(index, 1)" class="delete-link">×</button></td>
                   </tr>
               </tbody>
           </table>
@@ -92,13 +120,35 @@ const handleCrear = async () => {
           />
       </div>
 
-      <p v-if="error" class="error-msg">Error: {{ error }}</p>
+      <p v-if="error" class="error-msg">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Reutilizando tus clases */
+/* Tus estilos anteriores + estos ajustes */
+.search-results {
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 100%;
+}
+.result-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+.result-item:hover { background: #f0f0f0; }
+.selection-confirm {
+    margin-top: 10px;
+    padding: 10px;
+    background: #eef9ee;
+    border-radius: 5px;
+    width: 100%;
+}
+.separator { width: 100%; border-top: 1px solid #eee; margin: 15px 0; }
 .container-card { width: 100%; background: white; }
 .container-form { display: flex; flex-direction: column; padding: 16px 24px; gap: 10px; align-items: center; }
 
