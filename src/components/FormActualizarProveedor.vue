@@ -43,27 +43,13 @@ const proveedorSeleccionado = (proveedor) => {
         <SearchResults titulo="Proveedores" placeholder="Buscar proveedor..." :productos="proveedores"
                            v-model:searchQuery="searchQuery" @select="proveedorSeleccionado" />
 
-        <Custom-input label="Nombre" v-model="form.name" placeholder="Ej: Ingrese el nombre del proveedor"/>
-          <Custom-input label="Email" v-model="form.email" placeholder="Ej: Ingrese el email del proveedor"/>
+        <Custom-input label="Nombre" v-model="form.name" placeholder="Ingrese el nombre del proveedor"/>
+          <Custom-input label="Email" v-model="form.email" placeholder="Ingrese el email del proveedor"/>
         <CustomButton label="Actualizar" :disabled="loading" @click="handleActualizar" class="btn-search" />
       </div>
 
       <hr class="separator" v-if="idUsuario" />
-
-      <!-- Campos del Formulario (se llenan tras la búsqueda) -->
-      <div v-if="idUsuario" class="form-fields">
-        <Custom-input label="Nombre" v-model="form.name" />
-        <Custom-input label="Email" v-model="form.email" />
-        <Accordion title="Elija una estado" :text="form.active || 'Seleccione un estado'"
-          :items="{ Activo: true, Inactivo: false }" @select="(item) => form.role = item" />
-
-        <p v-if="error" class="error-text">{{ error }}</p>
-
-        <CustomButton :label="loading ? 'Guardando...' : 'Actualizar Usuario'" :disabled="loading"
-          @click="handleActualizar" />
-      </div>
-
-      <p v-else class="info-text">Busca un usuario para editar sus datos.</p>
+      <p v-if="error" class="error-text">{{ error }}</p>
     </div>
   </div>
 </template>
