@@ -35,11 +35,11 @@ const handleAñadirALista = () => {
         return;
     }
     
-    // ✅ ENVIAMOS EL ID REAL AL BACKEND
+    // Cambiamos los nombres para que coincidan con lo que el Composable busca
     agregarItem({
-        productId: tempItem.idReal, 
-        productName: tempItem.productName,
-        productCode: tempItem.productCode,
+        id: tempItem.idReal, // El composable busca producto.id
+        name: tempItem.productName, // El composable busca producto.name
+        code: tempItem.productCode, // El composable busca producto.code
         receivedQuantity: tempItem.receivedQuantity,
         orderedQuantity: tempItem.receivedQuantity
     });
@@ -117,6 +117,13 @@ const handleCrear = async () => {
       <p v-if="error" class="error-msg">{{ error }}</p>
     </div>
   </div>
+
+  <div style="margin-top: 20px; width: 100%; text-align: left;">
+    <h4 class="sub-title">Vista previa del JSON (Debug):</h4>
+    <pre style="background: #333; color: #fff; padding: 10px; border-radius: 5px; font-size: 11px; overflow-x: auto;">
+        {{ JSON.stringify(form, null, 2) }}
+    </pre>
+</div>
 </template>
 
 <style scoped>
