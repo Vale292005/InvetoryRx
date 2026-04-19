@@ -156,10 +156,6 @@ const handleCrear = async () => {
             <p v-if="error" class="error-msg">{{ error }}</p>
         </div>
     </div>
-
-    <div class="json-debug">
-        <pre>{{ form }}</pre>
-    </div>
 </template>
 <style scoped>
 .container-card {
