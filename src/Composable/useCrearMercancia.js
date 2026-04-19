@@ -11,7 +11,7 @@ export function useCrearMercancia() {
         orderId: null,               // Dinámico
         orderNumber: '',             // Dinámico
         supplierId: null,            // Dinámico
-        status: "PENDING",
+        status: "COMPLETED",       // Por defecto COMPLETED, pero podría ser un dropdown en el futuro
         notes: "",
         items: []
     });
@@ -23,7 +23,7 @@ export function useCrearMercancia() {
         form.orderId = orden.id;
         form.orderNumber = orden.orderNumber || orden.number;
         form.supplierId = orden.supplierId || orden.supplier_id;
-        form.notes = `Recepción basada en orden ${form.orderNumber}`;
+        form.notes = `Recepción basada en orden ${form.orderNumber}`||orden.notes;
     };
 
     const loading = ref(false);
