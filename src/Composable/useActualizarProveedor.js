@@ -1,25 +1,35 @@
 import { reactive, ref } from 'vue';
 import { useNotification } from "./useNotification";
-import {updateSupplier} from "../api/proveedor";
+import { updateSupplier } from "../api/proveedor";
 
 export const updateSupplierAPI = (supplierData) => {
-    return updateSupplier(supplierData.id,supplierData).then(r => r.data);
+    return updateSupplier(supplierData.id, supplierData).then(r => r.data);
 };
 
 export function useActualizarProveedor() {
-    const{notify}=useNotification();
+    const { notify } = useNotification();
     const getInitialState = () => ({
-        id: '',
-        code: '',
-        name: '',
-        email: '',
-        active: '',
-        build: ''
+        code: '',            // Corresponde a existsByCode
+        name: '',            // Nombre comercial
+        email: '',           // Corresponde a existsByEmail
+        contactNumber: '',   // Teléfono de contacto
+        address: '',         // Dirección física
+        active: true
     });
 
     const form = reactive(getInitialState());
     const loading = ref(false);
     const error = ref(null);
+
+    const setProveedorData = (supplier) => {
+        supplier.id && (form.id = supplier.id);
+        form.code = supplier.code || '';
+        form.name = supplier.name || '';
+        form.email = supplier.email || '';
+        form.contactNumber = supplier.contactNumber || '';
+        form.address = supplier.address || '';
+        form.active = supplier.active !== undefined ? supplier.active : true;
+    };
 
     const resetForm = () => {
         Object.assign(form, getInitialState());

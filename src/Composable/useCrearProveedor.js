@@ -9,12 +9,12 @@ export const registerProveedor = (supplierData) => {
 export function useCrearProveedor() {
     const { notify } = useNotification();
     const getInitialState = () => ({
-        id: '',
-        code: '',
-        name: '',
-        email: '',
-        active: '',
-        build: ''
+        code: '',            // Corresponde a existsByCode
+        name: '',            // Nombre comercial
+        email: '',           // Corresponde a existsByEmail
+        contactNumber: '',   // Teléfono de contacto
+        address: '',         // Dirección física
+        active: true
     });
 
     const form = reactive(getInitialState());

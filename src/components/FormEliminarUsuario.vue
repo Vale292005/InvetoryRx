@@ -35,9 +35,9 @@ const usuarioSeleccionado = (usuario) => {
         <div class="container-form">
             <SearchResults titulo="Usuarios" placeholder="Buscar usuario..." :productos="usuarios"
                 v-model:searchQuery="searchQueryUsuarios" @select="usuarioSeleccionado" />
-            <CustomInput label="Usuario" placeholder="Ingrese el usuario" v-model="form.username" />
-            <CustomInput label="Email" placeholder="Ingrese el email" v-model="form.email" />
-            <CustomInput label="Nombre" placeholder="Ingrese el nombre" v-model="form.firstname" />
+            <Custom-input label="Usuario" placeholder="Ingrese el usuario" v-model="form.username" />
+            <Custom-input label="Email" placeholder="Ingrese el email" v-model="form.email" />
+            <Custom-input label="Nombre" placeholder="Ingrese el nombre" v-model="form.firstname" />
             <Accordion title="Rol" :text="form.role || 'Ingrese el rol'" />
 
             <CustomButton :label="loading ? 'Guardando...' : 'Eliminar Usuario'" :disabled="loading"
