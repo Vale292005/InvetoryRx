@@ -50,7 +50,7 @@ const {searchQuery,productos}=searchProductos();
       </table>
     </div>
     <div v-else class="loading-state">
-      <overline>Esperando datos o error en la conexión</overline>
+      <span>Esperando datos o error en la conexión</span>
     </div>
   </div>
 </template>
