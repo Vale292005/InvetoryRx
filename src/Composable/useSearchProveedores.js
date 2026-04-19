@@ -6,54 +6,51 @@ export function useSearchProveedores() {
     const authStore = useAuthStore();
 
     const searchQuery = ref('');
-    const proveedores = ref([]);
+    const listaCompleta = ref([]); // Todos los proveedores de la DB
+    const resultadosFiltrados = ref([]); // Lo que se muestra en pantalla
     const loading = ref(false);
-    const resultados = ref([]);
 
-    let timeout = null;
-
-    const obtenerProveedores = async (termino = '') => {
+    // 1. Cargar datos una sola vez
+    const cargarDatos = async () => {
         loading.value = true;
         try {
-            const token = authStore.token;
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            };
-            const query = termino.trim();
+            // Asumiendo que getAllSuppliers ya maneja el token internamente o mediante interceptores
             const data = await getAllSuppliers();
-            proveedores.value = data;
-            resultados.value = data;
-
-            if (query !== '') {
-                resultados.value = proveedores.value.filter(c =>
-                    c.name?.toLowerCase().includes(query.toLowerCase()) ||
-                    c.documentNumber?.includes(query)
-                );
-            }
-            else {
-                resultados.value = proveedores.value;
-            }
+            listaCompleta.value = data;
+            resultadosFiltrados.value = data;
         } catch (err) {
-            console.error(`Error en busqueda`, err);
-            proveedores.value = [];
-        } finally { loading.value = false; }
-    }
+            console.error("Error al cargar proveedores:", err);
+            listaCompleta.value = [];
+        } finally {
+            loading.value = false;
+        }
+    };
 
-    watch(searchQuery, (valor) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            obtenerProveedores(valor);
-        }, 300);
+    // 2. Filtrar localmente (Más rápido, sin peticiones de red adicionales)
+    const filtrarProveedores = (termino) => {
+        const query = termino.trim().toLowerCase();
+        if (!query) {
+            resultadosFiltrados.value = listaCompleta.value;
+            return;
+        }
+
+        resultadosFiltrados.value = listaCompleta.value.filter(p =>
+            p.name?.toLowerCase().includes(query) ||
+            p.code?.includes(query) // Usamos 'code' que es lo que manejas en el form
+        );
+    };
+
+    // Escuchar cambios en la búsqueda
+    watch(searchQuery, (nuevoValor) => {
+        filtrarProveedores(nuevoValor);
     });
 
-    onMounted(() => obtenerProveedores());
+    onMounted(cargarDatos);
 
     return {
         searchQuery,
-        proveedores: resultados,
+        proveedores: resultadosFiltrados, // Esto es lo que consume SearchResults
         loading,
-        obtenerProveedores
+        refrescar: cargarDatos
     };
 }
