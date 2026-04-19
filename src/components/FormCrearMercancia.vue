@@ -77,13 +77,7 @@ const handleCrear = async () => {
               :productos="productos" 
               :cargando="cargando"
               v-model:searchQuery="searchQuery" 
-          />
-
-          <div v-if="productos.length > 0 && !tempItem.idReal" class="search-results">
-              <div v-for="p in productos" :key="p.id" @click="seleccionarDesdeBusqueda(p)" class="result-item">
-                  {{ p.name }} - <small>{{ p.code }}</small>
-              </div>
-          </div>
+              @select="seleccionarDesdeBusqueda" />
 
           <div v-if="tempItem.idReal" class="selection-confirm">
               <p>Vas a recibir: <strong>{{ tempItem.productName }}</strong></p>
