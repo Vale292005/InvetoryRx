@@ -6,7 +6,7 @@ import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import SearchMercancia from "./SearchMercancia.vue";
 
-const notify = useNotification();
+const {notify} = useNotification();
 const { eliminarMercancia, loading,idMercancia } = useEliminarMercancia();
 const { 
     searchQuery, 
