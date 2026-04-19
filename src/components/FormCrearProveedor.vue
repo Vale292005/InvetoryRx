@@ -12,6 +12,7 @@ const handleCrear = async () => {
     try {
         await saveProveedor();
         notify("Proveedor creado con éxito", "success");
+        console.log("Proveedor creado:", form);
     } catch (e) {
         console.error("Error al crear el proveedor", e);
         notify("Error al crear el proveedor", "error");
