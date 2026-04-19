@@ -1,5 +1,5 @@
 <script setup>
-import { useEliminarMercancia } from "@/Composable/eliminarMercancia.js";
+import { useEliminarMercancia } from "@/Composable/eliminarMercacia.js";
 import { useNotification } from "../Composable/useNotification";
 import { useSearchMercancia } from "../Composable/SearchMercancia";
 import CustomInput from "@/components/CustomInput.vue";
