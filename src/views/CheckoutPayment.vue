@@ -122,30 +122,38 @@ const handlePayment = async () => {
       </div>
     </div>
 
-    <div class="summary-section">
-      <div class="summary-content">
-        <h3>Resumen de tu Orden #{{ orderId }}</h3>
-        <hr class="divider" />
-        
-        <div class="order-items">
-          <div v-for="item in ordenCargada" :key="item.id" class="item">
-            <span>{{ item.cantidadSeleccionada }}x {{ item.nombre }}</span>
-            <span>${{ (item.precio * item.cantidadSeleccionada).toFixed(2) }}</span>
-          </div>
-        </div>
-
-        <hr class="divider" />
-        
-        <div class="total-row">
-          <span>Total a pagar</span>
-          <span class="total-amount">${{ totalVenta?.toFixed(2) }}</span>
-        </div>
-
-        <div class="security-note">
-          <p>🔒 Tu pago está protegido con encriptación de nivel bancario (AES-256).</p>
-        </div>
+<div class="summary-section">
+  <div class="summary-content" v-if="ordenCargada && ordenCargada.length > 0">
+    <h3>Resumen de tu Orden #{{ orderId }}</h3>
+    <hr class="divider" />
+    
+    <div class="order-items">
+      <div v-for="item in ordenCargada" :key="item.id" class="item">
+        <span>{{ item.cantidadSeleccionada || item.quantity }}x {{ item.nombre || item.name }}</span>
+        <span>${{ ((item.precio || item.price || 0) * (item.cantidadSeleccionada || item.quantity || 0)).toFixed(2) }}</span>
       </div>
     </div>
+
+    <hr class="divider" />
+    
+    <div class="total-row">
+      <span>Total a pagar</span>
+      <span class="total-amount">${{ totalVenta.toFixed(2) }}</span>
+    </div>
+
+    <div class="security-note">
+      <p>🔒 Tu pago está protegido con encriptación de nivel bancario (AES-256).</p>
+    </div>
+  </div>
+
+  <div v-else-if="loading" class="summary-content">
+     <p>Cargando detalles de la orden...</p>
+  </div>
+
+  <div v-else class="summary-content">
+     <p>No se encontraron productos en esta orden.</p>
+  </div>
+</div>
   </div>
 </template>
 
