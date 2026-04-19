@@ -2,24 +2,30 @@
 import { useCrearProveedor } from '../Composable/useCrearProveedor';
 import CustomInput from '@/components/CustomInput.vue';
 import CustomButton from '@/components/CustomButton.vue';
-import Accordion from '@/components/Accordion.vue';
+import { useNotification } from '@/Composable/useNotification';
+
+const { notify } = useNotification();
 
 const { form, loading, error, resetForm, saveProveedor } = useCrearProveedor();
 
 const handleCrear = async () => {
     try {
         await saveProveedor();
+        notify("Proveedor creado con éxito", "success");
     } catch (e) {
         console.error("Error al crear el proveedor", e);
+        notify("Error al crear el proveedor", "error");
     }
 };
 </script>
 <template>
     <div class="container-card">
         <div class="container-form">
-            <Custom-input label="Proveedor" placeholder="Ingrese el nombre del proveedor" v-model="form.name" />
-            <Custom-input label="Email" placeholder="Ingrese el email" v-model="form.email" />
-            <Accordion title="Elija una opción" text="Estado" :items="['Activos', 'Inactivos']" />
+            <Custom-input label="Código" placeholder="Ingrese el código del proveedor" v-model="form.code" />
+            <Custom-input label="Nombre" placeholder="Ingrese el nombre del proveedor" v-model="form.name" />
+            <Custom-input label="Email" placeholder="Ingrese el email del proveedor" v-model="form.email" />
+            <Custom-input label="Número de contacto" placeholder="Ingrese el número de contacto" v-model="form.contactNumber" />
+            <Custom-input label="Dirección" placeholder="Ingrese la dirección del proveedor" v-model="form.address" />
             <CustomButton :label="loading ? 'Cargando...' : 'Crear'" :disabled="loading" @click="handleCrear" />
             <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
         </div>
