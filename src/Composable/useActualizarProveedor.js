@@ -1,5 +1,4 @@
 import { reactive, ref } from 'vue';
-import { useNotification } from "./useNotification";
 import { updateSupplier } from "../api/proveedor";
 
 export const updateSupplierAPI = (supplierData) => {
@@ -39,7 +38,6 @@ export function useActualizarProveedor() {
         if (!form.code || !form.name || !form.email || !form.active || !form.build) {
             const msg = "Todos los campos son obligatorios";
             error.value = msg;
-            notify(msg, 'error');
             return;
         }
         loading.value = true;
@@ -47,13 +45,11 @@ export function useActualizarProveedor() {
 
         try {
             const data = await updateSupplierAPI(form);
-            notify("Proveedor actualizado con exito", "Success");
             console.log("Proveedor actualizado");
             resetForm();
             return data;
         } catch (err) {
             error.value = err;
-            notify(err || "Error al actualizar proveedor", "error");
             throw err;
         }
         finally {
@@ -64,7 +60,7 @@ export function useActualizarProveedor() {
         form,
         loading,
         error,
-        saveProveedor,
+        updateProveedor: saveProveedor,
         resetForm,
         setProveedorData
     };

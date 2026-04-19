@@ -5,10 +5,12 @@ import CustomInput from "@/components/CustomInput.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import SearchResults from "@/components/SearchResults.vue";
 import { useSearchProveedores } from "@/Composable/useSearchProveedores";
+import { useNotification } from '@/Composable/useNotification';
+
+const { notify } = useNotification();
 
 const proveedorBusqueda = ref("");
 const handleSearch = () => {
-  // Aquí iría la lógica para buscar al proveedor por su nombre o ID
   console.log("Buscando proveedor:", proveedorBusqueda.value);
 };
 // Importamos el composable para actualizar proveedor
@@ -24,8 +26,10 @@ const {
 const handleActualizar = async () => {
   try {
     await updateProveedor();
+    notify("Proveedor actualizado con éxito", "success");
   } catch (e) {
     console.error("Error al actualizar proveedor:", e);
+    notify("Error al actualizar proveedor", "error");
   }
 };
 
