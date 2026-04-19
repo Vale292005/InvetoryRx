@@ -10,11 +10,11 @@ import { useSearchUsuarios } from '@/Composable/useSearchUsuarios';
 const { searchQuery: searchQueryUsuarios, usuarios, loading: loadingUsuarios } = useSearchUsuarios();
 const { notify } = useNotification();
 
-const { form, loading, error, resetForm, deleteUsuario, setUserData } = useEliminarUsuario();
+const { form, loading, error, resetForm, eliminarUsuario, setUserData } = useEliminarUsuario();
 
 const handleEliminar = async () => {
     try {
-        await deleteUsuario();
+        await eliminarUsuario();
         if (!error.value) {
             notify("Usuario eliminado con éxito", "success");
             resetForm();
