@@ -16,12 +16,12 @@ const handleEliminar = async()=>{
     try{
         await deleteUsuario();
         if(!error.value){
-            notify('Usuario eliminado con éxito', 'success' );
+            notify("Usuario eliminado con éxito", "success" );
             resetForm();
         }
     }catch(e){
         console.error(e);
-        notify('Error al eliminar usuario','error' );
+        notify("Error al eliminar usuario","error" );
     }
 };
 
