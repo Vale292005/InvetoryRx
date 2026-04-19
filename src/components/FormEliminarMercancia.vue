@@ -8,9 +8,12 @@ import SearchMercancia from "./SearchMercancia.vue";
 
 const notify = useNotification();
 const { eliminarMercancia, loading,idMercancia } = useEliminarMercancia();
-const { searchQuery,
-    mercancias,
-    obtenerMercancias } = useSearchMercancia();
+const { 
+    searchQuery, 
+    mercancias, 
+    obtenerMercancias, 
+    setMercanciaData // <-- Faltaba esto para que mercanciaSeleccionada no falle
+} = useSearchMercancia();
 
 const handleEliminar = async () => {
     try {
@@ -23,7 +26,10 @@ const handleEliminar = async () => {
 };
 
 const mercanciaSeleccionada = (mercancia) => {
+    console.log("🎯 [UI] Mercancía clickeada en la lista:", mercancia);
     setMercanciaData(mercancia);
+    // Probablemente quieras guardar el ID para eliminarlo después:
+    // idMercancia.value = mercancia.id; 
 };
 
 </script>

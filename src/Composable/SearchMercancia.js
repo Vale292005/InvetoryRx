@@ -22,46 +22,39 @@ export function useSearchMercancia() {
             : [nuevasMercancias];
     };
 
-    const obtenerMercancias = async (termino = '') => {
-        loading.value = true;
-        error.value = null;
+const obtenerMercancias = async (termino = '') => {
+    loading.value = true;
+    console.log("📡 [API Search] Iniciando búsqueda con término:", termino);
 
-        try {
-            const query = termino.trim();
+    try {
+        const query = termino.trim();
+        let data;
 
-            if (query === '') {
-                const data = await getAllGoodsReceipts();
-                // Usamos la nueva función internamente para mantener consistencia
-                setMercanciaData(data);
-                return;
-            }
-
-            if (/^\d+$/.test(query) && query.length < 6) {
-                const data = await getGoodsReceiptById(Number(query));
-                setMercanciaData(data ? [data] : []);
-            }
-            else if (query.toLowerCase().startsWith('gr') || query.length >= 8) {
-                const data = await getGoodsReceiptByNumber(query);
-                setMercanciaData(data ? [data] : []);
-            }
-            else {
-                const data = await getAllGoodsReceipts(); 
-                const filtrados = data.filter(m => 
-                    m.notes?.toLowerCase().includes(query.toLowerCase()) ||
-                    m.orderId?.toString().includes(query)
-                );
-                setMercanciaData(filtrados);
-            }
-        } catch (err) {
-            if (err.response?.status === 401) {
-                authStore.logout();
-            }
-            error.value = err.response?.data?.message || "Error al buscar mercancías";
-            setMercanciaData([]);
-        } finally {
-            loading.value = false;
+        if (query === '') {
+            data = await getAllGoodsReceipts();
+            console.log("📂 [API Search] getAllGoodsReceipts respondió:", data);
+        } else if (/^\d+$/.test(query) && query.length < 6) {
+            data = await getGoodsReceiptById(Number(query));
+            console.log("🆔 [API Search] getById respondió:", data);
+            data = data ? [data] : [];
+        } else {
+            // ... (resto de la lógica)
+            data = await getAllGoodsReceipts();
+            // log para ver qué hay antes de filtrar
+            console.log("🧪 [API Search] Filtrando sobre:", data);
         }
-    };
+
+        // MUY IMPORTANTE: Ver qué llega a setMercanciaData
+        setMercanciaData(data);
+        
+    } catch (err) {
+        console.error("❌ [API Search] Error fatal:", err.response?.data || err.message);
+        error.value = "Error al buscar";
+    } finally {
+        loading.value = false;
+        console.log("🏁 [API Search] Estado final de 'mercancias':", mercancias.value);
+    }
+};
 
     onMounted(() => obtenerMercancias());
 
