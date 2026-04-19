@@ -7,7 +7,7 @@ import CustomButton from "@/components/CustomButton.vue";
 import SearchResults from "./SearchResults.vue";
 
 const notify = useNotification();
-const { eliminarMercancia, loading } = useEliminarMercancia();
+const { eliminarMercancia, loading,idMercancia } = useEliminarMercancia();
 const { searchQuery,
     mercancias,
     obtenerMercancias } = useSearchMercancia();
@@ -32,7 +32,7 @@ const mercanciaSeleccionada = (mercancia) => {
         <div class="container-form">
             <SearchResults titulo="Mercancías" placeholder="Buscar mercancía..." :productos="mercancias"
                 v-model:searchQuery="searchQuery" @select="mercanciaSeleccionada" />
-            <Custom-input label="Nombre" placeholder="Ingrese el nombre" v-model="form.name" />
+            <Custom-input label="Nombre" placeholder="Ingrese el nombre" v-model="idMercancia" />
 
             <CustomButton :label="loading ? 'Cargando...' : 'Eliminar'" :disabled="loading" @click="handleEliminar" />
             <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>
