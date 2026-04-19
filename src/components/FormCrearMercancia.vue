@@ -118,11 +118,9 @@ const handleCrear = async () => {
     </div>
   </div>
 
-  <div style="margin-top: 20px; width: 100%; text-align: left;">
-    <h4 class="sub-title">Vista previa del JSON (Debug):</h4>
-    <pre style="background: #333; color: #fff; padding: 10px; border-radius: 5px; font-size: 11px; overflow-x: auto;">
-        {{ JSON.stringify(form, null, 2) }}
-    </pre>
+<div class="json-debug">
+    <h4 style="color: #666; font-size: 12px;">DEBUG: JSON A ENVIAR</h4>
+    <pre>{{ form }}</pre> 
 </div>
 </template>
 

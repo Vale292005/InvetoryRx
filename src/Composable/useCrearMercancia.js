@@ -3,54 +3,55 @@ import { createGoodsReceipt } from '@/api/bodega.js';
 import { useNotification } from './useNotification';
 
 export function createGoodsReceiptAPI(goodsReceiptData) {
-    // Enviamos el objeto tal cual lo espera el test de Java
     return createGoodsReceipt(goodsReceiptData).then(r => r.data);
 }
 
 export function useCrearMercancia() {
     const { notify } = useNotification();
 
-    // Estado inicial basado en GoodsReceipt.java y el Test
     const getInitialState = () => ({
-        orderId: '',      // ID de la orden de compra
-        notes: '',        // Notas generales (Test: .notes("Test create"))
-        items: []         // Arreglo de GoodsReceiptItem
+        orderId: '',
+        notes: '',
+        items: []
     });
 
     const form = reactive(getInitialState());
-    
-    // Estado para el ítem que se está escribiendo actualmente (opcional pero recomendado)
-    const itemActual = reactive({
-        productId: '',
-        productCode: '',
-        productName: '',
-        orderedQuantity: 0,
-        receivedQuantity: 0
-    });
-
     const loading = ref(false);
     const error = ref(null);
 
-    // Función para agregar un producto a la lista antes de enviar
     const agregarItem = (producto) => {
+        // Validación interna para evitar objetos vacíos
+        if (!producto.id) {
+            console.error("El producto no tiene ID:", producto);
+            return; 
+        }
+
         form.items.push({
             productId: producto.id,
-            productCode: producto.code,
-            productName: producto.name,
-            orderedQuantity: producto.orderedQuantity || 0,
-            receivedQuantity: producto.receivedQuantity || 0
+            productCode: producto.code || '',
+            productName: producto.name || '',
+            orderedQuantity: Number(producto.orderedQuantity) || 0,
+            receivedQuantity: Number(producto.receivedQuantity) || 0
         });
+        
+        // Opcional: Notificación de éxito al añadir (info)
+        notify(`${producto.name} añadido a la lista`, "info");
     };
 
     const resetForm = () => {
-        Object.assign(form, getInitialState());
+        form.orderId = '';
+        form.notes = '';
+        form.items = [];
     };
 
     const saveGoodsReceipt = async () => {
-        // Validación basada en la estructura del Test
-        if (!form.orderId || form.items.length === 0) {
-            const msg = "Se requiere el ID de orden y al menos un producto";
-            error.value = msg;
+        if (!form.orderId) {
+            const msg = "Falta el ID de la orden";
+            notify(msg, 'error');
+            return;
+        }
+        if (form.items.length === 0) {
+            const msg = "La lista de productos está vacía";
             notify(msg, 'error');
             return;
         }
@@ -59,13 +60,12 @@ export function useCrearMercancia() {
         error.value = null;
         
         try {
-            // El objeto 'form' ahora tiene: { orderId, notes, items: [...] }
             const data = await createGoodsReceiptAPI(form);
-            notify("Recepción de mercancía creada con éxito", "success");
+            notify("Recepción creada con éxito", "success");
             resetForm();
             return data;
         } catch (err) {
-            const serverMsg = err.response?.data?.message || "Error al crear recepción";
+            const serverMsg = err.response?.data?.message || "Error en el servidor";
             error.value = serverMsg;
             notify(serverMsg, "error");
             throw err;
@@ -74,13 +74,5 @@ export function useCrearMercancia() {
         }
     };
 
-    return {
-        form,
-        itemActual, // Para vincular a los inputs de un producto
-        loading,
-        error,
-        agregarItem,
-        saveGoodsReceipt,
-        resetForm
-    };
+    return { form, loading, error, agregarItem, saveGoodsReceipt, resetForm };
 }
