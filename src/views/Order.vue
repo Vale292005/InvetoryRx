@@ -100,7 +100,7 @@ const procesarOrden = async () => {
   if (carrito.value.length === 0) return;
 
   const payload = {
-    supplierId: 1, // El que te pidieron agregar
+    supplierId: 1,
     customerId: authStore.user?.id || '1',
     items: carrito.value.map(item => ({
       productId: item.id,
@@ -113,19 +113,22 @@ const procesarOrden = async () => {
     const nuevaOrden = await orderStore.createOrder(payload);
 
     if (nuevaOrden && nuevaOrden.id) {
-      // IMPORTANTE: Antes de limpiar el carrito, podrías necesitar 
-      // guardar el total en un estado global si la pasarela lo requiere
-      // orderStore.setLastOrderTotal(totalVenta.value); 
-
       notify("¡Venta completada con éxito!", "success");
       
+      // --- LOG PARA DEPURAR ---
+      console.log("Lo que el servidor respondió:", nuevaOrden);
+      
       const idStr = nuevaOrden.id.toString();
-      carrito.value = []; // Aquí se limpia el local, asegúrate de que el store tenga la info
-
+      
+      // OPCIONAL: Si quieres que el total se vea sí o sí, 
+      // podrías pasar el total por query params o guardarlo en el store
       await route.push(`/pasarela-pago/${idStr}`);
+      
+      carrito.value = []; 
     }
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Error al crear orden:", err);
+    notify("Hubo un error al procesar la orden", "error");
   }
 };
 

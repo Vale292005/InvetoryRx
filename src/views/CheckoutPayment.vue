@@ -23,23 +23,19 @@ let cardElement = null;
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-// 1. Ajuste en la lista para mapear nombres de Java
+// 1. Asegura que el mapeo busque en los lugares correctos
 const listaProductos = computed(() => {
   if (!ordenCargada.value) return [];
-
-  // Buscamos la lista dentro del objeto
-  const items = ordenCargada.value.items || ordenCargada.value.orderItems || [];
-
-  return items;
+  // Java/JPA suele usar 'items' o 'orderDetails'
+  return ordenCargada.value.items || ordenCargada.value.orderDetails || [];
 });
 
-// 2. Ajuste en el total (asegurando que encuentre los campos)
+// 2. Corrige el cálculo del total para ser "a prueba de fallos"
 const totalVenta = computed(() => {
   return listaProductos.value.reduce((acc, item) => {
-    // Intentamos precio, unitPrice (común en Java) o price
-    const precio = Number(item.price || item.unitPrice || item.precio || 0);
-    // Intentamos quantity o cantidad
-    const cantidad = Number(item.quantity || item.cantidad || item.cantidadSeleccionada || 0);
+    // Busca el precio en: el item directo, el objeto producto anidado, o unitPrice
+    const precio = Number(item.price || item.product?.price || item.unitPrice || item.precio || 0);
+    const cantidad = Number(item.quantity || item.cantidad || 0);
     return acc + (precio * cantidad);
   }, 0);
 });
