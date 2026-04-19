@@ -1,10 +1,24 @@
 <script setup>
-import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useOrderStore } from '@/stores/order.store';
 import CustomButton from "@/components/CustomButton.vue";
 import CustomBack from "@/components/CustomBack.vue";
 import {orderApi} from "@/api/order.api.js";
+import { onMounted, ref, computed } from 'vue';
+
+const totalVenta = computed(() => {
+  // Si la orden aún no carga o no es una lista, el total es 0
+  if (!ordenCargada.value || !Array.isArray(ordenCargada.value)) {
+    return 0;
+  }
+  
+  // Sumamos: precio * cantidad de cada item
+  return ordenCargada.value.reduce((acc, item) => {
+    const precio = Number(item.precio) || 0;
+    const cantidad = Number(item.cantidadSeleccionada) || 0;
+    return acc + (precio * cantidad);
+  }, 0);
+});
 
 const route = useRoute();
 const router = useRouter();
