@@ -1,6 +1,7 @@
 <script setup>
 import ButtonForm from "@/components/ButtonForm.vue";
 import { onMounted, ref } from "vue";
+import SearchProduct from "@/components/SearchProduct.vue";
 import { useAuthStore } from "@/stores/auth.store.js";
 import { useRouter } from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
@@ -8,6 +9,7 @@ import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { useNotification } from "../Composable/useNotification";
 import SearchResults from "../components/SearchResults.vue";
 import { useSearchMercancia } from "../Composable/SearchMercancia";
+
 
 const notify = useNotification();
 const { form, loading, error, saveMercancia } = useCrearMercancia();
@@ -51,6 +53,10 @@ const handleSearch = (valor) => {
             <div class="actualizar-container">
                 <ButtonForm title="Eliminar mercancía" />
             </div>
+        </div>
+        <div class="prodc-container">
+            <SearchProduct placeholder="Buscar producto por código" :productos="productos" :cargando="cargando"
+                v-model:searchQuery="searchQuery" />
         </div>
 
         <div class="search-container">
