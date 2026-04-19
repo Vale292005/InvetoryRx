@@ -7,7 +7,7 @@ export function deleteUserAPI(id) {
 }
 
 export function useEliminarUsuario(){
-    const notify=useNotification();
+    const {notify}=useNotification();
     const getInitialState = () => ({
         id: '',
         username: '',
