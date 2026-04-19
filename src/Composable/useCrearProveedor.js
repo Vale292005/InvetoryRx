@@ -26,18 +26,16 @@ export function useCrearProveedor() {
     };
 
     const saveProveedor = async () => {
-        if (!form.code || !form.name || !form.email || !form.active || !form.build) {
+        if (!form.code || !form.name || !form.email) {
             const msg = "Todos los campos son obligatorios";
             error.value = msg;
-            notify(msg, 'error');
-            return;
+            throw new Error(msg);
         }
         loading.value = true;
         error.value = null;
 
         try {
             const data = await registerProveedor(form);
-            notify("Proveedor creado con exito", "Success");
             console.log("Proveedor creado");
             resetForm();
             return data;
