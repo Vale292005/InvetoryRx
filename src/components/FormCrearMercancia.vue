@@ -9,6 +9,7 @@ import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { ref, reactive, onMounted } from "vue";
+import SearchOrders from "./SearchOrders.vue";
 
 // 1. Lógica de creación y órdenes
 const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
@@ -92,7 +93,7 @@ const handleCrear = async () => {
                 <div class="separator-mini"></div>
 
                 <label class="label-lite">Seleccionar Orden (Opcional)</label>
-                <SearchProduct 
+                <SearchOrders 
                     placeholder="Buscar orden..." 
                     :productos="orders"
                     :cargando="loadingOrders" 
