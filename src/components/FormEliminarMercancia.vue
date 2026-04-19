@@ -1,5 +1,5 @@
 <script setup>
-import { useEliminarMercacia } from "@/Composable/eliminarMercacia.js";
+import { useEliminarMercancia } from "@/Composable/useEliminarMercancia.js";
 import { useNotification } from "../Composable/useNotification";
 import { useSearchMercancia } from "../Composable/SearchMercancia";
 import CustomInput from "@/components/CustomInput.vue";
@@ -7,7 +7,7 @@ import CustomButton from "@/components/CustomButton.vue";
 import SearchResults from "./SearchResults.vue";
 
 const notify = useNotification();
-const { form, loading, error, eliminarMercancia, setMercanciaData } = useEliminarMercacia();
+const { eliminarMercancia, loading } = useEliminarMercancia();
 const { searchQuery,
     mercancias,
     obtenerMercancias } = useSearchMercancia();
@@ -33,8 +33,6 @@ const mercanciaSeleccionada = (mercancia) => {
             <SearchResults titulo="Mercancías" placeholder="Buscar mercancía..." :productos="mercancias"
                 v-model:searchQuery="searchQuery" @select="mercanciaSeleccionada" />
             <Custom-input label="Nombre" placeholder="Ingrese el nombre" v-model="form.nombre" />
-            <Custom-input label="Descripción" placeholder="Ingrese la descripción" v-model="form.descripcion" />
-            <Custom-input label="Categoría" placeholder="Ingrese la categoría" v-model="form.categoria" />
 
             <CustomButton :label="loading ? 'Cargando...' : 'Eliminar'" :disabled="loading" @click="handleEliminar" />
             <p v-if="error" style="color: red; font-size: 12px;">{{ error }}</p>

@@ -1,56 +1,61 @@
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { deleteGoodsReceipt } from '@/api/bodega.js';
 import { useNotification } from './useNotification';
 
+/**
+ * Función pura para llamar a la API
+ */
 export function deleteGoodsReceiptAPI(id) {
     return deleteGoodsReceipt(id).then(r => r.data);
 }
 
-export function useEliminarMercacia() {
+export function useEliminarMercancia() {
     const { notify } = useNotification();
 
-    const idMercancia = ref(null);
-    const form = reactive({
-        id: '',
-        code: '',
-        name: '',
-        description: '',
-        quantity: '',
-        supplierId: '',
-        orderId: ''
-    });
-
+    // Estado
     const loading = ref(false);
     const error = ref(null);
+    
+    // Solo necesitamos trackear el ID que se pretende eliminar
+    const idMercancia = ref(null);
 
-    const setMercanciaData = (mercancia) => {
-        idMercancia.value = mercancia.id;
-        form.id = mercancia.id;
-        form.code = mercancia.code;
-        form.name = mercancia.name;
-        form.description = mercancia.description;
-        form.quantity = mercancia.quantity;
-        form.supplierId = mercancia.supplierId;
-        form.orderId = mercancia.orderId;
+    /**
+     * Prepara el ID para la eliminación (útil para modales de confirmación)
+     */
+    const setMercanciaParaEliminar = (id) => {
+        idMercancia.value = id;
     };
 
-    const eliminarMercancia = async (id) => {
-        if (!id) {
-            const msg = "ID de mercancía es requerido para eliminar";
+    /**
+     * Ejecuta la eliminación en el servidor
+     */
+    const eliminarMercancia = async (idExterno = null) => {
+        // Usamos el ID pasado por argumento o el que tengamos guardado en el estado
+        const idAEliminar = idExterno || idMercancia.value;
+
+        if (!idAEliminar) {
+            const msg = "No se ha seleccionado ninguna recepción para eliminar";
             error.value = msg;
             notify(msg, 'error');
             return;
         }
+
         loading.value = true;
         error.value = null;
 
         try {
-            await deleteGoodsReceiptAPI(id);
-            notify("Recepción de mercancía eliminada con éxito", "Success");
-            console.log("Recepción de mercancía eliminada");
+            await deleteGoodsReceiptAPI(idAEliminar);
+            notify("Recepción de mercancía eliminada con éxito", "success");
+            
+            // Limpiamos el estado después de éxito
+            if (idMercancia.value === idAEliminar) idMercancia.value = null;
+            
+            return true; 
         } catch (err) {
-            error.value = err;
-            notify(err || "Error al eliminar recepción de mercancía", "error");
+            // Manejo de errores consistente con el de Crear
+            const serverMsg = err.response?.data?.message || "Error al eliminar la recepción";
+            error.value = serverMsg;
+            notify(serverMsg, "error");
             throw err;
         } finally {
             loading.value = false;
@@ -58,11 +63,10 @@ export function useEliminarMercacia() {
     };
 
     return {
-        eliminarMercancia,
+        idMercancia,
         loading,
         error,
-        setMercanciaData,
-        idMercancia,
-        form
+        setMercanciaParaEliminar,
+        eliminarMercancia
     };
 }
