@@ -10,6 +10,7 @@ import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { ref, reactive, onMounted } from "vue";
 import SearchOrders from "./SearchOrders.vue";
+import SearchResults from "./SearchResults.vue";
 
 // 1. Lógica de creación y órdenes
 const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
@@ -107,7 +108,7 @@ const handleCrear = async () => {
 
             <div class="add-product-box">
                 <h4 class="sub-title">2. Proveedor</h4>
-                <SearchProduct 
+                <SearchResults 
                     titulo="Proveedores" 
                     placeholder="Buscar proveedor..." 
                     :productos="proveedores"
