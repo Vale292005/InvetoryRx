@@ -10,10 +10,6 @@ import { useNotification } from "../Composable/useNotification";
 import SearchResults from "../components/SearchResults.vue";
 import { useSearchMercancia } from "../Composable/SearchMercancia";
 import SearchMercancia from "../components/SearchMercancia.vue";
-import { useSearchMercancia } from "../Composable/SearchMercancia";
-
-const { searchQuery, mercancias, obtenerMercancias } = useSearchMercancia();
-
 
 const notify = useNotification();
 const { form, loading, error, saveMercancia } = useCrearMercancia();

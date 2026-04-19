@@ -1,12 +1,7 @@
 <script setup>
-import { watch, defineProps, defineEmits } from 'vue';
-const emit = defineEmits(['select', 'update:searchQuery']);
+import { watch } from 'vue'; // Nota: defineProps y defineEmits no necesitan importarse, son macros globales
 
-// Dentro del <script setup> del componente de la tabla
-watch(() => props.productos, (newVal) => {
-    console.log("🖼️ [Table Component] Recibió nuevas props 'productos':", newVal);
-}, { immediate: true });
-
+// 1. DEFINIR PROPS PRIMERO
 const props = defineProps({
     placeholder: {
         type: String,
@@ -23,23 +18,34 @@ const props = defineProps({
     searchQuery: String
 });
 
+const emit = defineEmits(['select', 'update:searchQuery']);
+
+// 2. AHORA SÍ PUEDES USAR 'props'
+watch(() => props.productos, (newVal) => {
+    console.log("🖼️ [Table Component] Recibió nuevas props 'productos':", newVal);
+}, { immediate: true });
+
 const seleccionar = (p) => {
     emit('select', p);
 };
 
 const handleInput = (e) => {
-    emit('update:searchQuery', e.target.value);
+    const valor = e.target.value; // Extraemos el valor del evento
     console.log("⌨️ [Search Component] Escribiendo:", valor);
-    emit('update:searchQuery', valor);
+    emit('update:searchQuery', valor); // Emitimos el cambio para el v-model
 };
 </script>
 
 <template>
     <div class="container">
         <div class="input-container">
-            <text-button>{{ props.titulo }}</text-button>
-            <input :value="props.searchQuery" @input="handleInput" :placeholder="props.placeholder"
-                class="search-input">
+            <span class="search-label">{{ props.titulo }}</span>
+            <input 
+                :value="props.searchQuery" 
+                @input="handleInput" 
+                :placeholder="props.placeholder"
+                class="search-input"
+            >
         </div>
 
         <div v-if="props.productos && props.productos.length > 0" class="table-wrapper">
@@ -52,7 +58,7 @@ const handleInput = (e) => {
                 </thead>
                 <tbody>
                     <tr v-for="(p, index) in props.productos" :key="p.id || index" @click="seleccionar(p)">
-                        <td>{{ p.notes || 'Sin descripción' }}</td>
+                        <td>{{ p.notes || p.description || 'Sin descripción' }}</td>
                         <td>{{ p.number || p.id }}</td>
                     </tr>
                 </tbody>
@@ -60,7 +66,7 @@ const handleInput = (e) => {
         </div>
 
         <div v-else class="loading-state">
-            <overline>Esperando datos o sin coincidencias</overline>
+            <p>Esperando datos o sin coincidencias</p>
         </div>
     </div>
 </template>

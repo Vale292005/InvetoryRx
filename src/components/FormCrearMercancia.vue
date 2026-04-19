@@ -1,11 +1,12 @@
 <script setup>
-import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
+import { useCrearMercancia } from "@/Composable/useCrearMercancia.js"; 
 import { searchProductos } from "@/Composable/SearchProductos.js";
-import { useOrders } from "@/Composable/useOrders.js"; // Composable de órdenes
+import { useSearchMercancia } from "@/Composable/SearchMercancia.js"; // Corregido: Importar como función
+import { useOrders } from "@/Composable/useOrders.js"; 
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
-import SearchProduct from "@/components/SearchProduct.vue";
-import { ref, reactive, onMounted } from "vue";
+import SearchProduct from "@/components/SearchProduct.vue"; // Componente reutilizable
+import { reactive, onMounted } from "vue";
 
 // 1. Lógica de creación y órdenes
 const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionada } = useCrearMercancia();
@@ -14,7 +15,10 @@ const { orders, getAll: fetchOrders, loading: loadingOrders } = useOrders();
 // 2. Lógica de búsqueda de productos
 const { searchQuery, productos, cargando } = searchProductos();
 
-// Estado temporal para el producto que se está configurando antes de añadir a la lista
+// Si necesitas la lógica de búsqueda de mercancías previas por algún motivo:
+// const { mercancias, obtenerMercancias } = useSearchMercancia();
+
+// Estado temporal para el producto seleccionado
 const tempItem = reactive({
     idReal: null,
     productName: '',
@@ -23,15 +27,14 @@ const tempItem = reactive({
 });
 
 onMounted(() => {
-    fetchOrders(); // Carga las órdenes disponibles al montar el componente
+    fetchOrders(); 
 });
 
-// Función cuando el usuario selecciona una ORDEN
 const seleccionarOrden = (orden) => {
     setOrdenSeleccionada(orden);
+    console.log("✅ Orden seleccionada para el formulario:", orden);
 };
 
-// Función cuando el usuario selecciona un PRODUCTO
 const seleccionarDesdeBusqueda = (prod) => {
     tempItem.idReal = prod.id;
     tempItem.productName = prod.name;
@@ -41,16 +44,16 @@ const seleccionarDesdeBusqueda = (prod) => {
 
 const handleAñadirALista = () => {
     if (!tempItem.idReal) return;
-    
+
     try {
         agregarItem({
-            id: tempItem.idReal, 
+            id: tempItem.idReal,
             code: tempItem.productCode,
             name: tempItem.productName,
             receivedQuantity: tempItem.receivedQuantity
         });
 
-        // Limpiar selección temporal
+        // Reset
         tempItem.idReal = null;
         tempItem.productName = '';
         tempItem.productCode = '';
@@ -71,87 +74,97 @@ const handleCrear = async () => {
 </script>
 
 <template>
-  <div class="container-card">
-    <div class="container-form">
-      
-      <div class="add-product-box">
-          <h4 class="sub-title">1. Seleccionar Orden de Compra</h4>
-          <SearchProduct 
-              placeholder="Buscar orden por número o ID..." 
-              :productos="orders" 
-              :cargando="loadingOrders"
-              @select="seleccionarOrden" 
-          />
-          
-          <div v-if="form.orderId" class="selection-confirm" style="background: #e3f2fd;">
-              <p>Orden activa: <strong>{{ form.orderNumber }}</strong></p>
-              <p style="font-size: 11px; color: #666;">ID Proveedor: {{ form.supplierId }}</p>
-          </div>
-      </div>
+    <div class="container-card">
+        <div class="container-form">
 
-      <hr class="separator" />
+            <div class="add-product-box">
+                <h4 class="sub-title">1. Seleccionar Orden de Compra</h4>
+                <SearchProduct 
+                    placeholder="Buscar orden por número o ID..." 
+                    :productos="orders"
+                    :cargando="loadingOrders" 
+                    @select="seleccionarOrden" 
+                />
 
-      <div class="add-product-box" :style="{ opacity: form.orderId ? 1 : 0.5 }">
-          <h4 class="sub-title">2. Buscar y Añadir Productos</h4>
-          
-          <SearchProduct 
-              :disabled="!form.orderId"
-              placeholder="Buscar por código o nombre..." 
-              :productos="productos" 
-              :cargando="cargando"
-              v-model:searchQuery="searchQuery" 
-              @select="seleccionarDesdeBusqueda" 
-          />
+                <div v-if="form.orderId" class="selection-confirm" style="background: #e3f2fd; border: 1px solid #bbdefb;">
+                    <p>Orden activa: <strong>{{ form.orderNumber }}</strong></p>
+                    <p style="font-size: 11px; color: #666;">ID Proveedor: {{ form.supplierId }}</p>
+                </div>
+            </div>
 
-          <div v-if="tempItem.idReal" class="selection-confirm">
-              <p>Vas a recibir: <strong>{{ tempItem.productName }}</strong></p>
-              <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
-              <button class="btn-add-item" @click="handleAñadirALista">Confirmar e Incluir</button>
-              <button class="delete-link" @click="tempItem.idReal = null">Cancelar</button>
-          </div>
-      </div>
+            <hr class="separator" />
 
-      <div class="items-wrapper" v-if="form.items.length > 0">
-          <h4 class="sub-title">Items en esta recepción</h4>
-          <table class="styled-table">
-              <thead>
-                  <tr>
-                      <th>Producto</th>
-                      <th>Cant.</th>
-                      <th></th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr v-for="(item, index) in form.items" :key="index">
-                      <td>{{ item.productName }}</td>
-                      <td>{{ item.receivedQuantity }}</td>
-                      <td><button @click="form.items.splice(index, 1)" class="delete-link">×</button></td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
+            <div class="add-product-box" :style="{ opacity: form.orderId ? 1 : 0.5, pointerEvents: form.orderId ? 'auto' : 'none' }">
+                <h4 class="sub-title">2. Buscar y Añadir Productos</h4>
 
-      <div class="container-button">
-          <CustomButton
-              :label="loading ? 'Enviando...' : 'Finalizar Recepción'"
-              :disabled="loading || form.items.length === 0 || !form.orderId"
-              @click="handleCrear"
-          />
-      </div>
+                <SearchProduct 
+                    titulo="Listado de Productos"
+                    placeholder="Escribe el código o nombre del producto..."
+                    :productos="productos"
+                    :cargando="cargando"
+                    v-model:searchQuery="searchQuery"
+                    @select="seleccionarDesdeBusqueda" 
+                />
 
-      <p v-if="error" class="error-msg">{{ error }}</p>
+                <div v-if="tempItem.idReal" class="selection-confirm">
+                    <p>Vas a recibir: <strong>{{ tempItem.productName }}</strong></p>
+                    <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
+                    <button class="btn-add-item" @click="handleAñadirALista">Confirmar e Incluir</button>
+                    <button class="delete-link" @click="tempItem.idReal = null" style="margin-left: 10px;">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="items-wrapper" v-if="form.items.length > 0">
+                <h4 class="sub-title">Items en esta recepción</h4>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cant.</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in form.items" :key="index">
+                            <td>{{ item.productName }}</td>
+                            <td>{{ item.receivedQuantity }}</td>
+                            <td><button @click="form.items.splice(index, 1)" class="delete-link">×</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="container-button">
+                <CustomButton 
+                    :label="loading ? 'Enviando...' : 'Finalizar Recepción'"
+                    :disabled="loading || form.items.length === 0 || !form.orderId" 
+                    @click="handleCrear" 
+                />
+            </div>
+
+            <p v-if="error" class="error-msg">{{ error }}</p>
+        </div>
     </div>
-  </div>
 
-  <div class="json-debug">
-      <h4 style="color: #666; font-size: 10px;">DATOS A ENVIAR:</h4>
-      <pre>{{ form }}</pre> 
-  </div>
+    <div class="json-debug" v-if="form.orderId">
+        <h4 style="color: #666; font-size: 10px;">DATOS A ENVIAR (DEBUG):</h4>
+        <pre>{{ form }}</pre>
+    </div>
 </template>
-
 <style scoped>
-.container-card { width: 100%; background: white; border-radius: 8px; }
-.container-form { display: flex; flex-direction: column; padding: 16px 24px; gap: 15px; align-items: center; }
+.container-card {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+}
+
+.container-form {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px;
+    gap: 15px;
+    align-items: center;
+}
 
 .add-product-box {
     width: 100%;
@@ -164,7 +177,13 @@ const handleCrear = async () => {
     gap: 10px;
 }
 
-.sub-title { margin: 0 0 5px 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+.sub-title {
+    margin: 0 0 5px 0;
+    color: #666;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
 
 .selection-confirm {
     margin-top: 10px;
@@ -187,14 +206,49 @@ const handleCrear = async () => {
     font-weight: bold;
 }
 
-.items-wrapper { width: 100%; margin-top: 10px; }
-.styled-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.styled-table th { text-align: left; padding: 10px; border-bottom: 2px solid #eee; color: #888; }
-.styled-table td { padding: 10px; border-bottom: 1px solid #eee; }
+.items-wrapper {
+    width: 100%;
+    margin-top: 10px;
+}
 
-.delete-link { background: none; border: none; color: #d32f2f; cursor: pointer; font-weight: bold; }
-.separator { width: 100%; border: 0; border-top: 1px solid #eee; margin: 5px 0; }
-.error-msg { color: #d32f2f; font-size: 12px; font-weight: bold; }
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.styled-table th {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 2px solid #eee;
+    color: #888;
+}
+
+.styled-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.delete-link {
+    background: none;
+    border: none;
+    color: #d32f2f;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.separator {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 5px 0;
+}
+
+.error-msg {
+    color: #d32f2f;
+    font-size: 12px;
+    font-weight: bold;
+}
 
 .json-debug {
     background: #f4f4f4;
