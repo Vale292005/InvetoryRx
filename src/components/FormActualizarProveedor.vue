@@ -43,10 +43,8 @@ const proveedorSeleccionado = (proveedor) => {
         <SearchResults titulo="Proveedores" placeholder="Buscar proveedor..." :productos="proveedores"
                            v-model:searchQuery="searchQuery" @select="proveedorSeleccionado" />
 
-        <Custom-input label="Nombre" v-model="proveedorBusqueda" placeholder="Ej: valeria2026"
-          @keyup.enter="handleSearch" />
-          <Custom-input label="Email" v-model="proveedorBusqueda" placeholder="Ej: valeria2026"
-          @keyup.enter="handleSearch" />
+        <Custom-input label="Nombre" v-model="form.name" placeholder="Ej: Ingrese el nombre del proveedor"/>
+          <Custom-input label="Email" v-model="form.email" placeholder="Ej: Ingrese el email del proveedor"/>
         <CustomButton label="Actualizar" :disabled="loading" @click="handleActualizar" class="btn-search" />
       </div>
 
