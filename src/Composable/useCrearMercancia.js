@@ -7,14 +7,12 @@ export function createGoodsReceiptAPI(goodsReceiptData) {
 
 export function useCrearMercancia() {
     const getInitialState = () => ({
-        receiptNumber: "1",       // <-- Forzado a 1 como pediste
-        orderId: '',
-        orderNumber: '',
-        supplierId: 1,            // Valor por defecto para cumplir el JSON
-        supplierName: '',
-        status: 'PENDING',
-        notes: '',
-        expectedDeliveryDate: new Date().toISOString().split('T')[0], // Fecha hoy
+        receiptNumber: "1",          // Como lo pediste
+        orderId: 10,                 // Coincide con sampleOrder.id(10L)
+        orderNumber: "ORD-TEST-10",  // Coincide con sampleOrder.orderNumber
+        supplierId: 5,               // Coincide con sampleOrder.supplierId(5L)
+        status: "PENDING",           // El estado inicial del recibo
+        notes: "Recepción de prueba",
         items: []
     });
 
@@ -32,11 +30,11 @@ export function useCrearMercancia() {
         }
 
         form.items.push({
-            productId: idParaRevisar,
-            productCode: producto.productCode || producto.code || '',
-            productName: producto.productName || producto.name || '',
-            orderedQuantity: Number(producto.orderedQuantity) || 0,
-            receivedQuantity: Number(producto.receivedQuantity) || 0
+            productId: producto.id,       // Será 100L
+            productCode: producto.code,   // Será "MED-TEST"
+            productName: producto.name,   // Será "Test Product"
+            orderedQuantity: 10,          // Cantidad de prueba
+            receivedQuantity: Number(producto.receivedQuantity) || 10
         });
     };
 
