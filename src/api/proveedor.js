@@ -1,7 +1,7 @@
 import client from "./client";
 
-export function createSupplier() {
-    return client.post('/api/suppliers').then(r => r.data);
+export function createSupplier(supplierData) {
+    return client.post('/api/suppliers', supplierData).then(r => r.data);
 }
 
 export function updateSupplier(id, supplierData) {
