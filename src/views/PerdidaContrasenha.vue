@@ -29,24 +29,32 @@ const buttonStatus = computed(() => {
   return !form.value.email ? 'disable' : 'default'
 })
 
-const handleResetRequest = async() => {
-  attemptedUser.value = true
-  serverErrorMessage.value = ''
+const handleResetRequest = async () => {
+  attemptedUser.value = true;
+  serverErrorMessage.value = '';
 
-  if (!form.value.email) {
-    console.warn("Campo vacío")
-    return
-  }try{
-    await authStore.forgotPassword(form.value.email)
-    isSuccess.value = true
-    setTimeout(()=>{
+  if (!form.value.email) return;
+
+  try {
+    // 1. Llamamos a la acción del store pasando el string del email
+    const res = await authStore.forgotPassword(form.value.email);
+    
+    // 2. Si llegamos aquí, fue un éxito
+    isSuccess.value = true;
+    serverErrorMessage.value = res.message; // El mensaje que viene de Java
+
+    // 3. Esperamos un poco para que el usuario lea el mensaje y redirigimos
+    setTimeout(() => {
       router.push('/confirmCode');
-    },3000)
-  }catch(e){
-    console.error("Error al enviar correo de recuperación:", e)
-    serverErrorMessage.value = 'No se pudo enviar el correo. Intente nuevamente.'
+    }, 3000);
+
+  } catch (e) {
+    // 4. Si el store lanza un error, lo capturamos aquí
+    console.error("Error en la vista:", e);
+    serverErrorMessage.value = e; 
+    isSuccess.value = false;
   }
-}
+};
 </script>
 
 <template>

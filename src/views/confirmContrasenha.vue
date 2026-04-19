@@ -53,9 +53,10 @@ const handleResetSubmit = async () => {
     alert("Contraseña restablecida correctamente")
     router.push('/login')
   } catch (e) {
-    console.error(e)
-    serverErrorMessage.value = 'El código es inválido o ha expirado.'
-  }
+    console.error(e);
+    // Usamos el mensaje que viene del backend o el genérico
+    serverErrorMessage.value = e || 'El código es inválido o ha expirado.';
+}
 }
 </script>
 

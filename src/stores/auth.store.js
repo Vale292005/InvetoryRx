@@ -36,42 +36,43 @@ export const useAuthStore = defineStore('auth', {
                 this.loading = false;
             }
         },
-        async register(userData){
-            this.loading=true;
-            this.error=null;
-            try{
-                const data=await authApi.register(userData);
+        async register(userData) {
+            this.loading = true;
+            this.error = null;
+            try {
+                const data = await authApi.register(userData);
                 return data;
-            }catch(e){
-                this.error=e;
+            } catch (e) {
+                this.error = e;
                 throw e;
-            }finally {
-                this.loading=false;
+            } finally {
+                this.loading = false;
             }
         },
-        async forgotPassword(email){
-            this.loading=true;
-            this.error=null;
-            try{
-                return await authApi.forgotPassword(email);
-            }catch(e){
-                this.error=e;
-                throw e;
-            }finally {
-                this.loading=false;
-            }   
+        async forgotPassword(email) { // Recibe el string 'correo@ejemplo.com'
+            this.loading = true;
+            this.error = null;
+            try {
+                // Envolvemos el string en un objeto para que coincida con el DTO de Java
+                return await authApi.forgotPassword({ email });
+            } catch (e) {
+                this.error = e.response?.data?.message || "Error al solicitar recuperación";
+                throw this.error;
+            } finally {
+                this.loading = false;
+            }
         },
-        async resetPassword(resetData){
-            this.loading=true;
-            this.error=null;
-            try{
+        async resetPassword(resetData) {
+            this.loading = true;
+            this.error = null;
+            try {
                 return await authApi.resetPassword(resetData);
-            }catch(e){
-                this.error=e;
+            } catch (e) {
+                this.error = e;
                 throw e;
-            }finally {
-                this.loading=false;
-            }   
+            } finally {
+                this.loading = false;
+            }
         },
         logout() {
             this.user = null;
