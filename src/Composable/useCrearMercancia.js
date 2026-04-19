@@ -7,7 +7,7 @@ export function createGoodsReceiptAPI(goodsReceiptData) {
 
 export function useCrearMercancia() {
     const getInitialState = () => ({
-        receiptNumber: '',      // Nuevo: según tu JSON
+        receiptNumber: 1,      // Nuevo: según tu JSON
         orderId: '',
         orderNumber: '',       // Nuevo: según tu JSON
         supplierId: '',        // Nuevo: según tu JSON
