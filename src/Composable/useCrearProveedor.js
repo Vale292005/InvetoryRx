@@ -2,8 +2,12 @@ import { useNotification } from "./useNotification";
 import { reactive, ref } from "vue";
 import { createSupplier } from "../api/proveedor";
 
-export const registerProveedor = (supplierData) => {
-    return createSupplier(supplierData).then(r => r.data);
+export const registerProveedor = async (supplierData) => {
+    const dataToSend = typeof toRaw === 'function' ? toRaw(supplierData) : supplierData;
+    
+    console.log("Enviando al backend:", JSON.stringify(dataToSend));
+    
+    return createSupplier(dataToSend).then(r => r.data);
 };
 
 export function useCrearProveedor() {
