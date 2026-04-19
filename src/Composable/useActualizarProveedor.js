@@ -65,6 +65,7 @@ export function useActualizarProveedor() {
         loading,
         error,
         saveProveedor,
-        resetForm
+        resetForm,
+        setProveedorData
     };
 }
