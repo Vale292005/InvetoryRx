@@ -7,12 +7,12 @@ export function createGoodsReceiptAPI(goodsReceiptData) {
 
 export function useCrearMercancia() {
     const getInitialState = () => ({
-        receiptNumber: "1",          // Como lo pediste
-        orderId: 10,                 // Coincide con sampleOrder.id(10L)
-        orderNumber: "ORD-TEST-10",  // Coincide con sampleOrder.orderNumber
-        supplierId: 5,               // Coincide con sampleOrder.supplierId(5L)
-        status: "COMPLETED",           // El estado inicial del recibo
-        notes: "Recepción de prueba",
+        receiptNumber: "1",           // Requerimiento de usuario
+        orderId: 1,                   // Coincide con tu Proxy id: 1
+        orderNumber: 'ORD-2024-001',  // Coincide con tu Proxy orderNumber
+        supplierId: 1,                // Valor por defecto según tu JSON anterior
+        status: "PENDING",
+        notes: "Recepción de Farmacia Central",
         items: []
     });
 
