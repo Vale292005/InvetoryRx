@@ -3,29 +3,46 @@ import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { useNotification } from "../Composable/useNotification";
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
 const { notify } = useNotification();
 const { form, loading, error, saveGoodsReceipt, agregarItem } = useCrearMercancia();
 
+// Estado temporal para el producto que estás escribiendo antes de añadirlo
+const tempItem = reactive({
+    productName: '',
+    productCode: '',
+    receivedQuantity: 1
+});
+
+const handleAñadirALista = () => {
+    if (!tempItem.productName || !tempItem.productCode) {
+        notify("Escribe el nombre y código del producto", "error");
+        return;
+    }
+    
+    // Pasamos los datos al composable
+    agregarItem({
+        id: Date.now(), // ID temporal
+        name: tempItem.productName,
+        code: tempItem.productCode,
+        receivedQuantity: tempItem.receivedQuantity,
+        orderedQuantity: tempItem.receivedQuantity // Asumimos que es igual si no hay orden previa
+    });
+
+    // Limpiamos los campos para el siguiente producto
+    tempItem.productName = '';
+    tempItem.productCode = '';
+    tempItem.receivedQuantity = 1;
+};
+
 const handleCrear = async () => {
     try {
         await saveGoodsReceipt();
-        notify("Recepción creada con éxito", "success");
+        notify("Recepción enviada al servidor", "success");
     } catch (e) {
-        // Error manejado por el composable
+        console.error("Error detallado:", e);
     }
-};
-
-// Simulación de añadir un producto (Esto lo podrías conectar a un buscador)
-const añadirProductoManual = () => {
-    agregarItem({
-        id: Date.now(),
-        code: "NUEVO-01",
-        name: "Producto Seleccionado",
-        orderedQuantity: 1,
-        receivedQuantity: 1
-    });
 };
 </script>
 
@@ -33,52 +50,35 @@ const añadirProductoManual = () => {
   <div class="container-card">
     <div class="container-form">
       
-      <CustomInput
-          label="ID de la Orden"
-          placeholder="Ingrese el ID de la orden de compra"
-          v-model="form.orderId" />
+      <CustomInput label="ID de la Orden" v-model="form.orderId" placeholder="Ej: 1" />
 
-      <CustomInput
-          label="Observaciones"
-          placeholder="Notas sobre el recibo"
-          v-model="form.notes" />
+      <hr class="separator" />
 
-      <div class="items-wrapper">
-          <div class="items-header">
-              <span class="items-title">Productos a Recibir</span>
-              <button class="add-btn" @click="añadirProductoManual">+ Añadir</button>
-          </div>
+      <div class="add-product-box">
+          <h4 class="sub-title">Añadir Producto</h4>
+          <CustomInput label="Nombre del Producto" v-model="tempItem.productName" />
+          <CustomInput label="Código" v-model="tempItem.productCode" />
+          <CustomInput label="Cantidad" type="number" v-model.number="tempItem.receivedQuantity" />
+          
+          <button class="btn-add-item" @click="handleAñadirALista">
+              Confirmar e Incluir en Lista
+          </button>
+      </div>
 
-          <div v-if="form.items.length === 0" class="empty-state">
-              No hay productos en la lista
-          </div>
-
-          <table v-else class="styled-table">
+      <div class="items-wrapper" v-if="form.items.length > 0">
+          <table class="styled-table">
               <thead>
                   <tr>
                       <th>Producto</th>
-                      <th width="80px">Cant.</th>
-                      <th width="40px"></th>
+                      <th>Cant.</th>
+                      <th></th>
                   </tr>
               </thead>
               <tbody>
                   <tr v-for="(item, index) in form.items" :key="index">
-                      <td>
-                          <div class="product-info">
-                              <span class="p-name">{{ item.productName }}</span>
-                              <span class="p-code">{{ item.productCode }}</span>
-                          </div>
-                      </td>
-                      <td>
-                          <input 
-                            type="number" 
-                            v-model.number="item.receivedQuantity" 
-                            class="inner-input"
-                          />
-                      </td>
-                      <td>
-                          <button @click="form.items.splice(index, 1)" class="delete-btn">×</button>
-                      </td>
+                      <td>{{ item.productName }} ({{ item.productCode }})</td>
+                      <td>{{ item.receivedQuantity }}</td>
+                      <td><button @click="form.items.splice(index, 1)" class="delete-link">Quitar</button></td>
                   </tr>
               </tbody>
           </table>
@@ -86,133 +86,51 @@ const añadirProductoManual = () => {
 
       <div class="container-button">
           <CustomButton
-              :label="loading ? 'Procesando...' : 'Guardar Recepción'"
+              :label="loading ? 'Enviando...' : 'Finalizar Recepción'"
               :disabled="loading || form.items.length === 0"
               @click="handleCrear"
           />
       </div>
 
-      <p v-if="error" class="error-msg">{{ error }}</p>
+      <p v-if="error" class="error-msg">Error: {{ error }}</p>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* TUS ESTILOS ORIGINALES */
-.container-card {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: auto;
-  background: white;
-}
-.container-button {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-  height: auto;
-  gap: 10px;
-  padding: 10px 20px;
-  border-radius: 6px;
-}
-.container-form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: auto;
-  gap: 12px;
-  padding: 16px 24px;
-  box-sizing: border-box;
-  align-items: center;
-}
+/* Reutilizando tus clases */
+.container-card { width: 100%; background: white; }
+.container-form { display: flex; flex-direction: column; padding: 16px 24px; gap: 10px; align-items: center; }
 
-/* ESTILOS ADAPTADOS PARA LA TABLA DE ITEMS */
-.items-wrapper {
+.add-product-box {
     width: 100%;
-    margin-top: 10px;
-    border: 1px solid #eee;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    overflow: hidden;
-}
-
-.items-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
-}
-
-.items-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #666;
-}
-
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-.styled-table th {
-    text-align: left;
-    padding: 10px;
-    color: #888;
-    font-weight: 500;
-    border-bottom: 1px solid #eee;
-}
-
-.styled-table td {
-    padding: 10px;
-    border-bottom: 1px solid #f5f5f5;
-}
-
-.product-info {
+    background: #fafafa;
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
-.p-name { font-weight: 500; color: #333; }
-.p-code { font-size: 11px; color: #999; }
+.sub-title { margin: 0; color: #666; font-size: 14px; text-transform: uppercase; }
 
-.inner-input {
-    width: 100%;
-    padding: 4px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.add-btn {
-    background: #f0f0f0;
+.btn-add-item {
+    background: #444;
+    color: white;
     border: none;
-    padding: 4px 8px;
+    padding: 8px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 12px;
-}
-
-.delete-btn {
-    background: none;
-    border: none;
-    color: #ff4d4f;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.empty-state {
-    padding: 20px;
-    text-align: center;
-    color: #ccc;
-    font-size: 13px;
-}
-
-.error-msg {
-    color: #ff4d4f;
-    font-size: 12px;
     margin-top: 5px;
 }
+
+.items-wrapper { width: 100%; margin-top: 15px; }
+.styled-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.styled-table th { text-align: left; padding: 8px; border-bottom: 2px solid #eee; }
+.styled-table td { padding: 8px; border-bottom: 1px solid #eee; }
+
+.delete-link { background: none; border: none; color: red; cursor: pointer; font-size: 11px; }
+.separator { width: 100%; border: 0; border-top: 1px solid #eee; margin: 10px 0; }
+.error-msg { color: red; font-size: 12px; }
 </style>
