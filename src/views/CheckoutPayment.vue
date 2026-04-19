@@ -11,8 +11,8 @@ const router = useRouter();
 const orderId = route.params.orderId;
 
 // Estados
-const loading = ref(true); 
-const paying = ref(false); 
+const loading = ref(true);
+const paying = ref(false);
 const errorMessage = ref('');
 const ordenCargada = ref(null);
 
@@ -23,20 +23,23 @@ let cardElement = null;
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-// 1. COMPUTED: Extraer la lista de productos del objeto de la orden
+// 1. Ajuste en la lista para mapear nombres de Java
 const listaProductos = computed(() => {
-    if (!ordenCargada.value) return [];
-    
-    // El log mostró que la orden tiene los productos en 'items' o 'orderItems'
-    // Accedemos a la propiedad interna del objeto que devolvió Axios
-    return ordenCargada.value.items || ordenCargada.value.orderItems || [];
+  if (!ordenCargada.value) return [];
+
+  // Buscamos la lista dentro del objeto
+  const items = ordenCargada.value.items || ordenCargada.value.orderItems || [];
+
+  return items;
 });
 
-// 2. COMPUTED: Cálculo del total usando la lista extraída
+// 2. Ajuste en el total (asegurando que encuentre los campos)
 const totalVenta = computed(() => {
   return listaProductos.value.reduce((acc, item) => {
-    const precio = Number(item.precio || item.price || 0);
-    const cantidad = Number(item.cantidadSeleccionada || item.quantity || 0);
+    // Intentamos precio, unitPrice (común en Java) o price
+    const precio = Number(item.price || item.unitPrice || item.precio || 0);
+    // Intentamos quantity o cantidad
+    const cantidad = Number(item.quantity || item.cantidad || item.cantidadSeleccionada || 0);
     return acc + (precio * cantidad);
   }, 0);
 });
@@ -46,10 +49,10 @@ onMounted(async () => {
   try {
     // CAMBIO CLAVE: Axios envuelve la respuesta en .data
     const response = await orderApi.getById(orderId);
-    
+
     // Según tu log: response.data es el objeto que tiene el id: 42
-    ordenCargada.value = response.data || response; 
-    
+    ordenCargada.value = response.data || response;
+
     console.log("Orden procesada:", ordenCargada.value);
   } catch (err) {
     console.error("Error al cargar orden:", err);
@@ -60,7 +63,7 @@ onMounted(async () => {
 
   // Inicialización de Stripe
   if (window.Stripe) {
-    stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN'); 
+    stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN');
     elements = stripe.elements();
     cardElement = elements.create('card', {
       style: { base: { fontSize: '16px', color: '#32325d' } }
@@ -81,9 +84,9 @@ const handlePayment = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ orderId: orderId })
     });
-    
+
     if (!response.ok) throw new Error("Error al procesar el pago");
-    
+
     const { clientSecret } = await response.json();
 
     const result = await stripe.confirmCardPayment(clientSecret, {
@@ -109,19 +112,15 @@ const handlePayment = async () => {
       <div class="content-wrapper">
         <CustomBack />
         <h2 class="title">Finalizar Pago</h2>
-        
+
         <div class="stripe-container">
           <label class="label">Tarjeta de Crédito o Débito 💳</label>
           <div id="card-element" class="stripe-input"></div>
           <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
         </div>
 
-        <CustomButton 
-          :label="paying ? 'Procesando...' : 'Pagar Ahora'" 
-          @click="handlePayment"
-          :disabled="paying || loading"
-          class="btn-pay"
-        />
+        <CustomButton :label="paying ? 'Procesando...' : 'Pagar Ahora'" @click="handlePayment"
+          :disabled="paying || loading" class="btn-pay" />
       </div>
     </div>
 
@@ -129,22 +128,26 @@ const handlePayment = async () => {
       <div class="summary-content">
         <h3>Resumen de tu Orden #{{ orderId }}</h3>
         <hr class="divider" />
-        
+
         <div v-if="loading" class="loading-state">Cargando productos...</div>
 
         <div v-else-if="listaProductos.length > 0" class="order-items">
           <div v-for="item in listaProductos" :key="item.id" class="item">
             <span>
-              {{ item.cantidadSeleccionada || item.quantity || 0 }}x 
-              {{ item.nombre || item.name || (item.product ? item.product.name : 'Producto') }}
+              {{ item.quantity || item.cantidad || 0 }}x
+
+              {{ (item.product ? item.product.name : '') || item.productName || item.name || item.nombre || 'Producto'
+              }}
             </span>
+
             <span>
-                ${{ ((item.precio || item.price || 0) * (item.cantidadSeleccionada || item.quantity || 0)).toFixed(2) }}
+              ${{ ((item.price || item.unitPrice || item.precio || 0) * (item.quantity || item.cantidad ||
+                0)).toFixed(2) }}
             </span>
           </div>
-          
+
           <hr class="divider" />
-          
+
           <div class="total-row">
             <span>Total a pagar</span>
             <span class="total-amount">${{ totalVenta.toFixed(2) }}</span>
@@ -173,7 +176,8 @@ const handlePayment = async () => {
 /* Columna Izquierda - Pago */
 .payment-section {
   flex: 1;
-  background-color: #ffffff; /* Blanco */
+  background-color: #ffffff;
+  /* Blanco */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -187,8 +191,10 @@ const handlePayment = async () => {
 
 /* Columna Derecha - Resumen */
 .summary-section {
-  flex: 0.8; /* Un poco más delgada que la de pago */
-  background: linear-gradient(135deg, var(--color-brand-20), var(--color-brand-40)); /* Tu azul */
+  flex: 0.8;
+  /* Un poco más delgada que la de pago */
+  background: linear-gradient(135deg, var(--color-brand-20), var(--color-brand-40));
+  /* Tu azul */
   color: white;
   display: flex;
   justify-content: center;
@@ -208,7 +214,7 @@ const handlePayment = async () => {
   border-radius: 8px;
   background-color: #f9f9f9;
   margin: 20px 0;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .title {
@@ -255,8 +261,10 @@ const handlePayment = async () => {
   .checkout-layout {
     flex-direction: column;
   }
+
   .summary-section {
-    order: -1; /* El resumen arriba en móviles */
+    order: -1;
+    /* El resumen arriba en móviles */
     flex: none;
     padding: 20px;
   }
