@@ -3,6 +3,7 @@ import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { searchProductos } from "@/Composable/SearchProductos.js";
 import { useOrders } from "@/Composable/useOrders.js";
 import { useSearchProveedores } from "@/Composable/useSearchProveedores.js";
+import { useNotification } from "../Composable/useNotification";
 
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
@@ -15,6 +16,8 @@ const { form, loading, error, saveGoodsReceipt, agregarItem, setOrdenSeleccionad
 const { orders, getAll: fetchOrders, loading: loadingOrders } = useOrders();
 const { searchQuery, productos, cargando } = searchProductos();
 const { searchQuery: searchQueryProveedores, proveedores } = useSearchProveedores();
+
+const { notify } = useNotification();
 
 const tempItem = reactive({
     idReal: null,
@@ -61,7 +64,7 @@ const handleAñadirALista = () => {
 const handleCrear = async () => {
     try {
         await saveGoodsReceipt();
-        alert("Recepción creada con éxito");
+        notify("Mercancía creada exitosamente", "success");
     } catch (e) {
         console.error("Error final:", e);
     }
