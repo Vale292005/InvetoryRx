@@ -65,7 +65,7 @@ const handleCrear = async () => {
   <div class="container-card">
     <div class="container-form">
       
-      <CustomInput label="ID de la Orden" v-model="form.orderId" placeholder="ID de la orden real" />
+      <CustomInput label="ID de la Orden" type="number" v-model="form.orderId" placeholder="ID de la orden real" />
 
       <hr class="separator" />
 
