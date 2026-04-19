@@ -1,13 +1,11 @@
 <script setup>
 import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
-import { useNotification } from "../Composable/useNotification";
 import { searchProductos } from "@/Composable/SearchProductos.js";
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import SearchProduct from "@/components/SearchProduct.vue";
 import { ref, reactive } from "vue";
 
-const { notify } = useNotification();
 const { form, loading, error, saveGoodsReceipt, agregarItem } = useCrearMercancia();
 
 // Importamos la lógica de búsqueda de productos
@@ -26,12 +24,11 @@ const seleccionarDesdeBusqueda = (prod) => {
     tempItem.idReal = prod.id;
     tempItem.productName = prod.name;
     tempItem.productCode = prod.code;
-    notify(`Seleccionado: ${prod.name}`, "info");
 };
 const handleAñadirALista = () => {
     // 1. Validación preventiva en el componente
     if (!tempItem.idReal) {
-        notify("Debes seleccionar un producto del buscador", "error");
+        console.warn("No hay producto seleccionado para añadir.");
         return;
     }
     
@@ -45,9 +42,6 @@ const handleAñadirALista = () => {
             orderedQuantity: tempItem.receivedQuantity 
         });
 
-        // 3. Si tuvo éxito, notificamos y limpiamos
-        notify(`Añadido: ${tempItem.productName}`, "success");
-
         tempItem.idReal = null;
         tempItem.productName = '';
         tempItem.productCode = '';
@@ -56,14 +50,12 @@ const handleAñadirALista = () => {
     } catch (err) {
         // 4. Si el composable lanzó el Error ("El producto no tiene ID"), lo capturamos aquí
         console.error("Error al añadir producto:", err);
-        notify(err.message || "Error al agregar el producto", "error");
     }
 };
 
 const handleCrear = async () => {
     try {
         await saveGoodsReceipt();
-        notify("Recepción creada con éxito", "success");
     } catch (e) {
         console.error("Error:", e);
     }

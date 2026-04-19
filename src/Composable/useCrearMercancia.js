@@ -11,7 +11,7 @@ export function useCrearMercancia() {
         orderId: 10,                 // Coincide con sampleOrder.id(10L)
         orderNumber: "ORD-TEST-10",  // Coincide con sampleOrder.orderNumber
         supplierId: 5,               // Coincide con sampleOrder.supplierId(5L)
-        status: "PENDING",           // El estado inicial del recibo
+        status: "COMPLETED",           // El estado inicial del recibo
         notes: "Recepción de prueba",
         items: []
     });
