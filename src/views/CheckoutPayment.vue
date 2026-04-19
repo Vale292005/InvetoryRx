@@ -11,8 +11,8 @@ const router = useRouter();
 const orderId = route.params.orderId;
 
 // Estados
-const loading = ref(true); // Empezamos en true para el estado de carga
-const paying = ref(false); // Para el botón de pago
+const loading = ref(true); 
+const paying = ref(false); 
 const errorMessage = ref('');
 const ordenCargada = ref(null);
 
@@ -23,36 +23,36 @@ let cardElement = null;
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-// COMPUTED: Cálculo del total blindado
-const totalVenta = computed(() => {
-  // Verificamos si es un array o si los items están dentro de una propiedad 'items'
-  const items = Array.isArray(ordenCargada.value) 
-                ? ordenCargada.value 
-                : (ordenCargada.value?.items || []);
+// 1. COMPUTED: Extraer la lista de productos del objeto de la orden
+const listaProductos = computed(() => {
+    if (!ordenCargada.value) return [];
+    
+    // El log mostró que la orden tiene los productos en 'items' o 'orderItems'
+    // Accedemos a la propiedad interna del objeto que devolvió Axios
+    return ordenCargada.value.items || ordenCargada.value.orderItems || [];
+});
 
-  return items.reduce((acc, item) => {
+// 2. COMPUTED: Cálculo del total usando la lista extraída
+const totalVenta = computed(() => {
+  return listaProductos.value.reduce((acc, item) => {
     const precio = Number(item.precio || item.price || 0);
     const cantidad = Number(item.cantidadSeleccionada || item.quantity || 0);
     return acc + (precio * cantidad);
   }, 0);
 });
 
-// COMPUTED: Para iterar en el template con seguridad
-const listaProductos = computed(() => {
-    if (!ordenCargada.value) return [];
-    return Array.isArray(ordenCargada.value) 
-           ? ordenCargada.value 
-           : (ordenCargada.value.items || []);
-});
-
 onMounted(async () => {
   loading.value = true;
   try {
-    const data = await orderApi.getById(orderId);
-    console.log("Datos recibidos de la API:", data); // Debug clave
-    ordenCargada.value = data;
+    // CAMBIO CLAVE: Axios envuelve la respuesta en .data
+    const response = await orderApi.getById(orderId);
+    
+    // Según tu log: response.data es el objeto que tiene el id: 42
+    ordenCargada.value = response.data || response; 
+    
+    console.log("Orden procesada:", ordenCargada.value);
   } catch (err) {
-    console.error(err);
+    console.error("Error al cargar orden:", err);
     errorMessage.value = "No se pudo cargar la información de la orden.";
   } finally {
     loading.value = false;
@@ -60,7 +60,6 @@ onMounted(async () => {
 
   // Inicialización de Stripe
   if (window.Stripe) {
-    // RECUERDA: Usa pk_test para pruebas
     stripe = Stripe('pk_live_51TKP7p6dth0g5DoErXmm2TvBL3Oeb54yp706mQTUA1RFg5sWSta4C2m1MFG8YCM2t9Q9vFV2H0NEazNRxgvVqdBh00uSghmEpN'); 
     elements = stripe.elements();
     cardElement = elements.create('card', {
@@ -68,7 +67,7 @@ onMounted(async () => {
     });
     cardElement.mount('#card-element');
   } else {
-    errorMessage.value = "Error: Stripe no detectado. Revisa index.html";
+    errorMessage.value = "Stripe no pudo cargarse. Revisa tu index.html";
   }
 });
 
@@ -83,7 +82,7 @@ const handlePayment = async () => {
       body: JSON.stringify({ orderId: orderId })
     });
     
-    if (!response.ok) throw new Error("Error al procesar el pago en el servidor");
+    if (!response.ok) throw new Error("Error al procesar el pago");
     
     const { clientSecret } = await response.json();
 
@@ -97,7 +96,7 @@ const handlePayment = async () => {
       router.push('/payment-success');
     }
   } catch (err) {
-    errorMessage.value = err.message || "Error en el servidor de pagos";
+    errorMessage.value = "Error en el servidor de pagos";
   } finally {
     paying.value = false;
   }
@@ -135,8 +134,13 @@ const handlePayment = async () => {
 
         <div v-else-if="listaProductos.length > 0" class="order-items">
           <div v-for="item in listaProductos" :key="item.id" class="item">
-            <span>{{ item.cantidadSeleccionada || item.quantity || 0 }}x {{ item.nombre || item.name }}</span>
-            <span>${{ ((item.precio || item.price || 0) * (item.cantidadSeleccionada || item.quantity || 0)).toFixed(2) }}</span>
+            <span>
+              {{ item.cantidadSeleccionada || item.quantity || 0 }}x 
+              {{ item.nombre || item.name || (item.product ? item.product.name : 'Producto') }}
+            </span>
+            <span>
+                ${{ ((item.precio || item.price || 0) * (item.cantidadSeleccionada || item.quantity || 0)).toFixed(2) }}
+            </span>
           </div>
           
           <hr class="divider" />

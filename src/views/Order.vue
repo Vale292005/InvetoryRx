@@ -12,6 +12,15 @@ import SearchOrders from "../components/SearchOrders.vue";
 import { useNotification } from '@/Composable/useNotification.js';
 import { useOrders } from "@/Composable/useOrders.js";
 
+// Agrega un watcher o una validación simple
+const validarCantidad = (item) => {
+  if (item.cantidadSeleccionada > item.stockMaximo) {
+    item.cantidadSeleccionada = item.stockMaximo;
+    notify(`Solo hay ${item.stockMaximo} unidades disponibles`, "warn");
+  }
+  if (item.cantidadSeleccionada < 1) item.cantidadSeleccionada = 1;
+};
+
 const { orders, loading: loadingOrders, getAll } = useOrders();
 onMounted((async () => {
   await getAll();
@@ -90,12 +99,14 @@ const totalVenta = computed(() => {
 const procesarOrden = async () => {
   if (carrito.value.length === 0) return;
 
-  const payload = {
-    supplierId: 1,
-    customerId: authStore.user?.id || '1',
+const payload = {
+    // Forzamos Number para evitar errores de tipo en el backend
+    supplierId: 1, 
+    customerId: Number(authStore.user?.id) || 1, 
     items: carrito.value.map(item => ({
-      productId: item.id,
-      quantity: item.cantidadSeleccionada
+      productId: Number(item.id),
+      quantity: Number(item.cantidadSeleccionada),
+      price: Number(item.precio) // Enviar el precio actual es buena práctica (Price Snapshot)
     })),
     notes: "Venta desde Dashboard"
   };
