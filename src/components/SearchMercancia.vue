@@ -6,11 +6,6 @@ watch(() => props.productos, (newVal) => {
     console.log("🖼️ [Table Component] Recibió nuevas props 'productos':", newVal);
 }, { immediate: true });
 
-const seleccionar = (p) => {
-    console.log("👆 [Table Component] Click en fila:", p);
-    emit('select', p);
-};
-
 const props = defineProps({
     placeholder: {
         type: String,
