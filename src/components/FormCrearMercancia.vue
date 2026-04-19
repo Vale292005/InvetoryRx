@@ -2,7 +2,7 @@
 import { useCrearMercancia } from "@/Composable/useCrearMercancia.js";
 import { searchProductos } from "@/Composable/SearchProductos.js";
 import { useOrders } from "@/Composable/useOrders.js";
-import { useSearchProveedores } from "@/Composable/useSearchProveedores.js"; 
+import { useSearchProveedores } from "@/Composable/useSearchProveedores.js";
 
 import CustomButton from "@/components/CustomButton.vue";
 import CustomInput from "@/components/CustomInput.vue";
@@ -42,7 +42,7 @@ const seleccionarDesdeBusqueda = (prod) => {
 
 const handleAñadirALista = () => {
     if (!tempItem.idReal) return;
-    
+
     agregarItem({
         id: tempItem.idReal,
         code: tempItem.productCode,
@@ -74,22 +74,17 @@ const handleCrear = async () => {
 
             <div class="add-product-box">
                 <h4 class="sub-title">1. Información de Recepción</h4>
-                
-                <CustomInput 
-                    label="Número de Recibo / Factura" 
-                    v-model="form.receiptNumber" 
-                    placeholder="Ej: FAC-2024-001" 
-                />
+
+                <CustomInput label="Número de Recibo / Factura" v-model="form.receiptNumber"
+                    placeholder="Ej: FAC-2024-001" />
+                <CustomInput label="Descripcion" v-model="form.notes"
+                    placeholder="Ej: Pedido de antiflamatorios" />
 
                 <div class="separator-mini"></div>
 
                 <label class="label-lite">Seleccionar Orden (Opcional)</label>
-                <SearchOrders 
-                    placeholder="Buscar orden..." 
-                    :productos="orders"
-                    :cargando="loadingOrders" 
-                    @select="seleccionarOrden" 
-                />
+                <SearchOrders placeholder="Buscar orden..." :productos="orders" :cargando="loadingOrders"
+                    @select="seleccionarOrden" />
 
                 <div v-if="form.orderId" class="info-tag-blue">
                     Orden: <strong>{{ form.orderNumber }}</strong>
@@ -98,14 +93,9 @@ const handleCrear = async () => {
 
             <div class="add-product-box">
                 <h4 class="sub-title">2. Proveedor</h4>
-                <SearchResults 
-                    titulo="Proveedores" 
-                    placeholder="Buscar proveedor..." 
-                    :productos="proveedores"
-                    v-model:searchQuery="searchQueryProveedores" 
-                    @select="seleccionarProveedor" 
-                />
-                
+                <SearchResults titulo="Proveedores" placeholder="Buscar proveedor..." :productos="proveedores"
+                    v-model:searchQuery="searchQueryProveedores" @select="seleccionarProveedor" />
+
                 <div v-if="form.supplierId" class="info-tag-green">
                     ID Proveedor seleccionado: <strong>{{ form.supplierId }}</strong>
                 </div>
@@ -115,28 +105,17 @@ const handleCrear = async () => {
 
             <div class="add-product-box" :style="{ opacity: form.supplierId ? 1 : 0.5 }">
                 <h4 class="sub-title">3. Productos Recibidos</h4>
-                <SearchProduct 
-                    placeholder="Buscar producto..." 
-                    :productos="productos"
-                    :cargando="cargando"
-                    v-model:searchQuery="searchQuery"
-                    @select="seleccionarDesdeBusqueda" 
-                />
+                <SearchProduct placeholder="Buscar producto..." :productos="productos" :cargando="cargando"
+                    v-model:searchQuery="searchQuery" @select="seleccionarDesdeBusqueda" />
 
                 <div v-if="tempItem.idReal" class="selection-confirm">
                     <p>Producto: <strong>{{ tempItem.productName }}</strong></p>
-                    
+
                     <div class="qty-inputs">
-                        <CustomInput 
-                            label="Cant. Pedida (Orden)" 
-                            type="number" 
-                            v-model.number="tempItem.orderedQuantity" 
-                        />
-                        <CustomInput 
-                            label="Cant. Recibida Ahora" 
-                            type="number" 
-                            v-model.number="tempItem.receivedQuantity" 
-                        />
+                        <CustomInput label="Cant. Pedida (Orden)" type="number"
+                            v-model.number="tempItem.orderedQuantity" />
+                        <CustomInput label="Cant. Recibida Ahora" type="number"
+                            v-model.number="tempItem.receivedQuantity" />
                     </div>
 
                     <button class="btn-add-item" @click="handleAñadirALista">Confirmar e Incluir</button>
@@ -166,11 +145,9 @@ const handleCrear = async () => {
             </div>
 
             <div class="container-button">
-                <CustomButton 
-                    :label="loading ? 'Procesando...' : 'Finalizar Recepción'"
-                    :disabled="loading || form.items.length === 0 || !form.supplierId || !form.receiptNumber" 
-                    @click="handleCrear" 
-                />
+                <CustomButton :label="loading ? 'Procesando...' : 'Finalizar Recepción'"
+                    :disabled="loading || form.items.length === 0 || !form.supplierId || !form.receiptNumber"
+                    @click="handleCrear" />
             </div>
 
             <p v-if="error" class="error-msg">{{ error }}</p>
@@ -184,6 +161,7 @@ const handleCrear = async () => {
 <style scoped>
 .container-card {
     width: 100%;
+    max-width: 325px;
     background: white;
     border-radius: 8px;
 }
@@ -222,6 +200,7 @@ const handleCrear = async () => {
     border-radius: 6px;
     width: 100%;
     border: 1px solid #c8e6c9;
+    box-sizing: border-box;
 }
 
 .btn-add-item {
