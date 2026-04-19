@@ -92,6 +92,7 @@ const procesarOrden = async () => {
   if (carrito.value.length === 0) return;
 
   const payload = {
+    supplierId: 1,
     customerId: authStore.user?.id || '1',
     items: carrito.value.map(item => ({
       productId: item.id,
