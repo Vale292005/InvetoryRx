@@ -58,11 +58,6 @@ const handleSearch = (valor) => {
             <SearchProduct placeholder="Buscar producto por código" :productos="productos" :cargando="cargando"
                 v-model:searchQuery="searchQuery" />
         </div>
-
-        <div class="search-container">
-            <SearchResults titulo="Mercancías" placeholder="Buscar mercancía..." :productos="mercancias"
-                v-model:searchQuery="searchQuery" @select="mercanciaSeleccionada" />
-        </div>
     </div>
 </template>
 
